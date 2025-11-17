@@ -12,9 +12,10 @@
   "app": {
     "windows": [
       {
-        "title": "nebula-manager",
+        "title": "Nebula Manager - Hassle-free Password Vault",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "fullscreen": false
       }
     ],
     "security": {
