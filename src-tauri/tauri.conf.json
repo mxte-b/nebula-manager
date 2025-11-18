@@ -12,10 +12,26 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "Nebula Manager - Hassle-free Password Vault",
         "width": 800,
-        "height": 600,
+        "height": 400,
         "fullscreen": false
+      },
+      {
+        "label": "overlay",
+        "width": 640,
+        "height": 440,
+        "url": "overlay/index.html",
+        "visible": false,
+        "transparent": true,
+        "decorations": false,
+        "shadow": false,
+        "alwaysOnTop": true,
+        "theme": "Dark",
+        "resizable": false,
+        "skipTaskbar": true,
+        "center": true
       }
     ],
     "security": {

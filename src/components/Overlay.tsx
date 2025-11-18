@@ -1,18 +1,12 @@
-import { register } from "@tauri-apps/plugin-global-shortcut";
+import { invoke } from "@tauri-apps/api/core";
 import { useEffect } from "react";
-
-await register("CommandOrControl+K", (e) => {
-    // Ignore key release
-    if (e.state == "Released") return;
-
-    console.log("Opening overlay");
-});
 
 const Overlay = () => {
 
     const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key == "Escape") {
             console.log("Leaving overlay");
+            invoke("toggle_overlay");
         }
     }
 
@@ -21,7 +15,11 @@ const Overlay = () => {
     });
 
     return (
-        <div className="overlay">Overlay</div>
+        <div className="overlay">
+            <div className="search">
+                <input type="text" name="search-value" id="searchValue" placeholder="Enter the name of the password..."/>
+            </div>
+        </div>
     )
 }
 
