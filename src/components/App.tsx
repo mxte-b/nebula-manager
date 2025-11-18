@@ -1,13 +1,12 @@
-import { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { useEffect } from "react";
 import "../styles/App.css";
 import SideBar from "./SideBar";
+import { invoke } from "@tauri-apps/api/core";
 
 function App() {
-    // async function greet() {
-    //   // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    //   setGreetMsg(await invoke("greet", { name }));
-    // }
+    useEffect(() => {
+        invoke("open_overlay");
+    }, []);
 
     return (
         <main className="dashboard">
