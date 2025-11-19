@@ -19,29 +19,48 @@
 }
 
 .side-bar > .title {
-    /* flex-grow: 1; */
     padding: 0.5rem;
-    padding-bottom: 0;
-    font-family: 'Inter';
-    font-size: 20px;
-    /* font-weight: bold; */
+    font-family: 'Bruno Ace';
+    font-size: 25px;
+    text-align: center;
 }
 
 .side-bar > .link {
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, font-weight 0.2s ease;
     user-select: none;
     padding: 0.5rem;
+    padding-block: 0.6rem;
     border: 2px solid transparent;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
     font-family: 'Inter';
     color: var(--fg-inactive);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-direction: row;
+}
+
+.side-bar > .link > svg {
+    width: 18px;
+    height: 18px;
 }
 
 .side-bar > .link:hover {
     background-color: var(--bg-2);
     border-color: var(--border-1);
     color: var(--fg);
+    font-weight: bold;
+}
+
+.side-bar > .link.active {
+    background-color: var(--bg-accent);
+    color: var(--fg-accent);
+    font-weight: bold;
+}
+
+.side-bar > .link.active:hover {
+    border-color: var(--border-accent);
 }
 
 .greeting {
@@ -53,7 +72,7 @@
 .separator {
     height: 2px;
     margin-inline: 0.5rem;
-    background-color: #8888ad93;
+    background-color: var(--bg-2);
 }
 
 section {

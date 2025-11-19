@@ -13,21 +13,23 @@
 }
 
 @font-face {
-    font-family: "Lora";
-    src: url("/fonts/Lora/Lora-VariableFont.ttf") format("truetype");
-    font-weight: 100 800;
+    font-family: "Bruno Ace";
+    src: url("/fonts/BrunoAce/BrunoAce-Regular.ttf") format("truetype");
+    font-weight: normal;
     font-display: swap;
 }
 
 :root {
-    --bg: #101014;
-    --bg-1: #191924;
-    --bg-2: #1b1b2e;
-    --border: #14141d;
-    --border-1: #252538;
-    --border-2: #2a2a46;
+    --bg: #121212;
+    --bg-1: #1B1B1B;
+    --bg-2: #ffffff08;
+    --bg-accent: #da4abb1e;
+    --border: #141414;
+    --border-1: #272727;
+    --border-accent: #92608771;
     --fg: #e5e7eb;
-    --fg-inactive: #a8a9ac;
+    --fg-inactive: #6B6B6B;
+    --fg-accent: #ffa2eb;
 
     font-family: "Inter", monospace;
     color: var(--fg);
@@ -39,4 +41,5 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    user-select: none;
 }

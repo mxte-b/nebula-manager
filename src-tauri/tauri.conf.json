@@ -14,9 +14,10 @@
       {
         "label": "main",
         "title": "Nebula Manager - Hassle-free Password Vault",
-        "width": 800,
-        "height": 400,
-        "fullscreen": false
+        "width": 1000,
+        "height": 600,
+        "fullscreen": false,
+        "resizable": false
       },
       {
         "label": "overlay",
