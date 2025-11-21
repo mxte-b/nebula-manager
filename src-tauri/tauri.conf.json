@@ -32,7 +32,8 @@
         "theme": "Dark",
         "resizable": false,
         "skipTaskbar": true,
-        "center": true
+        "center": true,
+        "parent": "main"
       }
     ],
     "security": {

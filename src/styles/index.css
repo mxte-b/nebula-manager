@@ -30,6 +30,7 @@
     --fg: #e5e7eb;
     --fg-inactive: #6B6B6B;
     --fg-accent: #ffa2eb;
+    --accent: #ff44d6;
 
     font-family: "Inter", monospace;
     color: var(--fg);
