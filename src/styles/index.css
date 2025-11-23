@@ -22,12 +22,15 @@
 :root {
     --bg: #121212;
     --bg-1: #1B1B1B;
-    --bg-2: #ffffff08;
+    --bg-2: #202020;
+    --bga: #ffffff08;
+    --bga-1: #ffffff0e;
     --bg-accent: #da4abb1e;
     --border: #141414;
-    --border-1: #272727;
+    --border-1: #303030;
     --border-accent: #92608771;
     --fg: #e5e7eb;
+    --fg-secondary: #a3a3a3;
     --fg-inactive: #6B6B6B;
     --fg-accent: #ffa2eb;
     --accent: #ff44d6;
@@ -43,4 +46,12 @@
     padding: 0;
     margin: 0;
     user-select: none;
+}
+
+button {
+    color: inherit;
+    background-color: inherit;
+    font: inherit;
+    cursor: pointer;
+    outline: none;
 }

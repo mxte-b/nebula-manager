@@ -17,7 +17,8 @@
         "width": 1000,
         "height": 600,
         "fullscreen": false,
-        "resizable": false
+        "resizable": false,
+        "backgroundColor": "#121212"
       },
       {
         "label": "overlay",

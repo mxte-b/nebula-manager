@@ -40,6 +40,10 @@ impl Vault {
             let save = serde_json::from_str::<SaveFileLayout>(&file_content)
                 .map_err(|e| format!("Couldn't parse vault: {}", e))?;
 
+            if save.version != self.version {
+                return Err(format!("Incompatible vault version: {}", save.version));
+            }
+
             // Load from vault file
             self.entries = save.vault;
         }
@@ -48,17 +52,13 @@ impl Vault {
     }
 
     fn convert_to_savefile(&self) -> SaveFileLayout {
-        SaveFileLayout { version: VERSION.to_string(), vault: self.entries.clone() }
+        SaveFileLayout { version: self.version.clone(), vault: self.entries.clone() }
     }
 
-    pub fn save(&self) {
-        let content = serde_json::to_string_pretty(&self.convert_to_savefile());
+    pub fn save(&self) -> Result<(), String> {
+        let content = serde_json::to_string_pretty(&self.convert_to_savefile()).map_err(|e| e.to_string())?;
 
-        match std::fs::write(self.path.clone(), content.unwrap()) {
-            Ok(()) => println!("Vault saved to file."),
-            Err(e) => println!("Error while saving vault {}", e),
-        }
-        // println!("{}", content.unwrap());
+        std::fs::write(self.path.clone(), content).map_err(|e| e.to_string())
     }
     
     // pub fn set_master_pw() {}
@@ -68,16 +68,26 @@ impl Vault {
 
 
     // // C(reate)
-    // pub fn new_entry(entry: &Entry) {
-
-    // }
+    pub fn new_entry(&mut self, entry: &Entry) {
+        self.entries.push(entry.clone());
+    }
 
     // // R(read)
-    // pub fn get_entries() {}
+    pub fn get_entries(&self) -> Vec<Entry> {
+        self.entries.clone()
+    }
 
     // // U(update)
-    // pub fn update_entry(label: String, updated: &Entry) {}
+    pub fn update_entry(&mut self, label: &str, updated: &Entry) {
+        if let Some(entry_pos) = self.entries.iter().position(|e| e.label == label) {
+            self.entries[entry_pos] = updated.clone();
+        }
+    }
 
     // // D(delete)
-    // pub fn delete_entry() {}
+    pub fn delete_entry(&mut self, label: &str) {
+        if let Some(entry_pos) = self.entries.iter().position(|e| e.label == label) {
+            self.entries.remove(entry_pos);
+        }
+    }
 }

@@ -48,7 +48,7 @@
 }
 
 .side-bar > .link:hover {
-    background-color: var(--bg-2);
+    background-color: var(--bga);
     border-color: var(--border-1);
     color: var(--fg);
     font-weight: bold;
@@ -73,7 +73,7 @@
 .separator {
     height: 2px;
     margin-inline: 0.5rem;
-    background-color: var(--bg-2);
+    background-color: var(--bga);
 }
 
 section {
@@ -136,4 +136,166 @@ section.content {
 
 .add-button:hover > .button-text {
     opacity: 1;
+}
+
+.entry-form-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.329);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    will-change: opacity, backdrop-filter;
+}
+
+.entry-form {
+    overflow: hidden;
+    width: 400px;
+    height: 350px;
+    padding: 1rem;
+    background-color: var(--bg-1);
+    border: 2px solid var(--border-accent);
+    border-radius: 10px;
+    will-change: opacity, scale;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.entry-form > .form-header {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px;
+    /* margin-bottom: 0.5rem; */
+}
+
+.entry-form > .form-header > .title-icon {
+    color: var(--bga-1);
+    z-index: -1;
+    rotate: -20deg;
+    position: absolute;
+    top: -45px;
+    left: -25px;
+    width: 100px;
+    height: 100px;
+}
+
+.title-icon > svg {
+    height: 100%;
+    width: 100%;
+}
+
+.entry-form .form-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.entry-form .form-close {
+    background-color: var(--bg-accent);
+    border: 2px solid var(--border-accent);
+    border-radius: 0.5rem;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg-accent);
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, scale 0.2s ease;
+}
+
+.entry-form .form-close:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--fg);
+}
+
+.entry-form .form-close:active {
+    scale: 0.95;
+}
+
+.form-group {
+    position: relative;
+    height: 40px;
+    border-radius: 10px;
+    border: 2px solid var(--border-1);
+    transition: background-color 0.2s ease;
+}
+
+.form-group:hover, .form-group:focus-within {
+    background-color: var(--bg-2);
+}
+
+.form-group > .group-label {
+    width: fit-content;
+    pointer-events: none;
+    user-select: none;
+    position: absolute;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    margin-left: 36px;
+    top: 0;
+    left: 0;
+    color: var(--fg-inactive);
+    z-index: 1;
+    transition: transform 0.2s ease, font-size 0.2s ease, height 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+    will-change: font-size;
+}
+
+.form-group > .group-input {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    color: var(--fg-inactive);
+}
+
+.group-input > svg {
+    width: 36px;
+    flex-shrink: 0;
+}
+
+.group-input > input {
+    padding-right: 0.5rem;
+    height: 100%;
+    width: 100%;
+    border: 0;
+    outline: none;
+    color: var(--fg);
+    font: inherit;
+    background-color: transparent;
+    z-index: 10;
+}
+
+.form-group:has(input:focus-within) > .group-label, .form-group:has(input:not(:placeholder-shown)) > .group-label {
+    transform: translate3d(-26px, -9px, 0);
+    height: 14px;
+    font-size: 14px;
+    background-color: var(--bg-1);
+    /* opacity: 0; */
+}
+
+.button-group {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    height: 30px;
+}
+
+.button-group > button {
+    flex-grow: 1;
+    height: 100%;
+    border-radius: 5px;
+    border: 2px solid transparent;
 }

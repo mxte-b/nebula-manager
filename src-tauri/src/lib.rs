@@ -1,14 +1,16 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
-use std::{path::PathBuf, sync::Arc, sync::Mutex};
-use tauri::{Manager, RunEvent};
+use std::{sync::Arc, sync::Mutex};
+use tauri::{Manager, RunEvent, State};
 
 pub mod vault;
 pub use vault::Vault;
 
+use crate::vault::Entry;
+
 // Toggle search overlay
 #[tauri::command]
-async fn toggle_overlay(app: tauri::AppHandle) {
+fn toggle_overlay(app: tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("overlay") {
         let is_visible = window.is_visible().unwrap_or(false);
 
@@ -20,6 +22,31 @@ async fn toggle_overlay(app: tauri::AppHandle) {
         }
     }
 }
+
+// Vault commands
+#[tauri::command]
+fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> Result<(), String> {
+    let mut v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    v.new_entry(&entry);
+    v.save().map_err(|e| format!("Failed to save vault: {}", e))
+}
+
+#[tauri::command]
+fn vault_get_entries(vault: State<Arc<Mutex<Vault>>>) -> Result<Vec<Entry>, String> {
+    let v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    Ok(v.get_entries())
+}
+
+#[tauri::command]
+fn vault_update_entry(vault: State<Arc<Mutex<Vault>>>, label: String, new: vault::Entry) -> Result<(), String> {
+    vault.lock().map(|mut v| v.update_entry(&label, &new)).map_err(|_| "Couldn't access vault".to_string())
+}
+
+#[tauri::command]
+fn vault_delete_entry(vault: State<Arc<Mutex<Vault>>>, label: String) -> Result<(), String> {
+    vault.lock().map(|mut v| v.delete_entry(&label)).map_err(|_| "Couldn't access vault".to_string())
+}
+
 
 // Set master pw
 
@@ -42,6 +69,7 @@ pub fn run() {
 
             println!("Save location: {}", app_data_dir.to_str().unwrap());
 
+            // Loading the vault from the save file
             {
                 let mut v = vault.lock().unwrap();
                 match v.load() {
@@ -50,15 +78,24 @@ pub fn run() {
                 }
             }
 
+            // Let tauri manage the vault
+            // This allows changing the vault in commands
             app.manage(vault);
 
             Ok(())
         })
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![toggle_overlay])
+        .invoke_handler(tauri::generate_handler![
+            toggle_overlay,
+            vault_create_entry,
+            vault_get_entries,
+            vault_update_entry,
+            vault_delete_entry
+        ])
         .build(tauri::generate_context!())
         .expect("failed to build app");
+
     app.run_return(move |app_handle, event| {
         match event {
             RunEvent::ExitRequested { api, .. } => {
@@ -69,7 +106,10 @@ pub fn run() {
 
                 let vault = app_handle.state::<Arc<Mutex<Vault>>>();
                 if let Ok(v) = vault.lock() {
-                    v.save();
+                    match v.save() {
+                        Ok(()) => println!("Successful save."),
+                        Err(e) => println!("Error while saving: {}", e)
+                    }
                 }
 
                 // Run Tauri's cleanup

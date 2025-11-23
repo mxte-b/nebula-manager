@@ -11,3 +11,9 @@ export type RouterContextType = {
     currentPage: Page;
     navigate: (page: Page) => void;
 }
+
+export type Entry = {
+    label: string,
+    name: string,
+    password: string
+}
