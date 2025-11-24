@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/App.css";
 import SideBar from "../components/SideBar";
 import { invoke } from "@tauri-apps/api/core";
@@ -22,11 +22,18 @@ await register("CommandOrControl+K", (e) => {
 
 function App() {
     const [isEntryFormVisible, setIsEntryFormVisible] = useState<boolean>(false);
+    const [vaultEntries, setVaultEntries] = useState<Entry[] | null>(null);
 
     const handleEntryFormSubmit = (entry: Entry) => {
         setIsEntryFormVisible(false);
-        console.log(entry);
+        invoke("vault_create_entry", { entry: entry }).then(r => console.log(r));
     }
+
+    useEffect(() => {
+        invoke("vault_get_entries")
+            .then(r => setVaultEntries(r as Entry[]))
+            .catch(e => alert(`Failed to get vault entries: ${e}`));
+    }, []);
 
     return (
         <RouterProvider>
@@ -35,7 +42,7 @@ function App() {
                 
                 <section className="content">
                     <Router>
-                        <Route path="vault" element={<Vault />} />
+                        <Route path="vault" element={<Vault entries={vaultEntries}/>} />
                         <Route path="export" element={<Export />} />
                         <Route path="settings" element={<Settings />} />
                         <Route path="about" element={<About />} />

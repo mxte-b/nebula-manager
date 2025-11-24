@@ -19,8 +19,8 @@ const EntryForm = (
     const getEntryValue: () => Entry = () => {
         return {
             label: (document.getElementById("label") as HTMLInputElement).value,
-            name: (document.getElementById("label") as HTMLInputElement).value,
-            password: (document.getElementById("label") as HTMLInputElement).value,
+            name: (document.getElementById("username") as HTMLInputElement).value,
+            password: (document.getElementById("password") as HTMLInputElement).value,
         };
     }
 

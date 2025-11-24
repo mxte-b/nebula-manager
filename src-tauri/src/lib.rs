@@ -1,7 +1,7 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
 use std::{sync::Arc, sync::Mutex};
-use tauri::{Manager, RunEvent, State};
+use tauri::{Manager, RunEvent, State, WindowEvent};
 
 pub mod vault;
 pub use vault::Vault;
@@ -26,6 +26,8 @@ fn toggle_overlay(app: tauri::AppHandle) {
 // Vault commands
 #[tauri::command]
 fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> Result<(), String> {
+    println!("Saving entry...");
+    println!("{}", serde_json::to_string_pretty(&entry).unwrap());
     let mut v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
     v.new_entry(&entry);
     v.save().map_err(|e| format!("Failed to save vault: {}", e))
@@ -82,6 +84,12 @@ pub fn run() {
             // This allows changing the vault in commands
             app.manage(vault);
 
+
+            // let main = app.get_webview_window("main").unwrap();
+            // main.on_window_event(|event| {
+            //     if let tauri::WindowEvent::CloseRequested { api, .. } = event
+            // });
+
             Ok(())
         })
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
@@ -93,6 +101,18 @@ pub fn run() {
             vault_update_entry,
             vault_delete_entry
         ])
+        .on_window_event(|window, event| {
+            if window.label() == "main" {
+                match event {
+                    WindowEvent::CloseRequested { api: _, .. } => {
+                        if let Some(overlay) = window.app_handle().get_webview_window("overlay") {
+                            let _ = overlay.close();
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        })
         .build(tauri::generate_context!())
         .expect("failed to build app");
 

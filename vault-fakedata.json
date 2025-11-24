@@ -1,0 +1,80 @@
+{
+  "version": "Nebula Manager - v0.2",
+  "vault": [
+    {
+      "label": "GitHub",
+      "name": "john-doe",
+      "password": "Qf9!bR72Lm"
+    },
+    {
+      "label": "Google",
+      "name": "john.doe",
+      "password": "nP4#xM81Qa"
+    },
+    {
+      "label": "Discord",
+      "name": "john_d_dev",
+      "password": "Zr1@t9Kp4W"
+    },
+    {
+      "label": "Steam",
+      "name": "johndoe_hu",
+      "password": "Lm7!bV24Ts"
+    },
+    {
+      "label": "Microsoft",
+      "name": "jdoe",
+      "password": "Ct8#pQ19Ye"
+    },
+    {
+      "label": "Facebook",
+      "name": "john.doe.official",
+      "password": "Bq3!mT94Xa"
+    },
+    {
+      "label": "Twitter",
+      "name": "johnwritescode",
+      "password": "Yp1$tG68Vr"
+    },
+    {
+      "label": "AWS",
+      "name": "john-doe-cloud",
+      "password": "Xp2@fZ70Mq"
+    },
+    {
+      "label": "Netlify",
+      "name": "johndoe_web",
+      "password": "Rk9#sU14Bp"
+    },
+    {
+      "label": "DigitalOcean",
+      "name": "john_doe_do",
+      "password": "Ta5@cN82Jq"
+    },
+    {
+      "label": "Spotify",
+      "name": "john.d.music",
+      "password": "Hf8#pM63Lw"
+    },
+    {
+      "label": "Epic Games",
+      "name": "doeplays",
+      "password": "Wz4!aQ75Cr"
+    },
+    {
+      "label": "Reddit",
+      "name": "jdoe_reacts",
+      "password": "Mn6$wP23Sk"
+    },
+    {
+      "label": "StackOverflow",
+      "name": "john_d_codes",
+      "password": "Jm7!eF80Tp"
+    },
+    {
+      "label": "ProtonMail",
+      "name": "john.doe.secure",
+      "password": "Vk3@tR91Qe"
+    }
+  ]
+}
