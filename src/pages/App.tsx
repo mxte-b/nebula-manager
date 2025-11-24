@@ -30,9 +30,7 @@ function App() {
         createVaultEntry
     } = useVault();
 
-    const handleEntryFormSubmit = (entry: Entry) => {
-        // setIsEntryFormVisible(false);
-        // invoke("vault_create_entry", { entry: entry }).then(r => console.log(r));
+    const handleNewEntrySubmit = (entry: Entry) => {
         createVaultEntry(entry, {
             ok: (e) => {
                 setIsEntryFormVisible(false);
@@ -42,13 +40,15 @@ function App() {
         });
     }
 
-    useEffect(() => {
+    const handleEntryUpdateSubmit = (entry: Entry) => {
+        
+    }
 
+    useEffect(() => {
         getVaultEntries({
             ok: setVaultEntries,
             err: (e) => alert(`Failed to get vault entries: ${e}`)
         });
-
     }, []);
 
     return (
@@ -56,7 +56,7 @@ function App() {
             <main className="dashboard">
                 <SideBar />
                 
-                <section className="content">
+                <section className="content no-scrollbar">
                     <Router>
                         <Route path="vault" element={<Vault entries={vaultEntries}/>} />
                         <Route path="export" element={<Export />} />
@@ -65,14 +65,18 @@ function App() {
                     </Router>
                 </section>
 
-                <button type="button" className="add-button" onClick={() => setIsEntryFormVisible(true)}>
+                <button 
+                    type="button" 
+                    className="add-button" 
+                    onClick={() => setIsEntryFormVisible(true)}
+                >
                     <Icons.Plus />
                     <div className="button-text">Add</div>
                 </button>
 
                 <EntryForm 
                     visible={isEntryFormVisible} 
-                    onSubmit={handleEntryFormSubmit}
+                    onSubmit={handleNewEntrySubmit}
                     onClose={() => setIsEntryFormVisible(false)}
                 />
             </main>

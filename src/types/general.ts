@@ -17,6 +17,7 @@ export type RouterContextType = {
 /* -------------------------------------------------------------------------- */
 export type Entry = {
     label: string,
+    url: string,
     name: string,
     password: string
 }

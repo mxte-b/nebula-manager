@@ -84,12 +84,6 @@ pub fn run() {
             // This allows changing the vault in commands
             app.manage(vault);
 
-
-            // let main = app.get_webview_window("main").unwrap();
-            // main.on_window_event(|event| {
-            //     if let tauri::WindowEvent::CloseRequested { api, .. } = event
-            // });
-
             Ok(())
         })
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())

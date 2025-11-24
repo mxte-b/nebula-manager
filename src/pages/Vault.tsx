@@ -1,19 +1,28 @@
+import Favicon from "../components/Favicon";
 import { Entry } from "../types/general";
 
 const Vault = ({ entries }: { entries: Entry[] | null }) => {
 
     return (
         <>
-            <div>Vault</div>
+            <header>My passwords</header>
             <div className="entries">
-            {
-                entries &&
-                entries.map(e => 
-                    <div className="entry">
-                        {e.label} - {e.name} - {e.password}
-                    </div>
-                )
-            }
+                {
+                    entries &&
+                    entries.map(e => 
+                        <div className="entry">
+                            <Favicon 
+                                label={e.label} 
+                                url={e.url} 
+                            />
+                            <div className="group">
+                                <div className="entry-label">{e.label}</div>
+                                <div className="entry-name">{e.name}</div>
+                            </div>
+                            <div className="entry-password">••••••••••</div>
+                        </div>
+                    )
+                }
             </div>
         </>
     )

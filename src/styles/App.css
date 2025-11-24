@@ -4,6 +4,16 @@
     max-height: 100vh;
 }
 
+.no-scrollbar {
+    overflow: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
 .side-bar {
     display: flex;
     gap: 0.5rem;
@@ -76,13 +86,20 @@
     background-color: var(--bga);
 }
 
-section {
-    padding: 0.5rem;
-}
-
 section.content {
     padding: 1rem;
     flex-grow: 1;
+    max-height: 100%;
+    overflow: auto;
+    color-scheme: dark;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+section > header {
+    font-size: 25px;
+    font-weight: bold;
 }
 
 .add-button {
@@ -149,6 +166,7 @@ section.content {
     align-items: center;
     justify-content: center;
     will-change: opacity, backdrop-filter;
+    z-index: 10000;
 }
 
 .entry-form {
@@ -298,4 +316,75 @@ section.content {
     height: 100%;
     border-radius: 5px;
     border: 2px solid transparent;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                Vault styles                                */
+/* -------------------------------------------------------------------------- */
+.entries {
+    background-color: var(--bg-1);
+    padding-inline: 1rem;
+}
+
+.entry {
+    /* border-bottom: 1px solid var(--border-1); */
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1rem;
+}
+
+.entry .entry-label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.entry .entry-name {
+    color: var(--fg-secondary);
+    font-family: 'JetBrains Mono';
+    font-size: 14px;
+}
+
+.entry .entry-password {
+    color: var(--fg-secondary);
+    font-family: 'JetBrains Mono';
+    font-size: 14px;
+}
+
+.entry .favicon {
+    position: relative;
+    height: 40px;
+    width: 40px;
+    flex-shrink: 0;
+    overflow: hidden;
+    /* border-radius: 5px; */
+    border-radius: 5px;
+}
+.entry .favicon > img, .entry .favicon .placeholder {
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    /* background-color: var(--bg-1); */
+}
+
+.entry .favicon > img {
+    background-color: rgb(255, 255, 255);
+    padding: 3px;    
+    border-radius: 5px;
+    object-fit: cover;
+    z-index: 2;
+}
+
+.entry .favicon .placeholder {
+    background-color: var(--fg-inactive);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+.entry .favicon .placeholder.hidden {
+    opacity: 0;
 }

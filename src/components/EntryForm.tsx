@@ -19,6 +19,7 @@ const EntryForm = (
     const getEntryValue: () => Entry = () => {
         return {
             label: (document.getElementById("label") as HTMLInputElement).value,
+            url: (document.getElementById("website") as HTMLInputElement).value,
             name: (document.getElementById("username") as HTMLInputElement).value,
             password: (document.getElementById("password") as HTMLInputElement).value,
         };
@@ -67,6 +68,14 @@ const EntryForm = (
                                 <div className="group-input">
                                     <Icons.Bookmark />
                                     <input required type="text" name="label" id="label" placeholder=""/>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <div className="group-label">Website (optional)</div>
+                                <div className="group-input">
+                                    <Icons.Globe />
+                                    <input required type="text" name="website" id="website" placeholder=""/>
                                 </div>
                             </div>
 

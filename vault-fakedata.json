@@ -1,80 +1,107 @@
 {
-  "version": "Nebula Manager - v0.2",
+  "version": "0.3.0",
   "vault": [
     {
       "label": "GitHub",
+      "url": "https://github.com",
       "name": "john-doe",
       "password": "Qf9!bR72Lm"
     },
     {
       "label": "Google",
+      "url": "https://www.google.com",
       "name": "john.doe",
       "password": "nP4#xM81Qa"
     },
     {
       "label": "Discord",
+      "url": "https://discord.com",
       "name": "john_d_dev",
       "password": "Zr1@t9Kp4W"
     },
     {
       "label": "Steam",
+      "url": "https://store.steampowered.com",
       "name": "johndoe_hu",
       "password": "Lm7!bV24Ts"
     },
     {
       "label": "Microsoft",
+      "url": "https://www.microsoft.com",
       "name": "jdoe",
       "password": "Ct8#pQ19Ye"
     },
     {
       "label": "Facebook",
+      "url": "https://facebook.com",
       "name": "john.doe.official",
       "password": "Bq3!mT94Xa"
     },
     {
       "label": "Twitter",
+      "url": "https://twitter.com",
       "name": "johnwritescode",
       "password": "Yp1$tG68Vr"
     },
     {
       "label": "AWS",
+      "url": "https://aws.amazon.com",
       "name": "john-doe-cloud",
       "password": "Xp2@fZ70Mq"
     },
     {
       "label": "Netlify",
+      "url": "https://www.netlify.com",
       "name": "johndoe_web",
       "password": "Rk9#sU14Bp"
     },
     {
       "label": "DigitalOcean",
+      "url": "https://www.digitalocean.com",
       "name": "john_doe_do",
       "password": "Ta5@cN82Jq"
     },
     {
       "label": "Spotify",
+      "url": "https://www.spotify.com",
       "name": "john.d.music",
       "password": "Hf8#pM63Lw"
     },
     {
       "label": "Epic Games",
+      "url": "https://www.epicgames.com",
       "name": "doeplays",
       "password": "Wz4!aQ75Cr"
     },
     {
       "label": "Reddit",
+      "url": "https://www.reddit.com",
       "name": "jdoe_reacts",
       "password": "Mn6$wP23Sk"
     },
     {
       "label": "StackOverflow",
+      "url": "https://stackoverflow.com",
       "name": "john_d_codes",
       "password": "Jm7!eF80Tp"
     },
     {
       "label": "ProtonMail",
+      "url": "https://proton.me",
       "name": "john.doe.secure",
       "password": "Vk3@tR91Qe"
+    },
+    {
+      "label": "Xbox",
+      "url": "https://xbox.com",
+      "name": "xXxGamer416xXx",
+      "password": "biggamerguy1"
+    },
+    {
+      "label": "random",
+      "url": "",
+      "name": "asdmasd",
+      "password": "asdasd"
     }
   ]
 }

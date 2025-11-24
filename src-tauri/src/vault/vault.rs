@@ -2,18 +2,19 @@ use std::path::{PathBuf};
 use serde::{Deserialize, Serialize};
 use crate::vault::Entry;
 
-const VERSION: &str = "Nebula Manager - v0.2";
+const VERSION: &str = "0.3.0";
 
 pub struct Vault {
     version: String,
     entries: Vec<Entry>,
     path: PathBuf,
+    loaded: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct SaveFileLayout {
-    version: String,
-    vault: Vec<Entry>
+    pub version: String,
+    pub vault: Vec<Entry>
 }
 
 impl Vault {
@@ -21,7 +22,8 @@ impl Vault {
         Vault { 
             version: String::from(VERSION),
             entries: Vec::new(), 
-            path: path
+            path: path,
+            loaded: false,
         }
     }
 
@@ -46,6 +48,7 @@ impl Vault {
 
             // Load from vault file
             self.entries = save.vault;
+            self.loaded = true;
         }
 
         Ok(())
@@ -56,6 +59,9 @@ impl Vault {
     }
 
     pub fn save(&self) -> Result<(), String> {
+        if !self.loaded {
+            return Err("Vault not loaded or incompatible version, cannot save.".into());
+        }
         let content = serde_json::to_string_pretty(&self.convert_to_savefile()).map_err(|e| e.to_string())?;
 
         std::fs::write(self.path.clone(), content).map_err(|e| e.to_string())
