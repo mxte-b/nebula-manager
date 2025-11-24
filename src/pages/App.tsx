@@ -12,6 +12,7 @@ import About from "./About";
 import Icons from "../components/Icons";
 import EntryForm from "../components/EntryForm";
 import { Entry } from "../types/general";
+import useVault from "../hooks/useVault";
 
 await register("CommandOrControl+K", (e) => {
     // Ignore key release
@@ -24,15 +25,30 @@ function App() {
     const [isEntryFormVisible, setIsEntryFormVisible] = useState<boolean>(false);
     const [vaultEntries, setVaultEntries] = useState<Entry[] | null>(null);
 
+    const { 
+        getVaultEntries,
+        createVaultEntry
+    } = useVault();
+
     const handleEntryFormSubmit = (entry: Entry) => {
-        setIsEntryFormVisible(false);
-        invoke("vault_create_entry", { entry: entry }).then(r => console.log(r));
+        // setIsEntryFormVisible(false);
+        // invoke("vault_create_entry", { entry: entry }).then(r => console.log(r));
+        createVaultEntry(entry, {
+            ok: (e) => {
+                setIsEntryFormVisible(false);
+                setVaultEntries(e);
+            },
+            err: (e) => alert(`Couldn't create entry: ${e}`)
+        });
     }
 
     useEffect(() => {
-        invoke("vault_get_entries")
-            .then(r => setVaultEntries(r as Entry[]))
-            .catch(e => alert(`Failed to get vault entries: ${e}`));
+
+        getVaultEntries({
+            ok: setVaultEntries,
+            err: (e) => alert(`Failed to get vault entries: ${e}`)
+        });
+
     }, []);
 
     return (
