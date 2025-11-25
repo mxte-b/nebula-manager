@@ -324,6 +324,7 @@ section > header {
 .entries {
     background-color: var(--bg-1);
     padding-inline: 1rem;
+    border-radius: 10px;
 }
 
 .entry {

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 const Favicon = ({ label, url }: { label: string, url?: string }) => {
     const faviconUrl = `https://www.google.com/s2/favicons?domain=${url}&sz=64`;
@@ -11,7 +12,10 @@ const Favicon = ({ label, url }: { label: string, url?: string }) => {
         const image = new Image();
 
         image.src = faviconUrl;
-        image.onload = () => setImageAvailable(true);
+        image.onload = () => {
+            setImageAvailable(true);
+        }
+       
     }, [faviconUrl]); 
 
     return (
@@ -20,10 +24,23 @@ const Favicon = ({ label, url }: { label: string, url?: string }) => {
                 {firstLetter}
             </div>
 
-            {
-                imageAvailable && 
-                <img src={faviconUrl} alt="icon" className="icon"/>
-            }
+            <AnimatePresence>
+                {
+                    imageAvailable && 
+                    <motion.img
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{
+                            duration: 0.3,
+                            ease: "easeInOut"
+                        }}
+                        src={faviconUrl}
+                        alt="icon" 
+                        className="icon"
+                    />
+                }
+            </AnimatePresence>
         </div>
     )
 }

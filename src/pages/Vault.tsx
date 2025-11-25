@@ -9,9 +9,9 @@ const Vault = ({ entries }: { entries: Entry[] | null }) => {
             <div className="entries">
                 {
                     entries &&
-                    entries.map(e => 
-                        <div className="entry">
-                            <Favicon 
+                    entries.map((e, i) => 
+                        <div className="entry" key={"favicon-"+i}>
+                            <Favicon
                                 label={e.label} 
                                 url={e.url} 
                             />

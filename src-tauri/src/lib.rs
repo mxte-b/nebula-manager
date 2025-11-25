@@ -113,11 +113,11 @@ pub fn run() {
     app.run_return(move |app_handle, event| {
         match event {
             RunEvent::ExitRequested { api, .. } => {
-                api.prevent_exit(); // prevents Tauri from shutting down immediately
+                api.prevent_exit();
 
-                // Your cleanup code here
                 println!("Doing cleanup...");
 
+                // Save the vault on window close
                 let vault = app_handle.state::<Arc<Mutex<Vault>>>();
                 if let Ok(v) = vault.lock() {
                     match v.save() {
@@ -126,7 +126,6 @@ pub fn run() {
                     }
                 }
 
-                // Run Tauri's cleanup
                 app_handle.cleanup_before_exit();
 
                 // Finally exit the process manually

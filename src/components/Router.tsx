@@ -7,7 +7,7 @@ export const Route = ({
     element
 }: RouteProps) => {
     const { currentPage } = useRouter();
-    return currentPage == path ? element : <></>;
+    return currentPage == path ? element : null;
 }
 
 // Wrapper element, just for hierarchy
