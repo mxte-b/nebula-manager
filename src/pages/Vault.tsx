@@ -1,8 +1,12 @@
+import React, { useEffect } from "react";
 import Favicon from "../components/Favicon";
 import { Entry } from "../types/general";
 
 const Vault = ({ entries }: { entries: Entry[] | null }) => {
 
+    useEffect(() => {
+        console.log(entries);
+    }, []);
     return (
         <>
             <header>My passwords</header>
@@ -28,4 +32,4 @@ const Vault = ({ entries }: { entries: Entry[] | null }) => {
     )
 }
 
-export default Vault
+export default Vault;

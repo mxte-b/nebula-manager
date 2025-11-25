@@ -50,6 +50,9 @@ impl Vault {
             self.entries = save.vault;
             self.loaded = true;
         }
+        else {
+            self.loaded = true;
+        }
 
         Ok(())
     }

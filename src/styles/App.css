@@ -86,15 +86,30 @@
     background-color: var(--bga);
 }
 
-section.content {
-    padding: 1rem;
+.content-wrapper {  
     flex-grow: 1;
     max-height: 100%;
+    position: relative;
+}
+
+section.content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
     overflow: auto;
     color-scheme: dark;
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
     gap: 1rem;
+    transition: opacity 0.2s ease;
+}
+
+section.content.active {
+    opacity: 1;
+    pointer-events: all;
 }
 
 section > header {

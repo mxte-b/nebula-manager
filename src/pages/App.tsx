@@ -56,14 +56,15 @@ function App() {
             <main className="dashboard">
                 <SideBar />
                 
-                <section className="content no-scrollbar">
+                
+                <div className="content-wrapper">
                     <Router>
                         <Route path="vault" element={<Vault entries={vaultEntries}/>} />
                         <Route path="export" element={<Export />} />
                         <Route path="settings" element={<Settings />} />
                         <Route path="about" element={<About />} />
                     </Router>
-                </section>
+                </div>
 
                 <button 
                     type="button" 
