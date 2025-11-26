@@ -2,102 +2,153 @@
   "version": "0.3.0",
   "vault": [
     {
+      "id": "8f7b1c8e-1a30-4d6b-92af-3f1f8ae0e001",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "GitHub",
       "url": "https://github.com",
       "name": "john-doe",
       "password": "Qf9!bR72Lm"
     },
     {
+      "id": "b2a3f951-2789-4cc1-8ac0-3efd4f0d7002",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "Google",
       "url": "https://www.google.com",
       "name": "john.doe",
       "password": "nP4#xM81Qa"
     },
     {
+      "id": "c4e7a621-0f14-41a7-b87e-419c3ea6d003",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "Discord",
       "url": "https://discord.com",
       "name": "john_d_dev",
       "password": "Zr1@t9Kp4W"
     },
     {
+      "id": "1f44d902-7fb0-4ba8-8ef1-775913f7d004",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "Steam",
       "url": "https://store.steampowered.com",
       "name": "johndoe_hu",
       "password": "Lm7!bV24Ts"
     },
     {
+      "id": "51b681b2-4b74-4e12-8f2e-cc6f117bd005",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "Microsoft",
       "url": "https://www.microsoft.com",
       "name": "jdoe",
       "password": "Ct8#pQ19Ye"
     },
     {
+      "id": "a93c104b-6f2a-4bc6-9aef-2b1fae6b9006",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "Facebook",
       "url": "https://facebook.com",
       "name": "john.doe.official",
       "password": "Bq3!mT94Xa"
     },
     {
+      "id": "73acde8f-c9df-4dbf-9abd-53b7eabff007",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "Twitter",
       "url": "https://twitter.com",
       "name": "johnwritescode",
       "password": "Yp1$tG68Vr"
     },
     {
+      "id": "fd2097c1-719c-49e7-aa77-64685bcb9008",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "AWS",
       "url": "https://aws.amazon.com",
       "name": "john-doe-cloud",
       "password": "Xp2@fZ70Mq"
     },
     {
+      "id": "49f15ad4-79fd-4dd1-a6fc-39f0abbbd009",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "Netlify",
       "url": "https://www.netlify.com",
       "name": "johndoe_web",
       "password": "Rk9#sU14Bp"
     },
     {
+      "id": "1be21cc7-6687-4bd1-85b2-547ef5e6a010",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "DigitalOcean",
       "url": "https://www.digitalocean.com",
       "name": "john_doe_do",
       "password": "Ta5@cN82Jq"
     },
     {
+      "id": "7bc9e004-e8ba-4b98-9900-8372de98e011",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "Spotify",
       "url": "https://www.spotify.com",
       "name": "john.d.music",
       "password": "Hf8#pM63Lw"
     },
     {
+      "id": "d8f12c0a-c908-4c08-90a7-420fe00f0012",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "Epic Games",
       "url": "https://www.epicgames.com",
       "name": "doeplays",
       "password": "Wz4!aQ75Cr"
     },
     {
+      "id": "a6e0ff0f-6c89-4f08-82b1-e9d82d7bc013",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "Reddit",
       "url": "https://www.reddit.com",
       "name": "jdoe_reacts",
       "password": "Mn6$wP23Sk"
     },
     {
+      "id": "2c3f1a52-1da1-4c0e-958e-cc948f2d0014",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "StackOverflow",
       "url": "https://stackoverflow.com",
       "name": "john_d_codes",
       "password": "Jm7!eF80Tp"
     },
     {
+      "id": "e15599bb-8128-4d47-9d90-bd3df2acb015",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "ProtonMail",
       "url": "https://proton.me",
       "name": "john.doe.secure",
       "password": "Vk3@tR91Qe"
     },
     {
+      "id": "95d476a7-4ab1-4e51-88b6-f7efa12cd016",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "Xbox",
       "url": "https://xbox.com",
       "name": "xXxGamer416xXx",
       "password": "biggamerguy1"
     },
     {
+      "id": "f23e90bc-9ac8-4f46-b3b6-a8f243bc0017",
+      "createdAt": "2025-11-26T12:00:00Z",
+      "modifiedAt": "2025-11-26T12:00:00Z",
       "label": "random",
       "url": "",
       "name": "asdmasd",

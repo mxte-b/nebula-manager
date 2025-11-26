@@ -2,7 +2,7 @@ use std::path::{PathBuf};
 use serde::{Deserialize, Serialize};
 use crate::vault::Entry;
 
-const VERSION: &str = "0.3.0";
+const VERSION: &str = "0.4.0";
 
 pub struct Vault {
     version: String,

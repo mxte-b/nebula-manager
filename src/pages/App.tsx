@@ -30,7 +30,7 @@ function App() {
         createVaultEntry
     } = useVault();
 
-    const handleNewEntrySubmit = (entry: Entry) => {
+    const handleNewEntrySubmit = async (entry: Entry) => {
         createVaultEntry(entry, {
             ok: (e) => {
                 setIsEntryFormVisible(false);
@@ -40,9 +40,9 @@ function App() {
         });
     }
 
-    const handleEntryUpdateSubmit = (entry: Entry) => {
+    // const handleEntryUpdateSubmit = (entry: Entry) => {
         
-    }
+    // }
 
     useEffect(() => {
         getVaultEntries({

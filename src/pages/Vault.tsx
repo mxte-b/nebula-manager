@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Favicon from "../components/Favicon";
 import { Entry } from "../types/general";
 
@@ -10,24 +10,34 @@ const Vault = ({ entries }: { entries: Entry[] | null }) => {
     return (
         <>
             <header>My passwords</header>
-            <div className="entries">
+            <table className="entries" cellSpacing={0}>
+                <thead>
+                    <tr>
+                        <th>Label</th>
+                        <th>Name</th>
+                        <th>Password</th>
+                        <th>Last Used</th>
+                    </tr>
+                </thead>
+                <tbody>
                 {
                     entries &&
-                    entries.map((e, i) => 
-                        <div className="entry" key={"favicon-"+i}>
-                            <Favicon
-                                label={e.label} 
-                                url={e.url} 
-                            />
-                            <div className="group">
-                                <div className="entry-label">{e.label}</div>
-                                <div className="entry-name">{e.name}</div>
-                            </div>
-                            <div className="entry-password">••••••••••</div>
-                        </div>
+                    entries.map(e => 
+                        <tr className="entry" key={e.id}>
+                            <td>
+                                <div  className="entry-label">
+                                    <Favicon label={e.label} url={e.url} />
+                                    <span>{e.label}</span>
+                                </div>
+                            </td>
+                            <td className="entry-name">{e.name}</td>
+                            <td className="entry-password">••••••••••</td>
+                            <td className="entry-last-use">{e.createdAt}</td>
+                        </tr>
                     )
                 }
-            </div>
+                </tbody>
+            </table>
         </>
     )
 }

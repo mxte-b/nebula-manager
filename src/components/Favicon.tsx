@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const Favicon = ({ label, url }: { label: string, url?: string }) => {
     const faviconUrl = `https://www.google.com/s2/favicons?domain=${url}&sz=64`;
@@ -36,6 +36,7 @@ const Favicon = ({ label, url }: { label: string, url?: string }) => {
                             ease: "easeInOut"
                         }}
                         src={faviconUrl}
+                        draggable={false}
                         alt="icon" 
                         className="icon"
                     />

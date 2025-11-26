@@ -22,6 +22,8 @@ tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+time = { version = "0.3", features = ["serde"] }
+uuid = { version = "1.18", features = ["v4", "serde"] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = "2"

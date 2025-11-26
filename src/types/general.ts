@@ -16,6 +16,9 @@ export type RouterContextType = {
 /*                           Vault types and helpers                          */
 /* -------------------------------------------------------------------------- */
 export type Entry = {
+    id: string,
+    createdAt: string,
+    modifiedAt: string,
     label: string,
     url: string,
     name: string,

@@ -1,6 +1,7 @@
 import { FormEvent } from "react";
 import { Entry } from "../types/general";
 import { AnimatePresence, motion } from "motion/react"
+import { v4 as uuidv4 } from 'uuid';
 import Icons from "./Icons";
 
 const EntryForm = (
@@ -17,7 +18,11 @@ const EntryForm = (
     }) => {
 
     const getEntryValue: () => Entry = () => {
+        const now = new Date().toISOString();
         return {
+            id: uuidv4(),
+            createdAt: now,
+            modifiedAt: now,
             label: (document.getElementById("label") as HTMLInputElement).value,
             url: (document.getElementById("website") as HTMLInputElement).value,
             name: (document.getElementById("username") as HTMLInputElement).value,
