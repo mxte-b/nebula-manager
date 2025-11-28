@@ -1,12 +1,12 @@
-import { useEffect } from "react";
 import Favicon from "../components/Favicon";
 import { Entry } from "../types/general";
+import Icons from "../components/Icons";
+import EntryPasswordField from "../components/EntryPasswordField";
 
 const Vault = ({ entries }: { entries: Entry[] | null }) => {
 
-    useEffect(() => {
-        console.log(entries);
-    }, []);
+    
+
     return (
         <>
             <header>My passwords</header>
@@ -17,6 +17,7 @@ const Vault = ({ entries }: { entries: Entry[] | null }) => {
                         <th>Name</th>
                         <th>Password</th>
                         <th>Last Used</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,14 +26,32 @@ const Vault = ({ entries }: { entries: Entry[] | null }) => {
                     entries.map(e => 
                         <tr className="entry" key={e.id}>
                             <td>
-                                <div  className="entry-label">
+                                <div className="entry-label">
                                     <Favicon label={e.label} url={e.url} />
-                                    <span>{e.label}</span>
+                                    <span title={e.label}>{e.label}</span>
                                 </div>
                             </td>
-                            <td className="entry-name">{e.name}</td>
-                            <td className="entry-password">••••••••••</td>
-                            <td className="entry-last-use">{e.createdAt}</td>
+
+                            <td className="entry-name">
+                                <span title={e.name}>{e.name}</span>
+                            </td>
+
+                            <td>
+                                <EntryPasswordField password={e.password} />
+                            </td>
+
+                            <td className="entry-last-use">{e.createdAt.toLocaleDateString()}</td>
+
+                            <td>
+                                <div className="entry-actions">
+                                    <div className="icon-hoverable">
+                                        <Icons.PencilFill />
+                                    </div>
+                                    <div className="icon-hoverable">
+                                        <Icons.TrashFill />
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                     )
                 }

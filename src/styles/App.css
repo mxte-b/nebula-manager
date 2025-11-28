@@ -343,12 +343,46 @@ section > header {
     gap: 0;
     border: 0;
     font-size: 14px;
+    table-layout: fixed;
 }
 
 .entries th,
 .entries td {
     padding: 0 0.5rem;
     border-bottom: 1px solid var(--border-1);
+}
+
+.entries td:first-child {
+    width: 25%;
+}
+
+.entries .entry-name {
+    width: 25%;
+}
+
+.entries .entry-password {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+}
+
+.entries .entry-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s ease;
+}
+
+.entries .entry-last-use {
+    width: 95px;
+    padding-right: 0rem;
 }
 
 .entries thead tr {
@@ -365,6 +399,16 @@ section > header {
 
 .entries tbody tr {
     height: 55px;
+    transition: background-color 0.1s ease;
+}
+
+.entries tbody tr:hover {
+    background-color: var(--bg-2);
+}
+
+.entries tbody tr:hover .entry-actions {
+    opacity: 1;
+    pointer-events: all;
 }
 
 .entries tbody * {
@@ -393,6 +437,12 @@ section > header {
     color: var(--fg);
 }
 
+.entry span {
+    overflow: hidden;
+    min-width: 0;
+    text-overflow: ellipsis;
+}
+
 .entry .favicon {
     position: relative;
     height: 40px;
@@ -406,6 +456,7 @@ section > header {
     position: absolute;
     height: 40px;
     width: 40px;
+    font-family: 'Inter';
     /* background-color: var(--bg-1); */
 }
 
@@ -428,5 +479,56 @@ section > header {
 }
 
 .entry .favicon .placeholder.hidden {
+    opacity: 0;
+}
+
+/* Hoverable icon styles */
+.icon-hoverable {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.8;
+    padding: 8px;
+    background-color: var(--bga-1);
+    border-radius: 50%;
+}
+
+.icon-hoverable svg {
+    width: 16px;
+    height: 16px;
+}
+
+.icon-toggleable {
+    width: fit-content;
+    display: block;
+    position: relative;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+}
+
+.icon-toggleable .icon-hoverable {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s ease;
+    will-change: opacity;
+}
+
+/* Toggleable icon styles */
+.icon-toggleable:not(.toggled) .icon-hoverable:first-child {
+    opacity: 0.8;
+}
+
+.icon-toggleable.toggled .icon-hoverable:nth-child(2) {
+    opacity: 0.8;
+}
+
+.icon-toggleable.toggled .icon-hoverable:first-child {
     opacity: 0;
 }

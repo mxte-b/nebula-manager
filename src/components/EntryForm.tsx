@@ -18,7 +18,7 @@ const EntryForm = (
     }) => {
 
     const getEntryValue: () => Entry = () => {
-        const now = new Date().toISOString();
+        const now = new Date();
         return {
             id: uuidv4(),
             createdAt: now,

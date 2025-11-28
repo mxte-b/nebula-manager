@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core"
-import { Entry, Err, Ok, Result } from "../types/general";
+import { Entry, EntryDTO, Err, Ok, Result, toEntry, toEntryDTO } from "../types/general";
 
 /**
  * Custom hook for interacting with the Vault backend.
@@ -27,10 +27,11 @@ const useVault = () => {
         }
     ): Promise<Result<Entry[], string>> => {
         try {
-            const result = await invoke("vault_get_entries") as Entry[];
+            const result = await invoke("vault_get_entries") as EntryDTO[];
+            const parsed = result.map(e => toEntry(e));
 
-            callbacks?.ok?.(result);
-            return Ok(result);
+            callbacks?.ok?.(parsed);
+            return Ok(parsed);
         }
         catch (e) {
             const error = e instanceof Error ? e.message : String(e);
@@ -60,7 +61,7 @@ const useVault = () => {
         }
     ): Promise<Result<Entry[], string>> => {
         try {
-            await invoke("vault_create_entry", { entry: entry });
+            await invoke("vault_create_entry", { entry: toEntryDTO(entry) });
 
             const result = await getVaultEntries();
             if (!result.ok) {
@@ -101,7 +102,7 @@ const useVault = () => {
         }
     ): Promise<Result<Entry[], string>> => {
         try {
-            await invoke("vault_update_entry", { label: label, new: updated });
+            await invoke("vault_update_entry", { label: label, new: toEntryDTO(updated) });
 
             const result = await getVaultEntries();
             if (!result.ok) {

@@ -17,6 +17,16 @@ export type RouterContextType = {
 /* -------------------------------------------------------------------------- */
 export type Entry = {
     id: string,
+    createdAt: Date,
+    modifiedAt: Date,
+    label: string,
+    url: string,
+    name: string,
+    password: string
+}
+
+export type EntryDTO = {
+    id: string,
     createdAt: string,
     modifiedAt: string,
     label: string,
@@ -24,6 +34,18 @@ export type Entry = {
     name: string,
     password: string
 }
+
+export const toEntry = (e: EntryDTO): Entry => ({
+    ...e,
+    createdAt: new Date(e.createdAt),
+    modifiedAt: new Date(e.modifiedAt)
+});
+
+export const toEntryDTO = (e: Entry): EntryDTO => ({
+    ...e,
+    createdAt: e.createdAt.toISOString(),
+    modifiedAt: e.modifiedAt.toISOString()
+});
 
 /* -------------------------------------------------------------------------- */
 /*                          Result type and helpers                           */
