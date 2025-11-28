@@ -15,6 +15,8 @@ const EntryPasswordField = ({ password }: { password: string }) => {
             <ToggleableIcon 
                 defaultElement={<Icons.EyeFill />}
                 toggledElement={<Icons.EyeSlashFill />}
+                hoverFg="#ffa2eb"
+                hoverBg="#ffa2eb25"
                 onToggle={setPasswordShown}
             />
         </div>

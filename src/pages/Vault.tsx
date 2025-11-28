@@ -2,17 +2,33 @@ import Favicon from "../components/Favicon";
 import { Entry } from "../types/general";
 import Icons from "../components/Icons";
 import EntryPasswordField from "../components/EntryPasswordField";
+import ToggleableIcon from "../components/ToggleableIcon";
 
 const Vault = ({ entries }: { entries: Entry[] | null }) => {
 
-    
+
 
     return (
         <>
-            <header>My passwords</header>
+            <h1>My passwords</h1>
+
+            <div className="info-grid">
+                <div className="favorites">
+                    <div>Favorites</div>
+                </div>
+                <div className="recents">
+                    <div>Recently used</div>
+                </div>
+            </div>
+
+            <h2>Security overview</h2>
+            <div>0 alerts</div>
+
+            <h2>All - {entries?.length} entries</h2>
             <table className="entries" cellSpacing={0}>
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Label</th>
                         <th>Name</th>
                         <th>Password</th>
@@ -25,6 +41,15 @@ const Vault = ({ entries }: { entries: Entry[] | null }) => {
                     entries &&
                     entries.map(e => 
                         <tr className="entry" key={e.id}>
+                            <td className="entry-favorite">
+                                <ToggleableIcon 
+                                    defaultElement={<Icons.Star />}
+                                    toggledElement={<Icons.StarFill />}
+                                    hoverFg="#d3a747ff"
+                                    hoverBg="#d3a74718"
+                                    // onToggle={setPasswordShown}
+                                />
+                            </td>
                             <td>
                                 <div className="entry-label">
                                     <Favicon label={e.label} url={e.url} />
@@ -44,10 +69,16 @@ const Vault = ({ entries }: { entries: Entry[] | null }) => {
 
                             <td>
                                 <div className="entry-actions">
-                                    <div className="icon-hoverable">
+                                    <div className="icon-hoverable" style={{
+                                        "--hover-fg": "#699dd8ff",
+                                        "--hover-bg": "#699dd818"
+                                    } as React.CSSProperties}>
                                         <Icons.PencilFill />
                                     </div>
-                                    <div className="icon-hoverable">
+                                    <div className="icon-hoverable" style={{
+                                        "--hover-fg": "#ec3e3eff",
+                                        "--hover-bg": "#ec3e3e18"
+                                    } as React.CSSProperties}>
                                         <Icons.TrashFill />
                                     </div>
                                 </div>

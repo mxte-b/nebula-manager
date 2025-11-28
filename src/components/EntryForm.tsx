@@ -72,7 +72,7 @@ const EntryForm = (
                                 <div className="group-label">Label</div>
                                 <div className="group-input">
                                     <Icons.Bookmark />
-                                    <input required type="text" name="label" id="label" placeholder=""/>
+                                    <input autoComplete="off" required type="text" name="label" id="label" placeholder=""/>
                                 </div>
                             </div>
 
@@ -80,7 +80,7 @@ const EntryForm = (
                                 <div className="group-label">Website (optional)</div>
                                 <div className="group-input">
                                     <Icons.Globe />
-                                    <input required type="text" name="website" id="website" placeholder=""/>
+                                    <input autoComplete="off" required type="text" name="website" id="website" placeholder=""/>
                                 </div>
                             </div>
 
@@ -88,7 +88,7 @@ const EntryForm = (
                                 <div className="group-label">Username</div>
                                 <div className="group-input">
                                     <Icons.Person />
-                                    <input required type="text" name="username" id="username" placeholder=""/>
+                                    <input autoComplete="off" required type="text" name="username" id="username" placeholder=""/>
                                 </div>
                             </div>
 
@@ -96,7 +96,7 @@ const EntryForm = (
                                 <div className="group-label">Password</div>
                                 <div className="group-input">
                                     <Icons.Lock />
-                                    <input required type="text" name="password" id="password" placeholder=""/>
+                                    <input autoComplete="off" required type="text" name="password" id="password" placeholder=""/>
                                 </div>
                             </div>
 
