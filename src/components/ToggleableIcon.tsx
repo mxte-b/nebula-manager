@@ -1,4 +1,4 @@
-import { JSX, useState } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
 
 const ToggleableIcon = (
     {
@@ -18,15 +18,21 @@ const ToggleableIcon = (
     }
 ) => {
     const [isToggled, setIsToggled] = useState<boolean>(toggled || false);
+    const isFirstRender = useRef<boolean>(true);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            // Skip the first render
+            isFirstRender.current = false;
+            return;
+        }
+        onToggle?.(isToggled);
+    }, [isToggled]);
 
     return <span 
                 className={"icon-toggleable" + (isToggled ? " toggled" : "")}
                 onClick={() => {
-                    setIsToggled(p => {
-                        const next = !p;
-                        onToggle?.(next);
-                        return next;
-                    });
+                    setIsToggled(p => !p);
                 }}
             >
         <div className="icon-hoverable" style={{

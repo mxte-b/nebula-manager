@@ -3,10 +3,27 @@ import { Entry } from "../types/general";
 import Icons from "../components/Icons";
 import EntryPasswordField from "../components/EntryPasswordField";
 import ToggleableIcon from "../components/ToggleableIcon";
+import Footer from "../components/Footer";
 
-const Vault = ({ entries }: { entries: Entry[] | null }) => {
+const Vault = (
+    { 
+        entries,
+        onEntryDelete,
+        onEntryFavorite,
+    }: { 
+        entries: Entry[] | null,
+        onEntryDelete: (id: string) => void,
+        onEntryFavorite: (id: string) => void,
+    }
+) => {
 
+    const handleFavoriteToggle = (id: string) => {
+        onEntryFavorite(id);
+    }
 
+    const handleEntryDelete = (id: string) => {
+        onEntryDelete(id);
+    }
 
     return (
         <>
@@ -47,7 +64,8 @@ const Vault = ({ entries }: { entries: Entry[] | null }) => {
                                     toggledElement={<Icons.StarFill />}
                                     hoverFg="#d3a747ff"
                                     hoverBg="#d3a74718"
-                                    // onToggle={setPasswordShown}
+                                    toggled={e.favorite}
+                                    onToggle={() => onEntryFavorite(e.id)}
                                 />
                             </td>
                             <td>
@@ -62,20 +80,25 @@ const Vault = ({ entries }: { entries: Entry[] | null }) => {
                             </td>
 
                             <td>
-                                <EntryPasswordField password={e.password} />
+                                <EntryPasswordField id={e.id} />
                             </td>
 
-                            <td className="entry-last-use">{e.createdAt.toLocaleDateString()}</td>
+                            <td className="entry-last-use">{e.lastUsed.toLocaleDateString()}</td>
 
                             <td>
                                 <div className="entry-actions">
-                                    <div className="icon-hoverable" style={{
+                                    <div 
+                                        className="icon-hoverable" 
+                                        style={{
                                         "--hover-fg": "#699dd8ff",
                                         "--hover-bg": "#699dd818"
                                     } as React.CSSProperties}>
                                         <Icons.PencilFill />
                                     </div>
-                                    <div className="icon-hoverable" style={{
+                                    <div 
+                                        className="icon-hoverable" 
+                                        onClick={() => onEntryDelete(e.id)}
+                                        style={{
                                         "--hover-fg": "#ec3e3eff",
                                         "--hover-bg": "#ec3e3e18"
                                     } as React.CSSProperties}>
@@ -88,6 +111,9 @@ const Vault = ({ entries }: { entries: Entry[] | null }) => {
                 }
                 </tbody>
             </table>
+
+            <Footer />
+
         </>
     )
 }

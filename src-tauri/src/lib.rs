@@ -4,9 +4,10 @@ use std::{sync::Arc, sync::Mutex};
 use tauri::{Manager, RunEvent, State, WindowEvent};
 
 pub mod vault;
+use uuid::Uuid;
 pub use vault::Vault;
 
-use crate::vault::Entry;
+use crate::vault::entry::{ EntryPublic };
 
 // Toggle search overlay
 #[tauri::command]
@@ -34,19 +35,33 @@ fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> R
 }
 
 #[tauri::command]
-fn vault_get_entries(vault: State<Arc<Mutex<Vault>>>) -> Result<Vec<Entry>, String> {
+fn vault_get_entries(vault: State<Arc<Mutex<Vault>>>) -> Result<Vec<EntryPublic>, String> {
     let v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
     Ok(v.get_entries())
 }
 
 #[tauri::command]
-fn vault_update_entry(vault: State<Arc<Mutex<Vault>>>, label: String, new: vault::Entry) -> Result<(), String> {
-    vault.lock().map(|mut v| v.update_entry(&label, &new)).map_err(|_| "Couldn't access vault".to_string())
+fn vault_get_entry_password(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> Result<String, String> {
+    let v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    v.get_entry_password(&id)
 }
 
 #[tauri::command]
-fn vault_delete_entry(vault: State<Arc<Mutex<Vault>>>, label: String) -> Result<(), String> {
-    vault.lock().map(|mut v| v.delete_entry(&label)).map_err(|_| "Couldn't access vault".to_string())
+fn vault_update_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid, new: vault::Entry) -> Result<EntryPublic, String> {
+    let mut guard = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    guard.update_entry(&id, &new)
+}
+
+#[tauri::command]
+fn vault_toggle_favorite(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> Result<EntryPublic, String> {
+    let mut guard = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    guard.toggle_favorite(&id)
+}
+
+#[tauri::command]
+fn vault_delete_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> Result<(), String> {
+    let mut guard = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    guard.delete_entry(&id)
 }
 
 
@@ -92,7 +107,9 @@ pub fn run() {
             toggle_overlay,
             vault_create_entry,
             vault_get_entries,
+            vault_get_entry_password,
             vault_update_entry,
+            vault_toggle_favorite,
             vault_delete_entry
         ])
         .on_window_event(|window, event| {

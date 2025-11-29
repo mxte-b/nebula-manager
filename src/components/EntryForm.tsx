@@ -23,6 +23,8 @@ const EntryForm = (
             id: uuidv4(),
             createdAt: now,
             modifiedAt: now,
+            lastUsed: now,
+            favorite: false,
             label: (document.getElementById("label") as HTMLInputElement).value,
             url: (document.getElementById("website") as HTMLInputElement).value,
             name: (document.getElementById("username") as HTMLInputElement).value,

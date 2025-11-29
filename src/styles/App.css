@@ -18,14 +18,10 @@
     display: flex;
     gap: 0.5rem;
     flex-direction: column;
-    /* align-items: center; */
-    /* justify-content: flex-end; */
     padding: 0.5rem;
     height: 100vh;
     width: 15rem;
-    /* background: linear-gradient(var(--bg-1), var(--bg)); */
     background-color: var(--bg-1);
-    border-bottom: 1px solid var(--border-1);
 }
 
 .side-bar > .title {
@@ -352,6 +348,10 @@ section > header {
     border-bottom: 1px solid var(--border-1);
 }
 
+.entries tr:last-child td {
+    border-bottom: 0;
+}
+
 .entries td:first-child {
     padding-right: 0rem;
 }
@@ -396,6 +396,7 @@ section > header {
 }
 
 .entries thead th {
+    font-family: 'JetBrains Mono';
     text-align: left;
     font-weight: normal;
     color: var(--fg-secondary-1);

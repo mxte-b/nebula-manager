@@ -1,8 +1,10 @@
 use std::path::{PathBuf};
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 use crate::vault::Entry;
+use crate::vault::entry::EntryPublic;
 
-const VERSION: &str = "0.4.0";
+const VERSION: &str = "0.5.0";
 
 pub struct Vault {
     version: String,
@@ -82,21 +84,47 @@ impl Vault {
     }
 
     // // R(read)
-    pub fn get_entries(&self) -> Vec<Entry> {
-        self.entries.clone()
+    pub fn get_entries(&self) -> Vec<EntryPublic> {
+        self.entries.iter().map(EntryPublic::from).collect()
+    }
+
+    pub fn get_entry_password(&self, id: &Uuid) -> Result<String, String> {
+        if let Some(entry) = self.entries.iter().find(|e| e.id == *id) {
+            Ok(entry.password.clone())
+        } else {
+            Err(format!("Entry '{}' not found", id))
+        }
     }
 
     // // U(update)
-    pub fn update_entry(&mut self, label: &str, updated: &Entry) {
-        if let Some(entry_pos) = self.entries.iter().position(|e| e.label == label) {
+    pub fn update_entry(&mut self, id: &Uuid, updated: &Entry) -> Result<EntryPublic, String> {
+        if let Some(entry_pos) = self.entries.iter().position(|e| e.id == *id) {
             self.entries[entry_pos] = updated.clone();
+            Ok(EntryPublic::from(&self.entries[entry_pos]))
+        }
+        else {
+            Err(format!("Entry '{}' not found", id))
+        }
+    }
+
+    pub fn toggle_favorite(&mut self, id: &Uuid) -> Result<EntryPublic, String> {
+        if let Some(entry) = self.entries.iter_mut().find(|e| e.id == *id) {
+            entry.favorite = !entry.favorite;
+            println!("Favoriting {}", id);
+            Ok(EntryPublic::from(&*entry))
+        } else {
+            Err(format!("Entry '{}' not found", id))
         }
     }
 
     // // D(delete)
-    pub fn delete_entry(&mut self, label: &str) {
-        if let Some(entry_pos) = self.entries.iter().position(|e| e.label == label) {
+    pub fn delete_entry(&mut self, id: &Uuid) -> Result<(), String> {
+        if let Some(entry_pos) = self.entries.iter().position(|e| e.id == *id) {
             self.entries.remove(entry_pos);
+            println!("Deleting {}", id);
+            Ok(())
+        } else {
+            Err(format!("Entry '{}' not found", id))
         }
     }
 }

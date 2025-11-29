@@ -56,3 +56,10 @@ button {
     cursor: pointer;
     outline: none;
 }
+
+footer {
+    padding-block: 1rem;
+    text-align: center;
+    color: var(--fg-inactive);
+    font-family: 'JetBrains Mono';
+}

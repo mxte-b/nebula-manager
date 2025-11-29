@@ -19,32 +19,36 @@ export type Entry = {
     id: string,
     createdAt: Date,
     modifiedAt: Date,
+    lastUsed: Date,
     label: string,
     url: string,
     name: string,
-    password: string
+    favorite: boolean
 }
 
 export type EntryDTO = {
     id: string,
     createdAt: string,
     modifiedAt: string,
+    lastUsed: string,
     label: string,
     url: string,
     name: string,
-    password: string
+    favorite: boolean
 }
 
 export const toEntry = (e: EntryDTO): Entry => ({
     ...e,
     createdAt: new Date(e.createdAt),
-    modifiedAt: new Date(e.modifiedAt)
+    modifiedAt: new Date(e.modifiedAt),
+    lastUsed: new Date(e.lastUsed)
 });
 
 export const toEntryDTO = (e: Entry): EntryDTO => ({
     ...e,
     createdAt: e.createdAt.toISOString(),
-    modifiedAt: e.modifiedAt.toISOString()
+    modifiedAt: e.modifiedAt.toISOString(),
+    lastUsed: e.lastUsed.toISOString()
 });
 
 /* -------------------------------------------------------------------------- */

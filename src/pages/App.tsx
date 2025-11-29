@@ -27,7 +27,9 @@ function App() {
 
     const { 
         getVaultEntries,
-        createVaultEntry
+        createVaultEntry,
+        toggleFavorite,
+        deleteVaultEntry,
     } = useVault();
 
     const handleNewEntrySubmit = async (entry: Entry) => {
@@ -44,6 +46,24 @@ function App() {
         
     // }
 
+    const handleEntryFavorite = (id: string) => {
+        toggleFavorite(id, {
+            ok: () => {
+                setVaultEntries(p => p?.map(e => e.id === id ? {...e, favorite: !e.favorite} as Entry : e) || null)
+            },
+            err: (e) => alert(`Couldn't favorite entry: ${e}`)
+        });
+    }
+
+    const handleEntryDelete = (id: string) => {
+        deleteVaultEntry(id, {
+            ok: () => {
+                setVaultEntries(p => p?.filter(e => e.id != id) || null)
+            },
+            err: (e) => alert(`Couldn't delete entry: ${e}`)
+        });
+    }
+
     useEffect(() => {
         getVaultEntries({
             ok: setVaultEntries,
@@ -59,7 +79,13 @@ function App() {
                 
                 <div className="content-wrapper">
                     <Router>
-                        <Route path="vault" element={<Vault entries={vaultEntries}/>} />
+                        <Route path="vault" element={
+                            <Vault 
+                                entries={vaultEntries}
+                                onEntryDelete={handleEntryDelete}
+                                onEntryFavorite={handleEntryFavorite}
+                            />
+                        } />
                         <Route path="export" element={<Export />} />
                         <Route path="settings" element={<Settings />} />
                         <Route path="about" element={<About />} />
