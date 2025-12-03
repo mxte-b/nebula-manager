@@ -372,6 +372,17 @@ section > header {
     align-items: center;
 }
 
+.entry-password .password-split {
+    position: relative;
+    /* overflow: hidden; */
+}
+
+.password-split .password {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .entries .entry-actions {
     width: 100%;
     display: flex;

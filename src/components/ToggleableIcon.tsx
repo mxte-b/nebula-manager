@@ -7,6 +7,7 @@ const ToggleableIcon = (
         hoverBg,
         hoverFg,
         toggled,
+        enabled = true,
         onToggle
     }: {
         defaultElement: JSX.Element,
@@ -14,6 +15,7 @@ const ToggleableIcon = (
         hoverBg: string,
         hoverFg: string,
         toggled?: boolean
+        enabled?: boolean
         onToggle?: (v: boolean) => void
     }
 ) => {
@@ -32,7 +34,8 @@ const ToggleableIcon = (
     return <span 
                 className={"icon-toggleable" + (isToggled ? " toggled" : "")}
                 onClick={() => {
-                    setIsToggled(p => !p);
+                    console.log(enabled)
+                    if (enabled) setIsToggled(p => !p);
                 }}
             >
         <div className="icon-hoverable" style={{
