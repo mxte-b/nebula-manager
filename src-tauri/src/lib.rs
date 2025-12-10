@@ -7,7 +7,7 @@ pub mod vault;
 use uuid::Uuid;
 pub use vault::Vault;
 
-use crate::vault::entry::{ EntryPublic };
+use crate::vault::entry::{ EntryPublic, UpdateEntry };
 
 // Toggle search overlay
 #[tauri::command]
@@ -47,7 +47,7 @@ fn vault_get_entry_password(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> Result
 }
 
 #[tauri::command]
-fn vault_update_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid, new: vault::Entry) -> Result<EntryPublic, String> {
+fn vault_update_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid, new: UpdateEntry) -> Result<EntryPublic, String> {
     let mut guard = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
     guard.update_entry(&id, &new)
 }

@@ -36,6 +36,14 @@ pub struct EntryPublic {
     pub favorite: bool
 }
 
+#[derive(Serialize, Deserialize, Clone)]
+pub struct UpdateEntry {
+    pub label: Option<String>,
+    pub url: Option<String>,
+    pub name: Option<String>,
+    pub password: Option<String>
+}
+
 impl From<&Entry> for EntryPublic {
     fn from(entry: &Entry) -> Self {
         EntryPublic {

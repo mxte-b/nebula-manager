@@ -11,8 +11,9 @@ import Settings from "./Settings";
 import About from "./About";
 import Icons from "../components/Icons";
 import EntryForm from "../components/EntryForm";
-import { Entry } from "../types/general";
+import { Entry, UpdateEntry } from "../types/general";
 import useVault from "../hooks/useVault";
+import UpdateForm from "../components/UpdateForm";
 
 await register("CommandOrControl+K", (e) => {
     // Ignore key release
@@ -23,11 +24,15 @@ await register("CommandOrControl+K", (e) => {
 
 function App() {
     const [isEntryFormVisible, setIsEntryFormVisible] = useState<boolean>(false);
+    const [isUpdateFormVisible, setIsUpdateFormVisible] = useState<boolean>(false);
+
     const [vaultEntries, setVaultEntries] = useState<Entry[] | null>(null);
+    const [entryToUpdate, setEntryToUpdate] = useState<string>("");
 
     const { 
         getVaultEntries,
         createVaultEntry,
+        updateVaultEntry,
         toggleFavorite,
         deleteVaultEntry,
     } = useVault();
@@ -42,9 +47,17 @@ function App() {
         });
     }
 
-    // const handleEntryUpdateSubmit = (entry: Entry) => {
-        
-    // }
+    const handleEntryUpdateSubmit = (id: string, entry: UpdateEntry) => {
+        updateVaultEntry(id, entry, {
+            ok: (newEntry) => {
+                setIsUpdateFormVisible(false);
+                setVaultEntries(p => p?.map(e => e.id === id ? newEntry : e) || null)
+                alert("Successful update!");
+                console.log("OKay")
+            },
+            err: (e) => alert(`Couldn't update entry: ${e}`)
+        });
+    }
 
     const handleEntryFavorite = (id: string) => {
         toggleFavorite(id, {
@@ -65,10 +78,16 @@ function App() {
     }
 
     useEffect(() => {
+        // Disable context menu
+        const prevent = (e: Event) => e.preventDefault()
+        window.addEventListener("contextmenu", prevent);
+
         getVaultEntries({
             ok: setVaultEntries,
             err: (e) => alert(`Failed to get vault entries: ${e}`)
         });
+
+        return () => window.removeEventListener("contextmenu", prevent);
     }, []);
 
     return (
@@ -83,6 +102,10 @@ function App() {
                             <Vault 
                                 entries={vaultEntries}
                                 onEntryDelete={handleEntryDelete}
+                                onEntryUpdate={(e) => {
+                                    setEntryToUpdate(e);
+                                    setIsUpdateFormVisible(true);
+                                }}
                                 onEntryFavorite={handleEntryFavorite}
                             />
                         } />
@@ -106,7 +129,14 @@ function App() {
                     onSubmit={handleNewEntrySubmit}
                     onClose={() => setIsEntryFormVisible(false)}
                 />
-            </main>
+
+                <UpdateForm
+                    entry={vaultEntries?.find(x => x.id == entryToUpdate)}
+                    visible={isUpdateFormVisible}
+                    onSubmit={handleEntryUpdateSubmit}
+                    onClose={() => setIsUpdateFormVisible(false)}
+                />
+            </main> 
         </RouterProvider>
     );
 }

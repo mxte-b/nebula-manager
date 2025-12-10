@@ -19,7 +19,8 @@
         "fullscreen": false,
         "resizable": false,
         "maximizable": false,
-        "backgroundColor": "#121212"
+        "backgroundColor": "#121212",
+        "center": true
       },
       {
         "label": "overlay",

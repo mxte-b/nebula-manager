@@ -2,7 +2,7 @@ use std::path::{PathBuf};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use crate::vault::Entry;
-use crate::vault::entry::EntryPublic;
+use crate::vault::entry::{EntryPublic, UpdateEntry};
 
 const VERSION: &str = "0.5.0";
 
@@ -97,10 +97,26 @@ impl Vault {
     }
 
     // // U(update)
-    pub fn update_entry(&mut self, id: &Uuid, updated: &Entry) -> Result<EntryPublic, String> {
-        if let Some(entry_pos) = self.entries.iter().position(|e| e.id == *id) {
-            self.entries[entry_pos] = updated.clone();
-            Ok(EntryPublic::from(&self.entries[entry_pos]))
+    pub fn update_entry(&mut self, id: &Uuid, updated: &UpdateEntry) -> Result<EntryPublic, String> {
+        if let Some(entry) = self.entries.iter_mut().find(|e| e.id == *id) {
+
+            if let Some(label) = &updated.label {
+                entry.label = label.clone();
+            }
+
+            if let Some(name) = &updated.name {
+                entry.name = name.clone();
+            }
+
+            if let Some(pass) = &updated.password {
+                entry.password = pass.clone();
+            }
+
+            if let Some(url) = &updated.url {
+                entry.url = url.clone();
+            }
+            
+            Ok(EntryPublic::from(&*entry))
         }
         else {
             Err(format!("Entry '{}' not found", id))

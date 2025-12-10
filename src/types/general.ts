@@ -1,15 +1,34 @@
 import { JSX } from "react";
 
+/* -------------------------------------------------------------------------- */
+/*                                   Router                                   */
+/* -------------------------------------------------------------------------- */
 export type Page = "vault" | "export" | "settings" | "about";
 
 export interface RouteProps {
     path: Page;
-    element: JSX.Element
+    element: JSX.Element;
 }
 
 export type RouterContextType = {
     currentPage: Page;
     navigate: (page: Page) => void;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                Alert system                                */
+/* -------------------------------------------------------------------------- */
+export type AlertType = "success" | "warning" | "error";
+
+type Alert = {
+    id: string;
+    type: AlertType,
+    message: string,
+    duration: number
+}
+
+export type AlertContextType = {
+    addAlert: (alert: Omit<Alert, "id">) => void 
 }
 
 /* -------------------------------------------------------------------------- */
@@ -35,6 +54,13 @@ export type EntryDTO = {
     url: string,
     name: string,
     favorite: boolean
+}
+
+export type UpdateEntry = {
+    label?: string,
+    url?: string,
+    name?: string,
+    password?: string
 }
 
 export const toEntry = (e: EntryDTO): Entry => ({

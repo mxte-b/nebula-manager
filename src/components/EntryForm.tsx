@@ -63,7 +63,7 @@ const EntryForm = (
                             <div className="form-header">
                                 <div className="title-icon"><Icons.Key /></div>
                                 <div className="form-title">
-                                    New Password
+                                    New Entry
                                 </div>
                                 <button type="button" className="form-close" onClick={onClose}>
                                     <Icons.X />

@@ -9,21 +9,15 @@ const Vault = (
     { 
         entries,
         onEntryDelete,
+        onEntryUpdate,
         onEntryFavorite,
     }: { 
         entries: Entry[] | null,
         onEntryDelete: (id: string) => void,
+        onEntryUpdate: (id: string) => void,
         onEntryFavorite: (id: string) => void,
     }
 ) => {
-
-    const handleFavoriteToggle = (id: string) => {
-        onEntryFavorite(id);
-    }
-
-    const handleEntryDelete = (id: string) => {
-        onEntryDelete(id);
-    }
 
     return (
         <>
@@ -89,6 +83,7 @@ const Vault = (
                                 <div className="entry-actions">
                                     <div 
                                         className="icon-hoverable" 
+                                        onClick={() => onEntryUpdate(e.id)}
                                         style={{
                                         "--hover-fg": "#699dd8ff",
                                         "--hover-bg": "#699dd818"
