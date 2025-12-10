@@ -374,13 +374,13 @@ section > header {
 
 .entry-password .password-split {
     position: relative;
-    /* overflow: hidden; */
 }
 
 .password-split .password {
     position: absolute;
     top: 0;
     left: 0;
+    opacity: 0;
 }
 
 .entries .entry-actions {

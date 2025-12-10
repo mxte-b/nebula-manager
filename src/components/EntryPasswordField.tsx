@@ -48,6 +48,10 @@ const EntryPasswordField = ({ id }: { id: string }) => {
             opacity: 0,
             yPercent: -50
         });
+
+        gsap.set(passwordSplitRef.current.elements[0], {
+            opacity: 1
+        });
         
         gsap.to(placeholderSplitRef.current.chars, {
             opacity: 0,
@@ -100,7 +104,15 @@ const EntryPasswordField = ({ id }: { id: string }) => {
             stagger: 0.005,
             ease: "power2.inOut",
             onComplete: () => {
+
+                if (passwordSplitRef.current) {
+                    gsap.set(passwordSplitRef.current.elements[0], {
+                        opacity: 0
+                    });
+                }
+
                 isAnimating.current = false;
+
                 setToggleEnabled(true);
                 setPassword(null);
             }
@@ -122,13 +134,13 @@ const EntryPasswordField = ({ id }: { id: string }) => {
 
         // Split the placeholder text once
         if (!placeholderSplitRef.current) {
-            placeholderSplitRef.current = new SplitText(passwordDomRef.current.querySelector(".placeholder"), { type: "chars" });
+            placeholderSplitRef.current = new SplitText(passwordDomRef.current.querySelector(".placeholder"), { type: "chars", aria: "none" });
         }
 
         // Split the password every time it updates
         if (password) {
             passwordSplitRef.current?.revert();
-            passwordSplitRef.current = new SplitText(passwordDomRef.current.querySelector(".password"), { type: "chars" });
+            passwordSplitRef.current = new SplitText(passwordDomRef.current.querySelector(".password"), { type: "chars", aria: "none" });
         }
 
         // Entry animation
@@ -147,7 +159,7 @@ const EntryPasswordField = ({ id }: { id: string }) => {
                 <div className="placeholder">
                     ••••••••••••••••••••
                 </div>
-                <div className="password">
+                <div className="password" title={password || ""}>
                     {password}
                 </div>
             </div>
