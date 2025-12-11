@@ -4,6 +4,8 @@ import ToggleableIcon from "./ToggleableIcon";
 import useVault from "../hooks/useVault";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
+import Tooltip from "./Tooltip";
+import HoverableIcon from "./HoverableIcon";
 
 gsap.registerPlugin(SplitText);
 
@@ -57,6 +59,7 @@ const EntryPasswordField = ({ id }: { id: string }) => {
             opacity: 0,
             yPercent: 50,
             duration: 0.1,
+            pointerEvents: "none",
             stagger:  0.005,
             ease: "power2.inOut"
         });
@@ -66,6 +69,7 @@ const EntryPasswordField = ({ id }: { id: string }) => {
             delay: 0.1,
             yPercent: 0,
             duration: 0.1,
+            pointerEvents: "auto",
             stagger: 0.01,
             ease: "power2.inOut",
             onComplete: () => {
@@ -93,6 +97,7 @@ const EntryPasswordField = ({ id }: { id: string }) => {
             yPercent: 50,
             duration: 0.1,
             stagger: 0.01,
+            pointerEvents: "none",
             ease: "power2.inOut"
         });
 
@@ -101,6 +106,7 @@ const EntryPasswordField = ({ id }: { id: string }) => {
             delay: 0.1,
             yPercent: 0,
             duration: 0.1,
+            pointerEvents: "auto",
             stagger: 0.005,
             ease: "power2.inOut",
             onComplete: () => {
@@ -163,14 +169,23 @@ const EntryPasswordField = ({ id }: { id: string }) => {
                     {password}
                 </div>
             </div>
-            <ToggleableIcon 
-                defaultElement={<Icons.EyeFill />}
-                toggledElement={<Icons.EyeSlashFill />}
-                hoverFg="#ffa2eb"
-                hoverBg="#ffa2eb25"
-                enabled={toggleEnabled}
-                onToggle={handlePasswordShow}
-            />
+
+            <Tooltip text="Copy">
+                <HoverableIcon hoverFg="#699dd8ff" hoverBg="#699dd818">
+                    <Icons.Copy/>
+                </HoverableIcon>
+            </Tooltip>
+
+            <Tooltip text={passwordShown ? "Hide" : "Show"}>
+                <ToggleableIcon 
+                    defaultElement={<Icons.EyeFill />}
+                    toggledElement={<Icons.EyeSlashFill />}
+                    hoverFg="#ffa2eb"
+                    hoverBg="#ffa2eb25"
+                    enabled={toggleEnabled}
+                    onToggle={handlePasswordShow}
+                />
+            </Tooltip>
         </div>
     )
 }

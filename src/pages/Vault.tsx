@@ -4,6 +4,8 @@ import Icons from "../components/Icons";
 import EntryPasswordField from "../components/EntryPasswordField";
 import ToggleableIcon from "../components/ToggleableIcon";
 import Footer from "../components/Footer";
+import HoverableIcon from "../components/HoverableIcon";
+import Tooltip from "../components/Tooltip";
 
 const Vault = (
     { 
@@ -81,24 +83,25 @@ const Vault = (
 
                             <td>
                                 <div className="entry-actions">
-                                    <div 
-                                        className="icon-hoverable" 
-                                        onClick={() => onEntryUpdate(e.id)}
-                                        style={{
-                                        "--hover-fg": "#699dd8ff",
-                                        "--hover-bg": "#699dd818"
-                                    } as React.CSSProperties}>
-                                        <Icons.PencilFill />
-                                    </div>
-                                    <div 
-                                        className="icon-hoverable" 
-                                        onClick={() => onEntryDelete(e.id)}
-                                        style={{
-                                        "--hover-fg": "#ec3e3eff",
-                                        "--hover-bg": "#ec3e3e18"
-                                    } as React.CSSProperties}>
-                                        <Icons.TrashFill />
-                                    </div>
+                                    <Tooltip text="Edit">
+                                        <HoverableIcon
+                                            hoverFg="#699dd8ff"
+                                            hoverBg="#699dd818"
+                                            onClick={() => onEntryUpdate(e.id)}
+                                        >
+                                            <Icons.PencilFill />
+                                        </HoverableIcon>
+                                    </Tooltip>
+
+                                    <Tooltip text="Delete">
+                                        <HoverableIcon
+                                            hoverFg="#ec3e3eff"
+                                            hoverBg="#ec3e3e18"
+                                            onClick={() => onEntryDelete(e.id)}
+                                        >
+                                            <Icons.TrashFill />
+                                        </HoverableIcon>
+                                    </Tooltip>
                                 </div>
                             </td>
                         </tr>

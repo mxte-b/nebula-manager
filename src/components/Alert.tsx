@@ -2,14 +2,12 @@ const Alert = (
 {
     type, 
     message, 
-    id,
-    duration = 5
+    id
 }
 :{
     type: "success" | "warning" | "error",
     message: string,
-    id: string,
-    duration?: number
+    id: string
 }
 ) => {
     return (

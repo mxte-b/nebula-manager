@@ -1,4 +1,5 @@
 import { JSX, useEffect, useRef, useState } from "react";
+import HoverableIcon from "./HoverableIcon";
 
 const ToggleableIcon = (
     {
@@ -34,18 +35,15 @@ const ToggleableIcon = (
     return <span 
                 className={"icon-toggleable" + (isToggled ? " toggled" : "")}
                 onClick={() => {
-                    console.log(enabled)
                     if (enabled) setIsToggled(p => !p);
                 }}
             >
-        <div className="icon-hoverable" style={{
-            "--hover-fg": hoverFg,
-            "--hover-bg": hoverBg
-        } as React.CSSProperties}>{ defaultElement }</div>
-        <div className="icon-hoverable" style={{
-            "--hover-fg": hoverFg,
-            "--hover-bg": hoverBg
-        } as React.CSSProperties}>{ toggledElement }</div>
+        <HoverableIcon hoverFg={hoverFg} hoverBg={hoverBg}>
+            { defaultElement }
+        </HoverableIcon>
+        <HoverableIcon hoverFg={hoverFg} hoverBg={hoverBg}>
+            { toggledElement }
+        </HoverableIcon>
     </span>
 }
 

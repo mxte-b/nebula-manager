@@ -1,4 +1,5 @@
 import Bookmark from "../assets/bookmark.svg?react"
+import Copy from "../assets/copy.svg?react"
 import Eye from "../assets/eye.svg?react"
 import EyeFill from "../assets/eye-fill.svg?react"
 import EyeSlash from "../assets/eye-slash.svg?react"
@@ -23,6 +24,7 @@ import X from "../assets/x.svg?react"
 
 const Icons = {
     Bookmark,
+    Copy,
     Eye,
     EyeFill,
     EyeSlash,
