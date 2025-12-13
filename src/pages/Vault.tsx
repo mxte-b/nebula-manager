@@ -55,14 +55,16 @@ const Vault = (
                     entries.map(e => 
                         <tr className="entry" key={e.id}>
                             <td className="entry-favorite">
-                                <ToggleableIcon 
-                                    defaultElement={<Icons.Star />}
-                                    toggledElement={<Icons.StarFill />}
-                                    hoverFg="#d3a747ff"
-                                    hoverBg="#d3a74718"
-                                    toggled={e.favorite}
-                                    onToggle={() => onEntryFavorite(e.id)}
-                                />
+                                <Tooltip text="Favorite">
+                                    <ToggleableIcon
+                                        defaultElement={<Icons.Star />}
+                                        toggledElement={<Icons.StarFill />}
+                                        hoverFg="#d3a747ff"
+                                        hoverBg="#d3a74718"
+                                        toggled={e.favorite}
+                                        onToggle={() => onEntryFavorite(e.id)}
+                                    />
+                                </Tooltip>
                             </td>
                             <td>
                                 <div className="entry-label">
