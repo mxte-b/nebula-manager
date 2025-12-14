@@ -1,7 +1,7 @@
-import { ReactNode, useEffect, useReducer, useRef, useState } from "react"
+import { ReactNode, useEffect, useRef, useState } from "react"
 import cooldown from "../types/cooldown";
 
-const TOOLTIP_MIN_EDGE_DIST = 8;
+const TOOLTIP_MIN_EDGE_DIST = 4;
 const TOOLTIP_DEFAULT_Y_OFFSET = -40;
 
 const Tooltip = ({
@@ -41,19 +41,18 @@ const Tooltip = ({
         }
         
         // Overflow detection - X axis
-        console.log(tooltipRect.left, sectionRectRef.current.left)
+        const tooltipRelativeLeft = Math.round(tooltipRect.left - sectionRectRef.current.left);
+        const tooltipRelativeRight = Math.round(sectionRectRef.current.right - tooltipRect.right);
+
         let offset = 0;
-        if (Math.floor(tooltipRect.left - sectionRectRef.current.left) < TOOLTIP_MIN_EDGE_DIST) {
-            console.log(`Section left: ${sectionRectRef.current.left}, tooltip left: ${tooltipRect.left}, diff: ${tooltipRect.left - sectionRectRef.current.left}`)
-            offset = Math.floor(sectionRectRef.current.left + TOOLTIP_MIN_EDGE_DIST - tooltipRect.left);
+        if (tooltipRelativeLeft < TOOLTIP_MIN_EDGE_DIST) {
+            offset = TOOLTIP_MIN_EDGE_DIST - tooltipRelativeLeft;
         }
-        else if (Math.floor(tooltipRect.right - sectionRectRef.current.right) > TOOLTIP_MIN_EDGE_DIST) {
-            console.log(`Section left: ${sectionRectRef.current.right}, tooltip left: ${tooltipRect.right}`)
-            offset = Math.floor(sectionRectRef.current.right - TOOLTIP_MIN_EDGE_DIST - tooltipRect.right);
+        else if (tooltipRelativeRight < TOOLTIP_MIN_EDGE_DIST) {
+            offset = tooltipRelativeRight - TOOLTIP_MIN_EDGE_DIST;
         }
         
         if (offset != 0) {
-            console.log(offset);
             tooltipRef.current.style.setProperty("--offsetX", `${offset}px`);
         }
     }

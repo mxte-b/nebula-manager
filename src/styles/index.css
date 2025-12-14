@@ -63,6 +63,8 @@ button {
 }
 
 footer {
+    height: 100vh;
+    flex-shrink: 0;
     padding-block: 1rem;
     text-align: center;
     color: var(--fg-inactive);

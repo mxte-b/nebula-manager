@@ -92,6 +92,7 @@ section.content {
     position: absolute;
     width: 100%;
     height: 200vh;
+    max-height: 100%;
     padding: 1rem;
     overflow: auto;
     color-scheme: dark;
@@ -336,17 +337,49 @@ section > header {
 /* ------------------------------- Entry table ------------------------------ */
 .entries {
     background-color: var(--bg-1);
-    border-radius: 10px;
     gap: 0;
     border: 0;
     font-size: 14px;
     table-layout: fixed;
+    border-collapse: separate;   /* important */
+    border-spacing: 0;
+    border-radius: 10px;
 }
 
 .entries th,
 .entries td {
+    background-clip: padding-box;
     padding: 0 0.5rem;
     border-bottom: 1px solid var(--border-1);
+}
+
+/* Table corner rounding */
+.entries thead th:first-child {
+    border-top-left-radius: 10px;
+}
+.entries thead th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.entries tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+.entries tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+.entries tbody tr {
+    height: 55px;
+    transition: background-color 0.1s ease;
+}
+
+.entries tbody tr:hover .entry-actions {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.entries tbody tr:hover td {
+    background-color: var(--bg-2);
 }
 
 .entries tr:last-child td {
@@ -419,20 +452,6 @@ section > header {
     color: var(--fg-secondary-1);
 }
 
-.entries tbody tr {
-    height: 55px;
-    transition: background-color 0.1s ease;
-}
-
-.entries tbody tr:hover {
-    background-color: var(--bg-2);
-}
-
-.entries tbody tr:hover .entry-actions {
-    opacity: 1;
-    pointer-events: all;
-}
-
 .entries tbody * {
     user-select: text;
 }
@@ -471,7 +490,6 @@ section > header {
     width: 40px;
     flex-shrink: 0;
     overflow: hidden;
-    /* border-radius: 5px; */
     border-radius: 5px;
 }
 .entry .favicon > img, .entry .favicon .placeholder {
@@ -479,7 +497,6 @@ section > header {
     height: 40px;
     width: 40px;
     font-family: 'Inter';
-    /* background-color: var(--bg-1); */
 }
 
 .entry .favicon > img {
@@ -599,7 +616,6 @@ section > header {
     width: 60px;
     pointer-events: none;
     opacity: 0;
-    scale: 0.95;
     transform: translate3d(var(--offsetX), -5px, 0px);
     transition: opacity 0.15s ease, transform 0.15s ease, scale 0.15s ease;
     border: 1px solid var(--border-2);
