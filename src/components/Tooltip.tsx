@@ -63,7 +63,7 @@ const Tooltip = ({
         sectionRectRef.current = sectionRef.current.getBoundingClientRect();
     }
 
-    const debouncedObserve = useRef(cooldown(observe, 100));
+    const debouncedObserve = useRef(cooldown(observe, 10));
 
     const handleResize = () => {
         updateSectionRect();
@@ -101,6 +101,7 @@ const Tooltip = ({
                 <div className="tooltip" ref={tooltipRef}>
                     {text}
                 </div>
+                <div className="tooltip-arrow"/>
             </div>
             {children}
         </div>

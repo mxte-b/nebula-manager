@@ -605,37 +605,54 @@ section > header {
 .tooltip-wrapper .tooltip {
     --offsetX: 0px;
 
-    border-radius: 5px;
-    font-size: 14px;
-    color: var(--fg);
-    padding: 0.3rem 0.5rem;
-    text-align: center;
-    background-color: var(--bg-2);
-    z-index: 9999;
-    min-width: fit-content;
     width: 60px;
-    pointer-events: none;
+    height: 30px;
+    min-width: fit-content;
     opacity: 0;
+    z-index: 9999;
+    text-align: center;
+    
+    padding: 0.3rem 0.5rem;
+
     transform: translate3d(var(--offsetX), -5px, 0px);
-    transition: opacity 0.15s ease, transform 0.15s ease, scale 0.15s ease;
+
+    color: var(--fg);
+    background-color: var(--bg-2);
     border: 1px solid var(--border-2);
-    will-change: scale;
+    border-radius: 5px;
     box-shadow: 0 0 1px black;
+    font-size: 14px;
+    pointer-events: none;
+
+    transition: opacity 0.15s ease, transform 0.15s ease, scale 0.15s ease;
+    will-change: opacity;
 }
 
-.tooltip-wrapper .tooltip::after {
+.tooltip-wrapper .tooltip-arrow {
+    position: absolute;
+    opacity: 0;
+    left: 50%;
+    top: calc(100% - 1px);
+    z-index: 10000;
+    transform: translateY(-5px);
+    transition: opacity 0.15s ease, transform 0.15s ease, scale 0.15s ease;
+    will-change: opacity;
+}
+
+.tooltip-wrapper .tooltip-arrow::after {
   content: " ";
   position: absolute;
+  z-index: 10000;
   top: 100%; /* bottom of tooltip */
   left: 50%;
   transform: translateX(-50%);
   border-width: 6px; /* outer border triangle */
   border-style: solid;
   border-color: var(--border-2) transparent transparent transparent; /* border color */
-  z-index: 1;
+  z-index: 10000;
 }
 
-.tooltip-wrapper .tooltip::before {
+.tooltip-wrapper .tooltip-arrow::before {
   content: " ";
   position: absolute;
   top: 100%;
@@ -644,7 +661,7 @@ section > header {
   border-width: 5px; /* inner triangle */
   border-style: solid;
   border-color: var(--bg-2) transparent transparent transparent; /* tooltip background */
-  z-index: 2;
+  z-index: 10001;
 }
 
 /* ------------------------ Tooltip - Bottom position ----------------------- */
@@ -657,20 +674,31 @@ section > header {
     transform: translate3d(var(--offsetX), 5px, 0px);
 }
 
-.tooltip-wrapper .tooltip-aligner.align-bottom .tooltip::after {
+.tooltip-wrapper .tooltip-aligner.align-bottom .tooltip-arrow {
+    transform: translateY(5px);
+    bottom: calc(100% - 1px);
     top: unset;
-    bottom: 100%;
-    border-color: transparent transparent var(--border-2) transparent; /* border color */
 }
 
-.tooltip-wrapper .tooltip-aligner.align-bottom .tooltip::before {
+.tooltip-wrapper .tooltip-aligner.align-bottom .tooltip-arrow::before {
     top: unset;
     bottom: 100%;
     border-color: transparent transparent var(--bg-2) transparent; /* border color */
 }
 
-.tooltip-wrapper:hover .tooltip {
+.tooltip-wrapper .tooltip-aligner.align-bottom .tooltip-arrow::after {
+    top: unset;
+    bottom: 100%;
+    border-color: transparent transparent var(--border-2) transparent; /* border color */
+}
+
+.tooltip-wrapper:hover .tooltip, .tooltip-wrapper:hover .tooltip-aligner.align-bottom .tooltip {
     opacity: 1;
-    scale: 1;
-    transform: translate3d(var(--offsetX), 0px, 0px);;
+    transform: translate3d(var(--offsetX), 0px, 0px);
+}
+
+
+.tooltip-wrapper:hover .tooltip-arrow, .tooltip-wrapper:hover .tooltip-aligner.align-bottom .tooltip-arrow {
+    opacity: 1;
+    transform: translateY(0px);
 }
