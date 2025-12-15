@@ -14,6 +14,8 @@ import EntryForm from "../components/EntryForm";
 import { Entry, UpdateEntry } from "../types/general";
 import useVault from "../hooks/useVault";
 import UpdateForm from "../components/UpdateForm";
+import { AlertProvider } from "../contexts/alert";
+import AlertManager from "../components/AlertManager";
 
 await register("CommandOrControl+K", (e) => {
     // Ignore key release
@@ -92,51 +94,54 @@ function App() {
 
     return (
         <RouterProvider>
-            <main className="dashboard">
-                <SideBar />
-                
-                
-                <div className="content-wrapper">
-                    <Router>
-                        <Route path="vault" element={
-                            <Vault 
-                                entries={vaultEntries}
-                                onEntryDelete={handleEntryDelete}
-                                onEntryUpdate={(e) => {
-                                    setEntryToUpdate(e);
-                                    setIsUpdateFormVisible(true);
-                                }}
-                                onEntryFavorite={handleEntryFavorite}
-                            />
-                        } />
-                        <Route path="export" element={<Export />} />
-                        <Route path="settings" element={<Settings />} />
-                        <Route path="about" element={<About />} />
-                    </Router>
-                </div>
+            <AlertProvider>
+                <main className="dashboard">
+                    <SideBar />
+                    
+                    
+                    <div className="content-wrapper">
+                        <Router>
+                            <Route path="vault" element={
+                                <Vault 
+                                    entries={vaultEntries}
+                                    onEntryDelete={handleEntryDelete}
+                                    onEntryUpdate={(e) => {
+                                        setEntryToUpdate(e);
+                                        setIsUpdateFormVisible(true);
+                                    }}
+                                    onEntryFavorite={handleEntryFavorite}
+                                />
+                            } />
+                            <Route path="export" element={<Export />} />
+                            <Route path="settings" element={<Settings />} />
+                            <Route path="about" element={<About />} />
+                        </Router>
+                    </div>
 
-                <button 
-                    type="button" 
-                    className="add-button" 
-                    onClick={() => setIsEntryFormVisible(true)}
-                >
-                    <Icons.Plus />
-                    <div className="button-text">Add</div>
-                </button>
+                    <button 
+                        type="button" 
+                        className="add-button" 
+                        onClick={() => setIsEntryFormVisible(true)}
+                    >
+                        <Icons.Plus />
+                        <div className="button-text">Add</div>
+                    </button>
 
-                <EntryForm 
-                    visible={isEntryFormVisible} 
-                    onSubmit={handleNewEntrySubmit}
-                    onClose={() => setIsEntryFormVisible(false)}
-                />
+                    <EntryForm 
+                        visible={isEntryFormVisible} 
+                        onSubmit={handleNewEntrySubmit}
+                        onClose={() => setIsEntryFormVisible(false)}
+                    />
 
-                <UpdateForm
-                    entry={vaultEntries?.find(x => x.id == entryToUpdate)}
-                    visible={isUpdateFormVisible}
-                    onSubmit={handleEntryUpdateSubmit}
-                    onClose={() => setIsUpdateFormVisible(false)}
-                />
-            </main> 
+                    <UpdateForm
+                        entry={vaultEntries?.find(x => x.id == entryToUpdate)}
+                        visible={isUpdateFormVisible}
+                        onSubmit={handleEntryUpdateSubmit}
+                        onClose={() => setIsUpdateFormVisible(false)}
+                    />
+                </main> 
+                <AlertManager />
+            </AlertProvider>
         </RouterProvider>
     );
 }

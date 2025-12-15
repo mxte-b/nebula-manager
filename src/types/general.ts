@@ -20,15 +20,17 @@ export type RouterContextType = {
 /* -------------------------------------------------------------------------- */
 export type AlertType = "success" | "warning" | "error";
 
-type Alert = {
+export type Alert = {
     id: string;
-    type: AlertType,
-    message: string,
-    duration: number
+    type: AlertType;
+    message: string;
+    duration: number;
 }
 
 export type AlertContextType = {
-    addAlert: (alert: Omit<Alert, "id">) => void 
+    alerts: Alert[];
+    addAlert: (alert: Omit<Alert, "id">) => void;
+    removeAlert: (id: string) => void;
 }
 
 /* -------------------------------------------------------------------------- */
