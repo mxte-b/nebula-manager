@@ -1,0 +1,31 @@
+@use 'mixins' as *;
+
+$bg-default: rgb(32 32 32);
+$bg-success: rgb(43 63 45);
+$bg-error: rgb(63 43 43);
+$border-default: rgb(65 65 65);
+$border-success: rgb(42 102 47);
+$border-error: rgb(99 42 42);
+
+.alerts {
+    @include flex(column);
+
+    position: absolute;
+    top: 0;
+    left: 50%;
+    gap: 1rem;
+    transform: translateX(-50%)
+}
+
+.alert {
+    @include flex;
+
+    // position: absolute;
+    // top: 0;
+    // left: 50%;
+    max-width: 350px;
+    padding: 1rem 2rem;
+    border: 1px solid $border-default;
+    border-radius: 5px;
+    background-color: $bg-default;
+}

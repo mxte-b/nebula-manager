@@ -1,10 +1,5 @@
-/* -------------------------------------------------------------------------- */
+@use 'mixins' as *;
 
-/*                                Vault styles                                */
-
-/* -------------------------------------------------------------------------- */
-
-/* ------------------------------- Entry table ------------------------------ */
 .entries {
     gap: 0;
     border: 0;
@@ -12,7 +7,7 @@
     background-color: var(--bg-1);
     font-size: 14px;
     table-layout: fixed;
-    border-collapse: separate;   /* important */
+    border-collapse: separate;
     border-spacing: 0;
 
     th,
@@ -63,10 +58,8 @@
     }
 
     .entry-actions {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
+        @include flex;
+
         gap: 0.5rem;
         width: 100%;
         opacity: 0;
@@ -107,10 +100,8 @@
     }
 
     .entry-password {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
+        @include flex($justify: space-between);
+
         gap: 0.5rem;
         min-width: 250px;
 
@@ -138,6 +129,8 @@
 
 .entry {
     .entry-label {
+        @include flex($justify: flex-start);
+
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -177,10 +170,9 @@
         }
 
         .placeholder {
-            display: flex;
+            @include flex;
+
             z-index: 1;
-            justify-content: center;
-            align-items: center;
             background-color: var(--fg-inactive);
             opacity: 1;
             transition: opacity 0.2s ease;
@@ -194,9 +186,8 @@
 
 /* ----------------------------- Hoverable icon ----------------------------- */
 .icon-hoverable {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include flex;
+
     padding: 8px;
     border-radius: 50%;
     background-color: var(--bga-1);

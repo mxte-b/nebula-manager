@@ -6,10 +6,17 @@ import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
 import Tooltip from "./Tooltip";
 import HoverableIcon from "./HoverableIcon";
+import { useAlert } from "../contexts/alert";
 
 gsap.registerPlugin(SplitText);
 
-const EntryPasswordField = ({ id }: { id: string }) => {
+const EntryPasswordField = (
+    { 
+        id,
+    }: { 
+        id: string,
+    }
+) => {
     const [password, setPassword] = useState<string | null>(null);
     const [passwordShown, setPasswordShown] = useState<boolean>(false);
     const [toggleEnabled, setToggleEnabled] = useState<boolean>(true);
@@ -21,6 +28,15 @@ const EntryPasswordField = ({ id }: { id: string }) => {
     const passwordSplitRef = useRef<SplitText | null>(null);
 
     const { getVaultEntryPassword } = useVault();
+    const { addAlert } = useAlert();
+
+    const handlePasswordCopy = (id: string) => {
+        addAlert({
+            type: "success",
+            message: `Password copied! (id: ${id})`,
+            duration: 2000,
+        })
+    }
 
     const handlePasswordShow = (next: boolean) => {
         if (isAnimating.current) return;
@@ -171,7 +187,11 @@ const EntryPasswordField = ({ id }: { id: string }) => {
             </div>
 
             <Tooltip text="Copy">
-                <HoverableIcon hoverFg="#699dd8ff" hoverBg="#699dd818">
+                <HoverableIcon 
+                    hoverFg="#699dd8ff" 
+                    hoverBg="#699dd818"
+                    onClick={() => handlePasswordCopy(id)}
+                >
                     <Icons.Copy/>
                 </HoverableIcon>
             </Tooltip>

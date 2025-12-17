@@ -1,3 +1,4 @@
+import { AnimatePresence } from "motion/react";
 import { useAlert } from "../contexts/alert"
 import AlertItem from "./AlertItem";
 
@@ -6,9 +7,11 @@ const AlertManager = () => {
 
     return (
         <div className="alerts">
-            {
-                alerts.map(a => <AlertItem alert={a} onClose={removeAlert} key={a.id} />)
-            }
+            <AnimatePresence>
+                {
+                    alerts.map(a => <AlertItem alert={a} onClose={removeAlert} key={a.id} />)
+                }
+            </AnimatePresence>
         </div>
     )
 }

@@ -1,21 +1,23 @@
-/* --------------------------------- Tooltip -------------------------------- */
+@use 'mixins' as *;
+
 .tooltip-wrapper {
     position: relative;
 
     .tooltip-aligner {
-        display: flex;
+        @include flex;
+
         position: absolute;
         top: -2.5rem;
         left: 0;
         z-index: 9999;
-        justify-content: center;
-        align-items: center;
         width: 100%;
         height: 30px;
         pointer-events: none;
     }
 
     .tooltip {
+        @include flex;
+
         --offset-x: 0px;
 
         z-index: 9999;
@@ -99,13 +101,13 @@
             &::before {
                 top: unset;
                 bottom: 100%;
-                border-color: transparent transparent var(--bg-2) transparent; /* border color */
+                border-color: transparent transparent var(--bg-2) transparent;
             }
 
             &::after {
                 top: unset;
                 bottom: 100%;
-                border-color: transparent transparent var(--border-2) transparent; /* border color */
+                border-color: transparent transparent var(--border-2) transparent;
             }
         }
     }
