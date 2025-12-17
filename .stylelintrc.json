@@ -1,0 +1,76 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-standard-scss"
+  ],
+  "plugins": [
+    "stylelint-order"
+  ],
+  "rules": {
+    "order/properties-order": [
+      [
+        {
+          "groupName": "Layout",
+          "properties": [
+            "display",
+            "position",
+            "top",
+            "right",
+            "bottom",
+            "left",
+            "z-index",
+            "flex",
+            "flex-direction",
+            "justify-content",
+            "align-items",
+            "gap"
+          ]
+        },
+        {
+          "groupName": "Dimensions",
+          "properties": [
+            "width",
+            "min-width",
+            "max-width",
+            "height",
+            "min-height",
+            "max-height"
+          ]
+        },
+        {
+          "groupName": "Structure",
+          "properties": [
+            "margin",
+            "padding",
+            "border",
+            "border-radius",
+            "box-sizing"
+          ]
+        },
+        {
+          "groupName": "Visual",
+          "properties": [
+            "background",
+            "background-color",
+            "color",
+            "box-shadow",
+            "opacity"
+          ]
+        },
+        {
+          "groupName": "Misc",
+          "properties": [
+            "font-family",
+            "font-size",
+            "outline",
+            "transition",
+            "will-change"
+          ]
+        }
+      ],
+      {
+        "unspecified": "bottom"
+      }
+    ]
+  }
+}

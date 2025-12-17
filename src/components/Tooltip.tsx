@@ -53,7 +53,7 @@ const Tooltip = ({
         }
         
         if (offset != 0) {
-            tooltipRef.current.style.setProperty("--offsetX", `${offset}px`);
+            tooltipRef.current.style.setProperty("--offset-x", `${offset}px`);
         }
     }
 

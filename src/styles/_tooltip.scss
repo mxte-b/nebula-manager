@@ -1,0 +1,112 @@
+/* --------------------------------- Tooltip -------------------------------- */
+.tooltip-wrapper {
+    position: relative;
+
+    .tooltip-aligner {
+        display: flex;
+        position: absolute;
+        top: -2.5rem;
+        left: 0;
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 30px;
+        pointer-events: none;
+    }
+
+    .tooltip {
+        --offset-x: 0px;
+
+        z-index: 9999;
+        width: 60px;
+        min-width: fit-content;
+        height: 30px;
+        padding: 0.3rem 0.5rem;
+        border: 1px solid var(--border-2);
+        border-radius: 5px;
+        background-color: var(--bg-2);
+        color: var(--fg);
+        box-shadow: 0 0 1px black;
+        opacity: 0;
+        font-size: 14px;
+        transition: opacity 0.15s ease, transform 0.15s ease, scale 0.15s ease;
+        will-change: opacity;
+        text-align: center;
+        transform: translate3d(var(--offset-x), -5px, 0);
+        pointer-events: none;
+    }
+
+    .tooltip-arrow {
+        position: absolute;
+        top: calc(100% - 1px);
+        left: 50%;
+        z-index: 10000;
+        opacity: 0;
+        transition: opacity 0.15s ease, transform 0.15s ease, scale 0.15s ease;
+        will-change: opacity;
+        transform: translateY(-5px);
+
+        &::after {
+            position: absolute;
+            top: 100%; /* bottom of tooltip */
+            left: 50%;
+            z-index: 10000;
+            content: " ";
+            transform: translateX(-50%);
+            border-width: 6px; /* outer border triangle */
+            border-style: solid;
+            border-color: var(--border-2) transparent transparent transparent; /* border color */
+        }
+
+        &::before {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            z-index: 10001;
+            content: " ";
+            transform: translateX(-50%);
+            border-width: 5px; /* inner triangle */
+            border-style: solid;
+            border-color: var(--bg-2) transparent transparent transparent; /* tooltip background */
+        }
+    }
+
+    &:hover .tooltip {
+        opacity: 1;
+        transform: translate3d(var(--offset-x), 0, 0) !important;
+    }
+
+    &:hover .tooltip-arrow {
+        opacity: 1;
+        transform: translateY(0) !important;
+    }
+
+    /* ------------------------ Tooltip - Bottom position ----------------------- */
+    .tooltip-aligner.align-bottom {
+        top: unset;
+        bottom: -2.5rem;
+
+        .tooltip {
+            transform: translate3d(var(--offset-x), 5px, 0);
+        }
+
+        .tooltip-arrow {
+            top: unset;
+            bottom: calc(100% - 1px);
+            transform: translateY(5px);
+
+            &::before {
+                top: unset;
+                bottom: 100%;
+                border-color: transparent transparent var(--bg-2) transparent; /* border color */
+            }
+
+            &::after {
+                top: unset;
+                bottom: 100%;
+                border-color: transparent transparent var(--border-2) transparent; /* border color */
+            }
+        }
+    }
+}

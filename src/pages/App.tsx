@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import "../styles/App.css";
+import "../styles/App.scss";
 import SideBar from "../components/SideBar";
 import { invoke } from "@tauri-apps/api/core";
 import { register } from "@tauri-apps/plugin-global-shortcut";
 import { Route, Router } from "../components/Router";
 import Vault from "./Vault";
-import { RouterProvider } from "../contexts/router";
 import Export from "./Export";
 import Settings from "./Settings";
 import About from "./About";
@@ -14,7 +13,7 @@ import EntryForm from "../components/EntryForm";
 import { Entry, UpdateEntry } from "../types/general";
 import useVault from "../hooks/useVault";
 import UpdateForm from "../components/UpdateForm";
-import { AlertProvider } from "../contexts/alert";
+import { useAlert } from "../contexts/alert";
 import AlertManager from "../components/AlertManager";
 
 await register("CommandOrControl+K", (e) => {
@@ -38,6 +37,10 @@ function App() {
         toggleFavorite,
         deleteVaultEntry,
     } = useVault();
+
+    const {
+        addAlert
+    } = useAlert();
 
     const handleNewEntrySubmit = async (entry: Entry) => {
         createVaultEntry(entry, {
@@ -89,60 +92,65 @@ function App() {
             err: (e) => alert(`Failed to get vault entries: ${e}`)
         });
 
+        setTimeout(() => {
+            addAlert({
+                type: "success",
+                message: "Almafa",
+                duration: 5000
+            });
+        }, 1000);
+
         return () => window.removeEventListener("contextmenu", prevent);
     }, []);
 
     return (
-        <RouterProvider>
-            <AlertProvider>
-                <main className="dashboard">
-                    <SideBar />
-                    
-                    
-                    <div className="content-wrapper">
-                        <Router>
-                            <Route path="vault" element={
-                                <Vault 
-                                    entries={vaultEntries}
-                                    onEntryDelete={handleEntryDelete}
-                                    onEntryUpdate={(e) => {
-                                        setEntryToUpdate(e);
-                                        setIsUpdateFormVisible(true);
-                                    }}
-                                    onEntryFavorite={handleEntryFavorite}
-                                />
-                            } />
-                            <Route path="export" element={<Export />} />
-                            <Route path="settings" element={<Settings />} />
-                            <Route path="about" element={<About />} />
-                        </Router>
-                    </div>
+        <main className="dashboard">
+            <SideBar />
+            
+            
+            <div className="content-wrapper">
+                <Router>
+                    <Route path="vault" element={
+                        <Vault 
+                            entries={vaultEntries}
+                            onEntryDelete={handleEntryDelete}
+                            onEntryUpdate={(e) => {
+                                setEntryToUpdate(e);
+                                setIsUpdateFormVisible(true);
+                            }}
+                            onEntryFavorite={handleEntryFavorite}
+                        />
+                    } />
+                    <Route path="export" element={<Export />} />
+                    <Route path="settings" element={<Settings />} />
+                    <Route path="about" element={<About />} />
+                </Router>
+            </div>
 
-                    <button 
-                        type="button" 
-                        className="add-button" 
-                        onClick={() => setIsEntryFormVisible(true)}
-                    >
-                        <Icons.Plus />
-                        <div className="button-text">Add</div>
-                    </button>
+            <button 
+                type="button" 
+                className="add-button" 
+                onClick={() => setIsEntryFormVisible(true)}
+            >
+                <Icons.Plus />
+                <div className="button-text">Add</div>
+            </button>
 
-                    <EntryForm 
-                        visible={isEntryFormVisible} 
-                        onSubmit={handleNewEntrySubmit}
-                        onClose={() => setIsEntryFormVisible(false)}
-                    />
+            <EntryForm 
+                visible={isEntryFormVisible} 
+                onSubmit={handleNewEntrySubmit}
+                onClose={() => setIsEntryFormVisible(false)}
+            />
 
-                    <UpdateForm
-                        entry={vaultEntries?.find(x => x.id == entryToUpdate)}
-                        visible={isUpdateFormVisible}
-                        onSubmit={handleEntryUpdateSubmit}
-                        onClose={() => setIsUpdateFormVisible(false)}
-                    />
-                </main> 
-                <AlertManager />
-            </AlertProvider>
-        </RouterProvider>
+            <UpdateForm
+                entry={vaultEntries?.find(x => x.id == entryToUpdate)}
+                visible={isUpdateFormVisible}
+                onSubmit={handleEntryUpdateSubmit}
+                onClose={() => setIsUpdateFormVisible(false)}
+            />
+
+            <AlertManager />
+        </main>
     );
 }
 

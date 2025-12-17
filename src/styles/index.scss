@@ -1,0 +1,73 @@
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono/JetBrainsMono-VariableFont.ttf") format("truetype");
+  font-weight: 100 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Inter;
+  src: url("/fonts/Inter/Inter-VariableFont.ttf") format("truetype");
+  font-weight: 100 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bruno Ace";
+  src: url("/fonts/BrunoAce/BrunoAce-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #121212;
+  --bg-1: #1B1B1B;
+  --bg-2: #202020;
+  --bga: #ffffff08;
+  --bga-1: #ffffff0e;
+  --bg-accent: #332330;
+  --border: #141414;
+  --border-1: #303030;
+  --border-2: #474747;
+  --border-accent: #92608771;
+  --fg: #e5e7eb;
+  --fg-secondary: #a3a3a3;
+  --fg-secondary-1: #cfcfcf;
+  --fg-inactive: #6B6B6B;
+  --fg-accent: #ffa2eb;
+  --accent: #ff44d6;
+
+  background: var(--bg);
+  color: var(--fg);
+  font-family: Inter, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+  overflow: hidden;
+}
+
+button {
+  background-color: inherit;
+  color: inherit;
+  outline: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+footer {
+  height: 100vh;
+  color: red;
+  color: var(--fg-inactive);
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+  padding-block: 1rem;
+  text-align: center;
+}
