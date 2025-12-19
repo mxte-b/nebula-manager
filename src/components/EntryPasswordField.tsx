@@ -32,7 +32,7 @@ const EntryPasswordField = (
 
     const handlePasswordCopy = (id: string) => {
         addAlert({
-            type: "success",
+            type: "error",
             message: `Password copied! (id: ${id})`,
             duration: 2000,
         })

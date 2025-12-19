@@ -23,6 +23,7 @@ export type AlertType = "success" | "warning" | "error";
 export type Alert = {
     id: string;
     type: AlertType;
+    count?: number;
     message: string;
     duration: number;
 }

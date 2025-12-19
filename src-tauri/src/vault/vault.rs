@@ -1,5 +1,6 @@
 use std::path::{PathBuf};
 use serde::{Deserialize, Serialize};
+use time::OffsetDateTime;
 use uuid::Uuid;
 use crate::vault::Entry;
 use crate::vault::entry::{EntryPublic, UpdateEntry};
@@ -115,6 +116,8 @@ impl Vault {
             if let Some(url) = &updated.url {
                 entry.url = url.clone();
             }
+
+            entry.modified_at = OffsetDateTime::now_utc();
             
             Ok(EntryPublic::from(&*entry))
         }

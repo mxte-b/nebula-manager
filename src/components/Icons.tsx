@@ -1,5 +1,7 @@
 import Bookmark from "../assets/bookmark.svg?react"
+import CheckCircleFill from "../assets/check-circle-fill.svg?react"
 import Copy from "../assets/copy.svg?react"
+import ExclamationCircleFill from "../assets/exclamation-circle-fill.svg?react"
 import Eye from "../assets/eye.svg?react"
 import EyeFill from "../assets/eye-fill.svg?react"
 import EyeSlash from "../assets/eye-slash.svg?react"
@@ -21,10 +23,13 @@ import Trash from "../assets/trash.svg?react"
 import TrashFill from "../assets/trash-fill.svg?react"
 import Upload from "../assets/upload.svg?react"
 import X from "../assets/x.svg?react"
+import XCircleFill from "../assets/x-circle-fill.svg?react"
 
 const Icons = {
     Bookmark,
+    CheckCircleFill,
     Copy,
+    ExclamationCircleFill,
     Eye,
     EyeFill,
     EyeSlash,
@@ -46,6 +51,7 @@ const Icons = {
     TrashFill,
     Upload,
     X,
+    XCircleFill,
 }
 
 export default Icons;

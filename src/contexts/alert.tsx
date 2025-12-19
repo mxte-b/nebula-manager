@@ -8,7 +8,29 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
     const idRef = useRef<number>(0); 
 
     const addAlert = (alert: Omit<Alert, "id">) => {
-        setAlerts(p => [...p, { ...alert, id: String(++idRef.current) }]);
+        setAlerts(p => {
+            // If we find an already present alert of the same type,
+            // we just update the current ones to prevent large quantities
+            // of alerts.
+            const existing = p.find(a => a.type == alert.type)
+
+            // If there is an identical alert with the same message,
+            // increment the duplicate counter
+            if (existing && existing.message == alert.message) {
+                return p.map(a => a.id == existing.id ? {...a, count: (a.count ?? 1) + 1} : a);
+            }
+            
+            // If the message isn't the same, just remove the old one and add the new one
+            if (existing && existing.message != alert.message) {
+                return [
+                    ...p.filter(a => a.id !== existing.id),
+                    { ...alert, id: String(++idRef.current) }
+                ];
+            }
+
+            // Else, add the alert
+            return [...p, {...alert, id: String(++idRef.current)}]
+        });
     }
 
     const removeAlert = (id: string) => {

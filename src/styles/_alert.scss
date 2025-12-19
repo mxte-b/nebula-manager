@@ -1,11 +1,17 @@
 @use 'mixins' as *;
 
 $bg-default: rgb(32 32 32);
-$bg-success: rgb(43 63 45);
-$bg-error: rgb(63 43 43);
+$bg-success: rgb(26 63 26);
+$bg-error: rgb(39 25 25);
+$bg-warning: rgb(51 48 32);
 $border-default: rgb(65 65 65);
-$border-success: rgb(42 102 47);
-$border-error: rgb(99 42 42);
+$border-success: rgb(96 146 101);
+$border-error: rgb(170 80 80);
+$border-warning: rgb(150 143 79);
+$color-default: var(--fg);
+$color-success: rgb(200 255 204);
+$color-error: rgb(255 134 134);
+$color-warning: rgb(255 239 146);
 
 .alerts {
     @include flex(column);
@@ -13,19 +19,59 @@ $border-error: rgb(99 42 42);
     position: absolute;
     top: 0;
     left: 50%;
-    gap: 1rem;
     transform: translateX(-50%)
 }
 
 .alert {
     @include flex;
 
-    // position: absolute;
-    // top: 0;
-    // left: 50%;
+    position: relative;
+    gap: 1rem;
     max-width: 350px;
-    padding: 1rem 2rem;
+    padding: 1rem;
     border: 1px solid $border-default;
     border-radius: 5px;
     background-color: $bg-default;
+    color: $color-default;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    margin-top: 1rem;
+
+    &.alert-success {
+        background-color: $bg-success;
+        color: $color-success;
+        border-color: $border-success;
+    }
+
+    &.alert-warning {
+        background-color: $bg-warning;
+        color: $color-warning;
+        border-color: $border-warning;
+    }
+
+    &.alert-error {
+        background-color: $bg-error;
+        color: $color-error;
+        border-color: $border-error;
+    }
+
+    &-icon {
+        width: 16px;
+        height: 18px;
+        flex-shrink: 0
+    }
+
+    &-icon svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    &-count {
+        @include flex;
+
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-family: 'JetBrains Mono', monospace;
+    }
 }
