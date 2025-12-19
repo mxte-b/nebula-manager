@@ -12,25 +12,30 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
             // If we find an already present alert of the same type,
             // we just update the current ones to prevent large quantities
             // of alerts.
-            const existing = p.find(a => a.type == alert.type)
+            const existingIndex = p.findIndex(a => a.type == alert.type)
 
             // If there is an identical alert with the same message,
             // increment the duplicate counter
-            if (existing && existing.message == alert.message) {
-                return p.map(a => a.id == existing.id ? {...a, count: (a.count ?? 1) + 1} : a);
+            if (existingIndex > -1 && p[existingIndex].message == alert.message) {
+                return p.map(a => a.id == p[existingIndex].id ? {...a, count: (a.count ?? 1) + 1} : a);
             }
             
-            // If the message isn't the same, just remove the old one and add the new one
-            if (existing && existing.message != alert.message) {
-                return [
-                    ...p.filter(a => a.id !== existing.id),
-                    { ...alert, id: String(++idRef.current) }
-                ];
+            // If the message isn't the same, just mark the old one for swapping and remove it with a delay
+            if (existingIndex > -1 && p[existingIndex].message != alert.message) {
+                
+                return p.flatMap((a, i) => {
+                    return i == existingIndex ? [{...a, _isSwap: true}, { ...alert, id: String(++idRef.current) }]: [a];
+                });
             }
 
             // Else, add the alert
-            return [...p, {...alert, id: String(++idRef.current)}]
+            return [...p, {...alert, id: String((idRef.current++ % 100) + 1)}]
         });
+
+        // Call close on alerts to be swapped
+        setTimeout(() => {
+            setAlerts(prev => prev.filter(a => !a._isSwap));
+        }, 100);
     }
 
     const removeAlert = (id: string) => {

@@ -1,6 +1,6 @@
 import { FunctionComponent, JSX, useEffect, useMemo } from "react";
 import { Alert, AlertType } from "../types/general";
-import { motion } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 import Icons from "./Icons";
 
 const AlertItem = (
@@ -23,8 +23,8 @@ const AlertItem = (
     const alertIcon = useMemo(() => alertIconMap.get(alert.type ?? "success"), [alert]);
 
     useEffect(() => {
-        console.log(alert.count)
         const t = setTimeout(() => onClose(alert.id), alert.duration);
+
         return () => clearTimeout(t);
     }, [alert.count]);
 
@@ -32,13 +32,13 @@ const AlertItem = (
         <motion.div
             className="alert-wrapper"
             style={{
-                zIndex: Number(alert.id)
+                zIndex: 100000 - Number(alert.id)
             }}
             layout
             initial={{ height: 0 }}
             animate={{ height: "auto" }}
-            exit={{ height: 0 }}
-            transition={{ duration: 0.1 }}
+            exit={{ zIndex: 1, height: 0 }}
+            transition={{ duration: alert._isSwap ? 0 : 0.4 }}
         >
             <motion.div
                 className={`alert alert-${alert.type}`} 
@@ -61,8 +61,7 @@ const AlertItem = (
                         ease: "easeInOut"
                     }
                 }}
-                transition={{ delay: 0.1 }}
-                            
+                transition={{ delay: 0.1 }}      
             >
                 <div className="alert-icon">
                     {
@@ -70,10 +69,19 @@ const AlertItem = (
                     }
                 </div>
                 <div className="alert-message">{alert.message}</div>
-                {
-                    alert.count && 
-                    <div className="alert-count">{alert.count}x</div>
-                }
+                <AnimatePresence>
+                    {
+                        alert.count && 
+                        <motion.div 
+                            className="alert-count"
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0, opacity: 0 }}
+                        >
+                            {alert.count}x
+                        </motion.div>
+                    }
+                </AnimatePresence>
             </motion.div>
         </motion.div>
     )

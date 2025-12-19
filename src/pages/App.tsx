@@ -48,7 +48,11 @@ function App() {
                 setIsEntryFormVisible(false);
                 setVaultEntries(e);
             },
-            err: (e) => alert(`Couldn't create entry: ${e}`)
+            err: (e) => addAlert({
+                type: "error",
+                message: `Couldn't create entry: ${e}`,
+                duration: 5000,
+            })
         });
     }
 
@@ -57,10 +61,17 @@ function App() {
             ok: (newEntry) => {
                 setIsUpdateFormVisible(false);
                 setVaultEntries(p => p?.map(e => e.id === id ? newEntry : e) || null)
-                alert("Successful update!");
-                console.log("OKay")
+                addAlert({
+                    type: "success",
+                    message: "Update successful!",
+                    duration: 5000,
+                })
             },
-            err: (e) => alert(`Couldn't update entry: ${e}`)
+            err: (e) => addAlert({
+                type: "error",
+                message: `Couldn't update entry: ${e}`,
+                duration: 5000,
+            })
         });
     }
 
@@ -69,7 +80,11 @@ function App() {
             ok: () => {
                 setVaultEntries(p => p?.map(e => e.id === id ? {...e, favorite: !e.favorite} as Entry : e) || null)
             },
-            err: (e) => alert(`Couldn't favorite entry: ${e}`)
+            err: (e) => addAlert({
+                type: "error",
+                message: `Couldn't favourite entry: ${e}`,
+                duration: 5000,
+            })
         });
     }
 
@@ -77,8 +92,17 @@ function App() {
         deleteVaultEntry(id, {
             ok: () => {
                 setVaultEntries(p => p?.filter(e => e.id != id) || null)
+                addAlert({
+                    type: "success",
+                    message: "Deletion successful!",
+                    duration: 5000,
+                })
             },
-            err: (e) => alert(`Couldn't delete entry: ${e}`)
+            err: (e) => addAlert({
+                type: "error",
+                message: `Couldn't delete entry: ${e}`,
+                duration: 5000,
+            })
         });
     }
 

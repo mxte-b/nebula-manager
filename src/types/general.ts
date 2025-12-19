@@ -26,6 +26,7 @@ export type Alert = {
     count?: number;
     message: string;
     duration: number;
+    _isSwap?: boolean;
 }
 
 export type AlertContextType = {

@@ -7,7 +7,7 @@ const AlertManager = () => {
 
     return (
         <div className="alerts">
-            <AnimatePresence mode="sync">
+            <AnimatePresence>
                 {
                     alerts.map(a => <AlertItem alert={a} onClose={removeAlert} key={a.id} />)
                 }
