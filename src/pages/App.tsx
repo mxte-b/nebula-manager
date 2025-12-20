@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
 import "../styles/App.scss";
+import "../styles/NumberTicker.scss";
+import { useEffect, useState } from "react";
 import SideBar from "../components/SideBar";
 import { invoke } from "@tauri-apps/api/core";
 import { register } from "@tauri-apps/plugin-global-shortcut";

@@ -5,7 +5,7 @@
     z-index: 10;
     justify-content: flex-end;
     width: fit-content;
-    background: linear-gradient(to bottom, #242424 5%, transparent 25%, transparent 75%, #242424 90%);
+    mask-image: linear-gradient(to bottom, transparent 5%, black 25%, black 75%, transparent 95%);
     flex-flow: row-reverse;
     overflow: hidden;
 

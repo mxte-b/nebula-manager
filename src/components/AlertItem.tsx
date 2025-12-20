@@ -2,6 +2,7 @@ import { FunctionComponent, JSX, useEffect, useMemo } from "react";
 import { Alert, AlertType } from "../types/general";
 import { AnimatePresence, motion } from "motion/react"
 import Icons from "./Icons";
+import NumberTicker from "./NumberTicker";
 
 const AlertItem = (
 {
@@ -78,7 +79,7 @@ const AlertItem = (
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0, opacity: 0 }}
                         >
-                            {alert.count}x
+                            <NumberTicker number={alert.count} mode="auto" postfix="x" size={16}/>
                         </motion.div>
                     }
                 </AnimatePresence>
