@@ -1,4 +1,4 @@
-import { FunctionComponent, JSX, useEffect, useMemo } from "react";
+import { JSX, useEffect, useMemo } from "react";
 import { Alert, AlertType } from "../types/general";
 import { AnimatePresence, motion } from "motion/react"
 import Icons from "./Icons";
