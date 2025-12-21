@@ -36,6 +36,25 @@ export type AlertContextType = {
 }
 
 /* -------------------------------------------------------------------------- */
+/*                                   Popups                                   */
+/* -------------------------------------------------------------------------- */
+
+export type PopupType = "confirm";
+
+export type Popup = {
+    id: string;
+    type: AlertType;
+    count?: number;
+    message: string;
+    duration: number;
+    _isSwap?: boolean;
+}
+
+export type PopupContextType = {
+       
+}
+
+/* -------------------------------------------------------------------------- */
 /*                           Vault types and helpers                          */
 /* -------------------------------------------------------------------------- */
 export type Entry = {

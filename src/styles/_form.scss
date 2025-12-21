@@ -23,6 +23,7 @@
     border: 2px solid var(--border-accent);
     border-radius: 10px;
     background-color: var(--bg-1);
+    font-size: 15px;
     will-change: opacity, scale;
     overflow: hidden;
 
@@ -52,7 +53,7 @@
     > .form-group {
         position: relative;
         height: 40px;
-        border: 2px solid var(--border-1);
+        border: 1px solid var(--border-1);
         border-radius: 10px;
         transition: background-color 0.2s ease;
 
@@ -99,9 +100,10 @@
                 border: 0;
                 background-color: transparent;
                 color: var(--fg);
+                font-family: inherit;
+                font-size: 15px;
                 outline: none;
                 padding-right: 0.5rem;
-                font: inherit;
             }
         }
 
@@ -123,20 +125,56 @@
 
         width: 30px;
         height: 30px;
-        border: 2px solid var(--border-accent);
-        border-radius: 0.5rem;
-        background-color: var(--bg-accent);
-        color: var(--fg-accent);
+        border: 2px solid transparent;
+        border-radius: 50%;
+        color: var(--fg-secondary);
         transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, scale 0.2s ease;
+        padding-top: 1px;
         cursor: pointer;
 
         &:hover {
-            background-color: var(--accent);
+            background-color: var(--bga-1);
             color: var(--fg);
-            border-color: var(--accent);
         }
 
         &:active {
+            scale: 0.95;
+        }
+    }
+
+    .button-group {
+        @include flex($justify: space-between, $align: flex-end);
+
+        gap: 1rem;
+        flex-grow: 1;
+
+        & > button {
+            height: 35px;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            background-color: var(--bg-2);
+            color: var(--fg-secondary);
+            transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, scale 0.2s ease;
+            will-change: scale;
+            flex-grow: 1;
+        }
+
+        & > button.prominent {
+            background-color: var(--bg-accent);
+            color: var(--fg-accent);
+        }
+
+        & > button:hover {
+            color: var(--fg);
+            border-color: var(--border-1);
+        }
+
+        & > button.prominent:hover {
+            color: var(--fg);
+            border-color: var(--border-accent);
+        }
+
+        & > button:active {
             scale: 0.95;
         }
     }

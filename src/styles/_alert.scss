@@ -19,6 +19,7 @@ $color-warning: rgb(255 239 146);
     position: absolute;
     top: 0;
     left: 50%;
+    z-index: 10000;
     transform: translateX(-50%)
 }
 

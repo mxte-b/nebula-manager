@@ -169,17 +169,3 @@ section.content {
         font-weight: bold;
     }
 }
-
-.button-group {
-    @include flex($justify: flex-start);
-
-    gap: 0.5rem;
-    height: 30px;
-
-    > button {
-        height: 100%;
-        border: 2px solid transparent;
-        border-radius: 5px;
-        flex-grow: 1;
-    }
-}
