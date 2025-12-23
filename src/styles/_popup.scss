@@ -61,26 +61,4 @@
     & > .popup-message {
         color: var(--fg-secondary);
     }
-
-    .popup-close {
-        @include flex;
-
-        width: 30px;
-        height: 30px;
-        border: 2px solid transparent;
-        border-radius: 50%;
-        color: var(--fg-secondary);
-        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, scale 0.2s ease;
-        padding-top: 1px;
-        cursor: pointer;
-
-        &:hover {
-            background-color: var(--bga-1);
-            color: var(--fg);
-        }
-
-        &:active {
-            scale: 0.95;
-        }
-    }
 }

@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { Entry, UpdateEntry } from "../types/general";
 import { AnimatePresence, motion } from "motion/react";
 import Icons from "./Icons";
+import CloseButton from "./CloseButton";
 
 const UpdateForm = ({
     entry,
@@ -49,9 +50,7 @@ const UpdateForm = ({
                         <div className="form-header">
                             <div className="title-icon"><Icons.Key /></div>
                             <div className="form-title">Edit Entry</div>
-                            <button type="button" className="form-close" onClick={onClose}>
-                                <Icons.X />
-                            </button>
+                            <CloseButton onClick={onClose} />
                         </div>
 
                         <div className="form-group">

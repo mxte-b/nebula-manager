@@ -31,6 +31,11 @@ const EntryPasswordField = (
     const { addAlert } = useAlert();
 
     const handlePasswordCopy = (id: string) => {
+        addAlert({
+            type: "success",
+            message: "Password copied!",
+            duration: 20000
+        })
     }
 
     const handlePasswordShow = (next: boolean) => {

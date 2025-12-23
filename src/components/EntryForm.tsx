@@ -3,6 +3,7 @@ import { Entry } from "../types/general";
 import { AnimatePresence, motion } from "motion/react"
 import { v4 as uuidv4 } from 'uuid';
 import Icons from "./Icons";
+import CloseButton from "./CloseButton";
 
 const EntryForm = (
     { 
@@ -65,9 +66,7 @@ const EntryForm = (
                                 <div className="form-title">
                                     New Entry
                                 </div>
-                                <button type="button" className="form-close" onClick={onClose}>
-                                    <Icons.X />
-                                </button>
+                                <CloseButton onClick={onClose} />
                             </div>
 
                             <div className="form-group">

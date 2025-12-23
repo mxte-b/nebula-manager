@@ -2,6 +2,7 @@ import { useConfirmPopup } from "../contexts/confirmPopup";
 import { ConfirmPopup } from "../types/general";
 import { motion } from "motion/react";
 import Icons from "./Icons";
+import CloseButton from "./CloseButton";
 
 const ConfirmPopupItem = ({ popup }: { popup: ConfirmPopup }) => {
 
@@ -34,9 +35,7 @@ const ConfirmPopupItem = ({ popup }: { popup: ConfirmPopup }) => {
                         }
                     </div>
                     <div className="popup-title">{popup.title}</div>
-                    <button type="button" className="popup-close" onClick={closePopup}>
-                        <Icons.X />
-                    </button>
+                    <CloseButton onClick={closePopup} />
                 </div>
                 <div className="popup-message">
                     {popup.message}

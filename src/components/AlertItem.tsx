@@ -1,8 +1,10 @@
-import { JSX, useEffect, useMemo } from "react";
+import { JSX, useEffect, useMemo, useRef } from "react";
 import { Alert, AlertType } from "../types/general";
 import { AnimatePresence, motion } from "motion/react"
 import Icons from "./Icons";
 import NumberTicker from "./NumberTicker";
+import AlertProgress from "./AlertProgress";
+import CloseButton from "./CloseButton";
 
 const AlertItem = (
 {
@@ -23,10 +25,15 @@ const AlertItem = (
 
     const alertIcon = useMemo(() => alertIconMap.get(alert.type ?? "success"), [alert]);
 
-    useEffect(() => {
-        const t = setTimeout(() => onClose(alert.id), alert.duration);
+    const timeoutRef = useRef<NodeJS.Timeout>(undefined);
 
-        return () => clearTimeout(t);
+    useEffect(() => {
+        timeoutRef.current = setTimeout(() => onClose(alert.id), alert.duration);
+
+        return () => {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = undefined;
+        }
     }, [alert.count]);
 
     return (
@@ -70,6 +77,13 @@ const AlertItem = (
                     }
                 </div>
                 <div className="alert-message">{alert.message}</div>
+                <CloseButton onClick={() => {
+                    clearTimeout(timeoutRef.current);
+                    timeoutRef.current = undefined;
+                    onClose(alert.id);
+                }}/>
+
+                <AlertProgress alert={alert} />
                 <AnimatePresence>
                     {
                         alert.count && 

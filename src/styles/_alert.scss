@@ -1,7 +1,7 @@
 @use 'mixins' as *;
 
 $bg-default: rgb(32 32 32);
-$bg-success: rgb(26 63 26);
+$bg-success: rgb(12 34 12);
 $bg-error: rgb(39 25 25);
 $bg-warning: rgb(51 48 32);
 $border-default: rgb(65 65 65);
@@ -24,18 +24,20 @@ $color-warning: rgb(255 239 146);
 }
 
 .alert {
-    @include flex;
+    @include flex($justify: flex-start);
 
     position: relative;
     gap: 1rem;
+    min-width: 250px;
     max-width: 350px;
-    padding: 1rem;
+    padding: 0.5rem;
     border: 1px solid $border-default;
     border-radius: 5px;
     background-color: $bg-default;
     color: $color-default;
     font-family: 'JetBrains Mono', monospace;
     font-size: 14px;
+    padding-left: 1rem;
     margin-top: 1rem;
 
     &-icon {
@@ -49,11 +51,15 @@ $color-warning: rgb(255 239 146);
         height: 100%;
     }
 
+    &-message {
+        flex-grow: 1
+    }
+
     &-count {
         @include flex;
 
         position: absolute;
-        top: -0.5rem;
+        top: -0.8rem;
         right: -0.5rem;
         padding: 0.2rem 0.4rem;
         border-radius: 5px;
@@ -67,21 +73,51 @@ $color-warning: rgb(255 239 146);
         border-color: inherit;
     }
 
+    &-progress-track {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        border-radius: 0 0 5px 5px;
+        overflow: hidden;
+    }
+    
+    &-progress {
+        display: block;
+        height: 100%;
+        background-color: $color-default;
+        will-change: transform;
+        transform-origin: top left;
+    }
+
     &.alert-success {
         background-color: $bg-success;
         color: $color-success;
         border-color: $border-success;
+
+        .alert-progress {
+            background-color: $color-success;
+        }
     }
 
     &.alert-warning {
         background-color: $bg-warning;
         color: $color-warning;
         border-color: $border-warning;
+        
+        .alert-progress {
+            background-color: $color-warning;
+        }
     }
 
     &.alert-error {
         background-color: $bg-error;
         color: $color-error;
         border-color: $border-error;
+        
+        .alert-progress {
+            background-color: $color-error;
+        }
     }
 }
