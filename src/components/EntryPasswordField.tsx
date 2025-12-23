@@ -31,21 +31,11 @@ const EntryPasswordField = (
     const { addAlert } = useAlert();
 
     const handlePasswordCopy = (id: string) => {
-        addAlert({
-            type: "error",
-            message: `Couldn't get password`,
-            duration: 2000,
-        })
     }
 
     const handlePasswordShow = (next: boolean) => {
         if (isAnimating.current) return;
 
-        addAlert({
-            type: "success",
-            message: `Couldn't get password`,
-            duration: 2000,
-        })
         if (next) {
             getVaultEntryPassword(id, {
                 ok: setPassword,

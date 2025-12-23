@@ -20,7 +20,7 @@
     width: 400px;
     height: 350px;
     padding: 1rem;
-    border: 2px solid var(--border-accent);
+    border: 1px solid var(--border-accent-1);
     border-radius: 10px;
     background-color: var(--bg-1);
     font-size: 15px;
@@ -54,10 +54,10 @@
         position: relative;
         height: 40px;
         border: 1px solid var(--border-1);
-        border-radius: 10px;
+        border-radius: 5px;
         transition: background-color 0.2s ease;
 
-        &:hover, &:focus-within {
+        &:hover, &:focus-within, &:has(input:not(:placeholder-shown)){
             background-color: var(--bg-2);
         }
 
@@ -142,40 +142,53 @@
         }
     }
 
-    .button-group {
-        @include flex($justify: space-between, $align: flex-end);
+}
 
-        gap: 1rem;
+.button-group {
+    @include flex($justify: space-between, $align: flex-end);
+
+    gap: 1rem;
+    flex-grow: 1;
+
+    & > button {
+        height: 35px;
+        border: 2px solid transparent;
+        border-radius: 5px;
+        background-color: var(--bg-3);
+        color: var(--fg-secondary);
+        transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, scale 0.2s ease;
+        will-change: scale;
         flex-grow: 1;
+        flex-basis: 0;
+    }
 
-        & > button {
-            height: 35px;
-            border: 2px solid transparent;
-            border-radius: 5px;
-            background-color: var(--bg-2);
-            color: var(--fg-secondary);
-            transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, scale 0.2s ease;
-            will-change: scale;
-            flex-grow: 1;
-        }
+    & > button:hover {
+        color: var(--fg);
+        border-color: var(--border-1);
+    }
 
-        & > button.prominent {
-            background-color: var(--bg-accent);
-            color: var(--fg-accent);
-        }
+    & > button.prominent {
+        background-color: var(--bg-accent);
+        color: var(--fg-accent);
+    }
 
-        & > button:hover {
-            color: var(--fg);
-            border-color: var(--border-1);
-        }
+    & > button.dangerous {
+        background-color: var(--bga-danger);
+        color: var(--fg-danger);
+    }
 
-        & > button.prominent:hover {
-            color: var(--fg);
-            border-color: var(--border-accent);
-        }
+    & > button:active {
+        scale: 0.95;
+    }
 
-        & > button:active {
-            scale: 0.95;
-        }
+    & > button.prominent:hover {
+        color: var(--fg-accent);
+        border-color: var(--border-accent);
+    }
+
+    & > button.dangerous:hover {
+        background-color: var(--bga-danger-1);
+        color: var(--fg);
+        border-color: var(--border-danger);
     }
 }

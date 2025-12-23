@@ -16,6 +16,7 @@ import useVault from "../hooks/useVault";
 import UpdateForm from "../components/UpdateForm";
 import { useAlert } from "../contexts/alert";
 import AlertManager from "../components/AlertManager";
+import PopupManager from "../components/ConfirmPopupManager";
 
 await register("CommandOrControl+K", (e) => {
     // Ignore key release
@@ -117,14 +118,6 @@ function App() {
             err: (e) => alert(`Failed to get vault entries: ${e}`)
         });
 
-        setTimeout(() => {
-            addAlert({
-                type: "success",
-                message: "Almafa",
-                duration: 5000
-            });
-        }, 1000);
-
         return () => window.removeEventListener("contextmenu", prevent);
     }, []);
 
@@ -175,6 +168,7 @@ function App() {
             />
 
             <AlertManager />
+            <PopupManager />
         </main>
     );
 }

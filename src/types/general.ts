@@ -1,4 +1,5 @@
 import { JSX } from "react";
+import Icons from "../components/Icons";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Router                                   */
@@ -39,19 +40,19 @@ export type AlertContextType = {
 /*                                   Popups                                   */
 /* -------------------------------------------------------------------------- */
 
-export type PopupType = "confirm";
-
-export type Popup = {
-    id: string;
-    type: AlertType;
-    count?: number;
-    message: string;
-    duration: number;
-    _isSwap?: boolean;
+export type ConfirmPopup = {
+    title: string,
+    message: string,
+    dangerous?: boolean,
+    icon?: keyof typeof Icons
+    onCancel: () => void,
+    onConfirm: () => void,
 }
 
-export type PopupContextType = {
-       
+export type ConfirmPopupContextType = {
+    popup: ConfirmPopup | null,
+    openPopup: (popup: ConfirmPopup) => void,
+    closePopup: () => void,
 }
 
 /* -------------------------------------------------------------------------- */

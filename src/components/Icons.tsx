@@ -2,6 +2,7 @@ import Bookmark from "../assets/bookmark.svg?react"
 import CheckCircleFill from "../assets/check-circle-fill.svg?react"
 import Copy from "../assets/copy.svg?react"
 import ExclamationCircleFill from "../assets/exclamation-circle-fill.svg?react"
+import ExclamationTriangle from "../assets/exclamation-triangle.svg?react"
 import Eye from "../assets/eye.svg?react"
 import EyeFill from "../assets/eye-fill.svg?react"
 import EyeSlash from "../assets/eye-slash.svg?react"
@@ -30,6 +31,7 @@ const Icons = {
     CheckCircleFill,
     Copy,
     ExclamationCircleFill,
+    ExclamationTriangle,
     Eye,
     EyeFill,
     EyeSlash,

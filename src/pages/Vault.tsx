@@ -6,6 +6,7 @@ import ToggleableIcon from "../components/ToggleableIcon";
 import Footer from "../components/Footer";
 import HoverableIcon from "../components/HoverableIcon";
 import Tooltip from "../components/Tooltip";
+import { useConfirmPopup } from "../contexts/confirmPopup";
 
 const Vault = (
     { 
@@ -20,6 +21,8 @@ const Vault = (
         onEntryFavorite: (id: string) => void,
     }
 ) => {
+
+    const { openPopup, closePopup } = useConfirmPopup();
 
     return (
         <>
@@ -99,7 +102,16 @@ const Vault = (
                                         <HoverableIcon
                                             hoverFg="#ec3e3eff"
                                             hoverBg="#ec3e3e18"
-                                            onClick={() => onEntryDelete(e.id)}
+                                            onClick={() => {
+                                                openPopup({
+                                                    title: "Are you sure?",
+                                                    message: "This will permanently delete the entry.",
+                                                    dangerous: true,
+                                                    icon: "ExclamationTriangle",
+                                                    onCancel: closePopup,
+                                                    onConfirm: () => onEntryDelete(e.id)
+                                                })
+                                            }}
                                         >
                                             <Icons.TrashFill />
                                         </HoverableIcon>
