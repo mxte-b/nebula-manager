@@ -5,7 +5,7 @@ use uuid::Uuid;
 use crate::vault::Entry;
 use crate::vault::entry::{EntryPublic, UpdateEntry};
 
-const VERSION: &str = "0.5.0";
+const VERSION: &str = "0.6.0";
 
 pub struct Vault {
     version: String,
@@ -38,6 +38,7 @@ impl Vault {
 
     pub fn load(&mut self) -> Result<(), String> {
         if self.is_initialized() {
+            // Trigger unlock screen
 
             let file_content = std::fs::read_to_string(self.path.clone())
                 .map_err(|e| format!("Couldn't read vault file: {}", e))?;
@@ -54,6 +55,8 @@ impl Vault {
             self.loaded = true;
         }
         else {
+            // Trigger setup screen
+
             self.loaded = true;
         }
 
@@ -73,7 +76,9 @@ impl Vault {
         std::fs::write(self.path.clone(), content).map_err(|e| e.to_string())
     }
     
-    // pub fn set_master_pw() {}
+    pub fn set_master_pw(&self, password: String) {
+        println!("Setting master password to: {}", password);
+    }
     // pub fn unlock(&mut self) {
     //     println!("Nothing to unlock yet. :)")
     // }
@@ -81,7 +86,7 @@ impl Vault {
 
     // // C(reate)
     pub fn new_entry(&mut self, entry: &Entry) {
-        self.entries.push(entry.clone());
+        self.entries.push(entry.clone())
     }
 
     // // R(read)

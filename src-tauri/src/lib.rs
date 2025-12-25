@@ -81,7 +81,7 @@ pub fn run() {
 
             // Create vault
             let vault = Arc::new(Mutex::new(
-                Vault::new(app_data_dir.join("vault.json"))
+                Vault::new(app_data_dir.join("vault_encrypted.json"))
             ));
 
             println!("Save location: {}", app_data_dir.to_str().unwrap());
