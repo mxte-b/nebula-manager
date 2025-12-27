@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom/client";
-import AppWrapper from "./pages/AppWrapper";
+import Root from "./pages/Root";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <AppWrapper />
+  <Root />
 );

@@ -58,6 +58,15 @@ export type ConfirmPopupContextType = {
 /* -------------------------------------------------------------------------- */
 /*                           Vault types and helpers                          */
 /* -------------------------------------------------------------------------- */
+export type VaultState = "Uninitialized" | "Loaded";
+
+export type VaultStateContextType = {
+    state: VaultState | null,
+    loading: boolean,
+    error: string | null,
+    refreshState: () => void,
+}
+
 export type Entry = {
     id: string,
     createdAt: Date,

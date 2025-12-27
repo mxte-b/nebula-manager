@@ -7,7 +7,7 @@ pub mod vault;
 use uuid::Uuid;
 pub use vault::Vault;
 
-use crate::vault::entry::{ EntryPublic, UpdateEntry };
+use crate::vault::{entry::{ EntryPublic, UpdateEntry }, vault::VaultState};
 
 // Toggle search overlay
 #[tauri::command]
@@ -32,6 +32,12 @@ fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> R
     let mut v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
     v.new_entry(&entry);
     v.save().map_err(|e| format!("Failed to save vault: {}", e))
+}
+
+#[tauri::command]
+fn vault_get_state(vault: State<Arc<Mutex<Vault>>>) -> Result<VaultState, String> {
+    let v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    Ok(v.get_state())
 }
 
 #[tauri::command]
@@ -106,6 +112,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             toggle_overlay,
             vault_create_entry,
+            vault_get_state,
             vault_get_entries,
             vault_get_entry_password,
             vault_update_entry,

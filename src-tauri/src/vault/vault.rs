@@ -7,11 +7,18 @@ use crate::vault::entry::{EntryPublic, UpdateEntry};
 
 const VERSION: &str = "0.6.0";
 
+#[derive(Serialize, Clone)]
+pub enum VaultState {
+    Uninitialized,
+    Loaded,
+    Error(String)
+}
+
 pub struct Vault {
     version: String,
     entries: Vec<Entry>,
     path: PathBuf,
-    loaded: bool,
+    state: VaultState,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -26,19 +33,16 @@ impl Vault {
             version: String::from(VERSION),
             entries: Vec::new(), 
             path: path,
-            loaded: false,
+            state: VaultState::Uninitialized
         }
     }
 
     pub fn is_initialized(&self) -> bool {
-        self.path
-        .try_exists()
-        .unwrap_or(false)
+        self.path.exists()
     }
 
     pub fn load(&mut self) -> Result<(), String> {
         if self.is_initialized() {
-            // Trigger unlock screen
 
             let file_content = std::fs::read_to_string(self.path.clone())
                 .map_err(|e| format!("Couldn't read vault file: {}", e))?;
@@ -52,12 +56,7 @@ impl Vault {
 
             // Load from vault file
             self.entries = save.vault;
-            self.loaded = true;
-        }
-        else {
-            // Trigger setup screen
-
-            self.loaded = true;
+            self.state = VaultState::Loaded;
         }
 
         Ok(())
@@ -68,17 +67,16 @@ impl Vault {
     }
 
     pub fn save(&self) -> Result<(), String> {
-        if !self.loaded {
+        if !matches!(self.state, VaultState::Loaded) {
             return Err("Vault not loaded or incompatible version, cannot save.".into());
         }
+
         let content = serde_json::to_string_pretty(&self.convert_to_savefile()).map_err(|e| e.to_string())?;
 
         std::fs::write(self.path.clone(), content).map_err(|e| e.to_string())
     }
     
-    pub fn set_master_pw(&self, password: String) {
-        println!("Setting master password to: {}", password);
-    }
+    // pub fn set_master_pw() {}
     // pub fn unlock(&mut self) {
     //     println!("Nothing to unlock yet. :)")
     // }
@@ -86,10 +84,14 @@ impl Vault {
 
     // // C(reate)
     pub fn new_entry(&mut self, entry: &Entry) {
-        self.entries.push(entry.clone())
+        self.entries.push(entry.clone());
     }
 
     // // R(read)
+    pub fn get_state(&self) -> VaultState {
+        self.state.clone()
+    }
+
     pub fn get_entries(&self) -> Vec<EntryPublic> {
         self.entries.iter().map(EntryPublic::from).collect()
     }

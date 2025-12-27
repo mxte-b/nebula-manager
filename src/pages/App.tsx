@@ -11,7 +11,7 @@ import Settings from "./Settings";
 import About from "./About";
 import Icons from "../components/Icons";
 import EntryForm from "../components/EntryForm";
-import { Entry, UpdateEntry } from "../types/general";
+import { Entry, UpdateEntry, VaultState } from "../types/general";
 import useVault from "../hooks/useVault";
 import UpdateForm from "../components/UpdateForm";
 import { useAlert } from "../contexts/alert";
@@ -29,10 +29,12 @@ function App() {
     const [isEntryFormVisible, setIsEntryFormVisible] = useState<boolean>(false);
     const [isUpdateFormVisible, setIsUpdateFormVisible] = useState<boolean>(false);
 
+    const [vaultState, setVaultState] = useState<VaultState | null>(null);
     const [vaultEntries, setVaultEntries] = useState<Entry[] | null>(null);
     const [entryToUpdate, setEntryToUpdate] = useState<string>("");
 
     const { 
+        getVaultState,
         getVaultEntries,
         createVaultEntry,
         updateVaultEntry,
@@ -113,9 +115,22 @@ function App() {
         const prevent = (e: Event) => e.preventDefault()
         window.addEventListener("contextmenu", prevent);
 
+        getVaultState({
+            ok: setVaultState,
+            err: (e) => addAlert({
+                type: "error",
+                message: `Couldn't get vault state: ${e}`,
+                duration: 5000
+            })
+        })
+
         getVaultEntries({
             ok: setVaultEntries,
-            err: (e) => alert(`Failed to get vault entries: ${e}`)
+            err: (e) => addAlert({
+                type: "error",
+                message: `Couldn't get vault entries: ${e}`,
+                duration: 5000
+            })
         });
 
         return () => window.removeEventListener("contextmenu", prevent);
@@ -166,6 +181,8 @@ function App() {
                 onSubmit={handleEntryUpdateSubmit}
                 onClose={() => setIsUpdateFormVisible(false)}
             />
+
+            <div>STATE: { vaultState }</div>
 
             <AlertManager />
             <PopupManager />

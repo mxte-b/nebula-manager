@@ -1,6 +1,6 @@
 const Footer = () => {
     return (
-         <footer>
+        <footer className="app-footer">
             &copy; 2025 Nebula Manager<br/>
             Made with ❤️ by mxte_b
         </footer>

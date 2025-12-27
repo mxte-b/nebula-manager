@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core"
-import { Entry, EntryDTO, Err, Ok, Result, toEntry, toEntryDTO, UpdateEntry } from "../types/general";
+import { Entry, EntryDTO, Err, Ok, Result, toEntry, toEntryDTO, UpdateEntry, VaultState } from "../types/general";
 
 /**
  * Custom hook for interacting with the Vault backend.
@@ -9,6 +9,26 @@ import { Entry, EntryDTO, Err, Ok, Result, toEntry, toEntryDTO, UpdateEntry } fr
  */
 const useVault = () => {
     
+    const getVaultState = async (
+        callbacks ?: {
+            ok ?: (r: VaultState) => void;
+            err ?: (e: string) => void;
+        }
+    ): Promise<Result<VaultState, string>> => {
+        try {
+            const result = await invoke("vault_get_state") as VaultState;
+
+            callbacks?.ok?.(result);
+            return Ok(result);
+        }
+        catch (e) {
+            const error = e instanceof Error ? e.message : String(e);
+
+            callbacks?.err?.(error);
+            return Err(error);
+        }
+    }
+
     /**
      * Fetch all vault entries from the backend.
      * 
@@ -237,6 +257,7 @@ const useVault = () => {
     }
 
     return {
+        getVaultState,
         getVaultEntries,
         getVaultEntryPassword,
         createVaultEntry,
