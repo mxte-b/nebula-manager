@@ -1,24 +1,30 @@
-const SetupScreen = () => {
+import { JSX, useState } from "react";
+import SetupWelcomeStep from "../components/SetupWelcomeStep";
+import SetupCreateStep from "../components/SetupCreateStep";
+import SetupImportStep from "../components/SetupImportStep";
+import { SetupPhase } from "../types/general";
+import { AnimatePresence } from "motion/react";
+import SetupDoneStep from "../components/SetupDoneStep";
+
+const SetupScreen = ({ onSetupCompleted }: { onSetupCompleted: () => void }) => {
+
+    const [phase, setPhase] = useState<SetupPhase>("welcome");
+
+    const home = () => setPhase("welcome");
+    const done = () => setPhase("done");
+
+    const steps: Record<SetupPhase, JSX.Element> = {
+        welcome: <SetupWelcomeStep key={"welcome"} next={setPhase} />,
+        create: <SetupCreateStep key={"create"} next={done} back={home} />,
+        import: <SetupImportStep key={"import"} next={done} back={home} />,
+        done: <SetupDoneStep key={"done"} onDone={onSetupCompleted} />
+    }
+
     return (
         <div className="setup-screen">
-            <header className="setup-header">
-                <h1>Set up your vault</h1>
-                <p>Create a new vault or import an existing one to get started.</p>
-            </header>
-
-            <main className="setup-actions">
-                <button className="primary">
-                    Create new vault
-                </button>
-
-                <button className="secondary">
-                    Import an existing vault
-                </button>
-            </main>
-
-            <footer className="setup-footer">
-                Your data is encrypted locally and never leaves your device.
-            </footer>
+            <AnimatePresence mode="wait">
+                { steps[phase] }
+            </AnimatePresence>
         </div>
     )
 }

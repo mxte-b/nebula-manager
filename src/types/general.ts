@@ -2,6 +2,27 @@ import { JSX } from "react";
 import Icons from "../components/Icons";
 
 /* -------------------------------------------------------------------------- */
+/*                                    Setup                                   */
+/* -------------------------------------------------------------------------- */
+export type SetupPhase = "welcome" | "create" | "import" | "done";
+
+export interface PhaseEndpointProps {
+    onComplete: () => void,
+    back: () => void,
+}
+
+export interface RootPhaseProps {
+    next: (phase: SetupPhase) => void
+}
+
+// PhaseProps has no params for next because we pre-define the routes
+export interface PhaseProps {
+    next: () => void,
+    back: () => void,
+}
+
+
+/* -------------------------------------------------------------------------- */
 /*                                   Router                                   */
 /* -------------------------------------------------------------------------- */
 export type Page = "vault" | "export" | "settings" | "about";
