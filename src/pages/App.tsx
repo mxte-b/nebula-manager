@@ -14,9 +14,9 @@ import EntryForm from "../components/EntryForm";
 import { Entry, UpdateEntry, VaultState } from "../types/general";
 import useVault from "../hooks/useVault";
 import UpdateForm from "../components/UpdateForm";
-import { useAlert } from "../contexts/alert";
-import AlertManager from "../components/AlertManager";
-import PopupManager from "../components/ConfirmPopupManager";
+import { useToast } from "../contexts/toast";
+import ToastManager from "../components/ToastManager";
+import PopupManager from "../components/ConfirmModalManager";
 
 await register("CommandOrControl+K", (e) => {
     // Ignore key release
@@ -43,8 +43,8 @@ function App() {
     } = useVault();
 
     const {
-        addAlert
-    } = useAlert();
+        addToast
+    } = useToast();
 
     const handleNewEntrySubmit = async (entry: Entry) => {
         createVaultEntry(entry, {
@@ -52,7 +52,7 @@ function App() {
                 setIsEntryFormVisible(false);
                 setVaultEntries(e);
             },
-            err: (e) => addAlert({
+            err: (e) => addToast({
                 type: "error",
                 message: `Couldn't create entry: ${e}`,
                 duration: 5000,
@@ -65,13 +65,13 @@ function App() {
             ok: (newEntry) => {
                 setIsUpdateFormVisible(false);
                 setVaultEntries(p => p?.map(e => e.id === id ? newEntry : e) || null)
-                addAlert({
+                addToast({
                     type: "success",
                     message: "Update successful!",
                     duration: 5000,
                 })
             },
-            err: (e) => addAlert({
+            err: (e) => addToast({
                 type: "error",
                 message: `Couldn't update entry: ${e}`,
                 duration: 5000,
@@ -84,7 +84,7 @@ function App() {
             ok: () => {
                 setVaultEntries(p => p?.map(e => e.id === id ? {...e, favorite: !e.favorite} as Entry : e) || null)
             },
-            err: (e) => addAlert({
+            err: (e) => addToast({
                 type: "error",
                 message: `Couldn't favourite entry: ${e}`,
                 duration: 5000,
@@ -96,13 +96,13 @@ function App() {
         deleteVaultEntry(id, {
             ok: () => {
                 setVaultEntries(p => p?.filter(e => e.id != id) || null)
-                addAlert({
+                addToast({
                     type: "success",
                     message: "Deletion successful!",
                     duration: 5000,
                 })
             },
-            err: (e) => addAlert({
+            err: (e) => addToast({
                 type: "error",
                 message: `Couldn't delete entry: ${e}`,
                 duration: 5000,
@@ -117,7 +117,7 @@ function App() {
 
         getVaultState({
             ok: setVaultState,
-            err: (e) => addAlert({
+            err: (e) => addToast({
                 type: "error",
                 message: `Couldn't get vault state: ${e}`,
                 duration: 5000
@@ -126,7 +126,7 @@ function App() {
 
         getVaultEntries({
             ok: setVaultEntries,
-            err: (e) => addAlert({
+            err: (e) => addToast({
                 type: "error",
                 message: `Couldn't get vault entries: ${e}`,
                 duration: 5000
@@ -184,7 +184,7 @@ function App() {
 
             <div>STATE: { vaultState }</div>
 
-            <AlertManager />
+            <ToastManager />
             <PopupManager />
         </main>
     );

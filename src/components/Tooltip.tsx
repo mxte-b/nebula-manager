@@ -77,7 +77,7 @@ const Tooltip = ({
             sectionRef.current = tooltipWrapperRef.current.closest("section.content");
 
             if (!sectionRef.current) {
-                alert("No section element found");
+                toast("No section element found");
                 return;
             }
         }

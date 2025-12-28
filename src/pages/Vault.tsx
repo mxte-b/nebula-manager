@@ -6,7 +6,7 @@ import ToggleableIcon from "../components/ToggleableIcon";
 import Footer from "../components/Footer";
 import HoverableIcon from "../components/HoverableIcon";
 import Tooltip from "../components/Tooltip";
-import { useConfirmPopup } from "../contexts/confirmPopup";
+import { useConfirmModal } from "../contexts/confirmModal";
 
 const Vault = (
     { 
@@ -22,7 +22,7 @@ const Vault = (
     }
 ) => {
 
-    const { openPopup, closePopup } = useConfirmPopup();
+    const { openPopup, closePopup } = useConfirmModal();
 
     return (
         <>
@@ -38,7 +38,7 @@ const Vault = (
             </div>
 
             <h2>Security overview</h2>
-            <div>0 alerts</div>
+            <div>0 toasts</div>
 
             <h2>All - {entries?.length} entries</h2>
             <table className="entries" cellSpacing={0}>

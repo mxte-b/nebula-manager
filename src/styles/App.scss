@@ -3,7 +3,7 @@
 @use 'vault';
 @use 'entry-form';
 @use 'form';
-@use 'alert';
+@use 'toast';
 @use 'mixins' as *;
 
 .dashboard {

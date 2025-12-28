@@ -1,56 +1,56 @@
 import { JSX, useEffect, useMemo, useRef } from "react";
-import { Alert, AlertType } from "../types/general";
+import { Toast, ToastType } from "../types/general";
 import { AnimatePresence, motion } from "motion/react"
 import Icons from "./Icons";
 import NumberTicker from "./NumberTicker";
-import AlertProgress from "./AlertProgress";
+import ToastProgress from "./ToastProgress";
 import CloseButton from "./CloseButton";
 
-const AlertItem = (
+const ToastItem = (
 {
-    alert,
+    toast,
     onClose
 }
 :{
-    alert: Alert,
+    toast: Toast,
     onClose: (id: string) => void
 }
 ) => {
 
-    const alertIconMap: Map<AlertType, JSX.Element> = new Map<AlertType, JSX.Element>([
+    const toastIconMap: Map<ToastType, JSX.Element> = new Map<ToastType, JSX.Element>([
         ["success", <Icons.CheckCircleFill />],
         ["warning", <Icons.ExclamationCircleFill />],
         ["error", <Icons.XCircleFill />],
     ]);
 
-    const alertIcon = useMemo(() => alertIconMap.get(alert.type ?? "success"), [alert]);
+    const toastIcon = useMemo(() => toastIconMap.get(toast.type ?? "success"), [toast]);
 
     const timeoutRef = useRef<NodeJS.Timeout>(undefined);
 
     useEffect(() => {
-        timeoutRef.current = setTimeout(() => onClose(alert.id), alert.duration);
+        timeoutRef.current = setTimeout(() => onClose(toast.id), toast.duration);
 
         return () => {
             clearTimeout(timeoutRef.current);
             timeoutRef.current = undefined;
         }
-    }, [alert.count]);
+    }, [toast.count]);
 
     return (
         <motion.div
-            className="alert-wrapper"
+            className="toast-wrapper"
             style={{
-                zIndex: 100000 - Number(alert.id)
+                zIndex: 100000 - Number(toast.id)
             }}
             layout
             initial={{ height: 0 }}
             animate={{ height: "auto" }}
             exit={{ zIndex: 1, height: 0 }}
-            transition={{ duration: alert._isSwap ? 0 : 0.4 }}
+            transition={{ duration: toast._isSwap ? 0 : 0.4 }}
         >
             <motion.div
-                className={`alert alert-${alert.type}`} 
-                id={alert.id}
+                className={`toast toast-${toast.type}`} 
+                id={toast.id}
                 initial={{ 
                     opacity: 0,
                     y: -50, 
@@ -71,29 +71,29 @@ const AlertItem = (
                 }}
                 transition={{ delay: 0.1 }}      
             >
-                <div className="alert-icon">
+                <div className="toast-icon">
                     {
-                        alertIcon
+                        toastIcon
                     }
                 </div>
-                <div className="alert-message">{alert.message}</div>
+                <div className="toast-message">{toast.message}</div>
                 <CloseButton onClick={() => {
                     clearTimeout(timeoutRef.current);
                     timeoutRef.current = undefined;
-                    onClose(alert.id);
+                    onClose(toast.id);
                 }}/>
 
-                <AlertProgress alert={alert} />
+                <ToastProgress toast={toast} />
                 <AnimatePresence>
                     {
-                        alert.count && 
+                        toast.count && 
                         <motion.div 
-                            className="alert-count"
+                            className="toast-count"
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0, opacity: 0 }}
                         >
-                            <NumberTicker number={alert.count} mode="auto" postfix="x" size={16}/>
+                            <NumberTicker number={toast.count} mode="auto" postfix="x" size={16}/>
                         </motion.div>
                     }
                 </AnimatePresence>
@@ -102,4 +102,4 @@ const AlertItem = (
     )
 }
 
-export default AlertItem;
+export default ToastItem;

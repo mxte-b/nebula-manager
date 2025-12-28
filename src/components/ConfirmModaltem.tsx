@@ -1,12 +1,12 @@
-import { useConfirmPopup } from "../contexts/confirmPopup";
-import { ConfirmPopup } from "../types/general";
+import { useConfirmModal } from "../contexts/confirmModal";
+import { ConfirmModal } from "../types/general";
 import { motion } from "motion/react";
 import Icons from "./Icons";
 import CloseButton from "./CloseButton";
 
-const ConfirmPopupItem = ({ popup }: { popup: ConfirmPopup }) => {
+const ConfirmModalItem = ({ popup }: { popup: ConfirmModal }) => {
 
-    const { closePopup } = useConfirmPopup();
+    const { closePopup } = useConfirmModal();
     const Icon = popup.icon ? Icons[popup.icon] : null;
 
     return (
@@ -52,4 +52,4 @@ const ConfirmPopupItem = ({ popup }: { popup: ConfirmPopup }) => {
     )
 }
 
-export default ConfirmPopupItem;
+export default ConfirmModalItem;

@@ -38,30 +38,30 @@ export type RouterContextType = {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                Alert system                                */
+/*                                Toast system                                */
 /* -------------------------------------------------------------------------- */
-export type AlertType = "success" | "warning" | "error";
+export type ToastType = "success" | "warning" | "error";
 
-export type Alert = {
+export type Toast = {
     id: string;
-    type: AlertType;
+    type: ToastType;
     count?: number;
     message: string;
     duration: number;
     _isSwap?: boolean;
 }
 
-export type AlertContextType = {
-    alerts: Alert[];
-    addAlert: (alert: Omit<Alert, "id">) => void;
-    removeAlert: (id: string) => void;
+export type ToastContextType = {
+    toasts: Toast[];
+    addToast: (toast: Omit<Toast, "id">) => void;
+    removeToast: (id: string) => void;
 }
 
 /* -------------------------------------------------------------------------- */
 /*                                   Popups                                   */
 /* -------------------------------------------------------------------------- */
 
-export type ConfirmPopup = {
+export type ConfirmModal = {
     title: string,
     message: string,
     dangerous?: boolean,
@@ -70,9 +70,9 @@ export type ConfirmPopup = {
     onConfirm: () => void,
 }
 
-export type ConfirmPopupContextType = {
-    popup: ConfirmPopup | null,
-    openPopup: (popup: ConfirmPopup) => void,
+export type ConfirmModalContextType = {
+    popup: ConfirmModal | null,
+    openPopup: (popup: ConfirmModal) => void,
     closePopup: () => void,
 }
 

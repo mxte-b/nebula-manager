@@ -13,7 +13,7 @@ $color-success: rgb(200 255 204);
 $color-error: rgb(255 134 134);
 $color-warning: rgb(255 239 146);
 
-.alerts {
+.toasts {
     @include flex(column);
 
     position: absolute;
@@ -23,7 +23,7 @@ $color-warning: rgb(255 239 146);
     transform: translateX(-50%)
 }
 
-.alert {
+.toast {
     @include flex($justify: flex-start);
 
     position: relative;
@@ -91,32 +91,32 @@ $color-warning: rgb(255 239 146);
         transform-origin: top left;
     }
 
-    &.alert-success {
+    &.toast-success {
         background-color: $bg-success;
         color: $color-success;
         border-color: $border-success;
 
-        .alert-progress {
+        .toast-progress {
             background-color: $color-success;
         }
     }
 
-    &.alert-warning {
+    &.toast-warning {
         background-color: $bg-warning;
         color: $color-warning;
         border-color: $border-warning;
         
-        .alert-progress {
+        .toast-progress {
             background-color: $color-warning;
         }
     }
 
-    &.alert-error {
+    &.toast-error {
         background-color: $bg-error;
         color: $color-error;
         border-color: $border-error;
         
-        .alert-progress {
+        .toast-progress {
             background-color: $color-error;
         }
     }
