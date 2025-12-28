@@ -8,6 +8,27 @@ import { Entry, EntryDTO, Err, Ok, Result, toEntry, toEntryDTO, UpdateEntry, Vau
  * Supports both callback-based handling and Result-based async/await handling.
  */
 const useVault = () => {
+
+    const setupVault = async (
+        masterPassword: string,
+        callbacks ?: {
+            ok ?: () => void;
+            err ?: (e: string) => void;
+        }
+    ): Promise<Result<null, string>> => {
+        try {
+            await invoke("vault_setup", { masterPassword: masterPassword });
+
+            callbacks?.ok?.();
+            return Ok(null);
+        }
+        catch (e) {
+            const error = e instanceof Error ? e.message : String(e);
+
+            callbacks?.err?.(error);
+            return Err(error);
+        }
+    }
     
     const getVaultState = async (
         callbacks ?: {
@@ -257,6 +278,7 @@ const useVault = () => {
     }
 
     return {
+        setupVault,
         getVaultState,
         getVaultEntries,
         getVaultEntryPassword,

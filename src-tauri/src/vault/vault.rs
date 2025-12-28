@@ -76,7 +76,9 @@ impl Vault {
         std::fs::write(self.path.clone(), content).map_err(|e| e.to_string())
     }
     
-    // pub fn set_master_pw() {}
+    pub fn set_master_pw(&self, master_password: String) {
+        println!("Setting master password to: {}", master_password);
+    }
     // pub fn unlock(&mut self) {
     //     println!("Nothing to unlock yet. :)")
     // }

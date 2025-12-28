@@ -4,7 +4,7 @@ const SetupWelcomeStep = ({ next }: RootPhaseProps) => {
     return (
         <>
             <header className="setup-header">
-                <h1>Set up your vault</h1>
+                <h1>Let's get you started</h1>
                 <p>Create a new vault or import an existing one to get started.</p>
             </header>
 

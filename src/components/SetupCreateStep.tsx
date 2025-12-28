@@ -1,6 +1,30 @@
+import { useRef } from "react";
 import { PhaseProps } from "../types/general";
+import useVault from "../hooks/useVault";
+import { useAlert } from "../contexts/alert";
 
 const SetupCreateStep = ({ next, back }: PhaseProps) => {
+
+    const passwordInpuRef = useRef<HTMLInputElement>(null);
+
+    const { setupVault } = useVault();
+    const { addAlert } = useAlert();
+
+    const handlePasswordCreate = () => {
+        const password = passwordInpuRef.current?.value;
+
+        if (!password) return;
+
+        setupVault(password, {
+            ok: next,
+            err: (e) => addAlert({
+                type: "error",
+                message: `Couldn't set up vault: ${e}`,
+                duration: 5000
+            })
+        });
+    }
+
     return (
         <>
             <button className="secondary" onClick={back}>
@@ -11,11 +35,13 @@ const SetupCreateStep = ({ next, back }: PhaseProps) => {
                 <p>To secure your vault, please enter a strong password.</p>
             </header>
 
-            <main className="setup-actions">
-                <button className="secondary" onClick={next}>
+            <form className="password-form form">
+                <label htmlFor="password">Password</label>
+                <input type="password" name="password" id="password" ref={passwordInpuRef} />
+                <button type="button" className="secondary" onClick={handlePasswordCreate}>
                     Secure vault
                 </button>
-            </main>
+            </form>
 
             <footer className="setup-footer">
                 Your data is encrypted locally and never leaves your device.

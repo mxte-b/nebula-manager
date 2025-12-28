@@ -1,0 +1,11 @@
+.setup-screen {
+    height: calc(100vh - 4rem);
+    margin: 2rem;
+    padding: 1rem;
+    border-radius: 15px;
+    background-color: var(--bg-1);
+}
+
+p {
+    color: var(--fg-secondary);
+}

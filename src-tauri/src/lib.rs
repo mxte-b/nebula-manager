@@ -25,6 +25,14 @@ fn toggle_overlay(app: tauri::AppHandle) {
 }
 
 // Vault commands
+
+#[tauri::command]
+fn vault_setup(vault: State<Arc<Mutex<Vault>>>, master_password: String) -> Result<(), String> {
+    let v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    v.set_master_pw(master_password);
+    Ok(())
+}
+
 #[tauri::command]
 fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> Result<(), String> {
     println!("Saving entry...");
@@ -111,6 +119,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             toggle_overlay,
+            vault_setup,
             vault_create_entry,
             vault_get_state,
             vault_get_entries,

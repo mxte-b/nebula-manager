@@ -5,6 +5,8 @@ import SetupImportStep from "../components/SetupImportStep";
 import { SetupPhase } from "../types/general";
 import { AnimatePresence } from "motion/react";
 import SetupDoneStep from "../components/SetupDoneStep";
+import "../styles/SetupScreen.scss";
+import SetupProgressBar from "../components/SetupProgressBar";
 
 const SetupScreen = ({ onSetupCompleted }: { onSetupCompleted: () => void }) => {
 
@@ -22,6 +24,7 @@ const SetupScreen = ({ onSetupCompleted }: { onSetupCompleted: () => void }) => 
 
     return (
         <div className="setup-screen">
+            <SetupProgressBar phase={phase} />
             <AnimatePresence mode="wait">
                 { steps[phase] }
             </AnimatePresence>
