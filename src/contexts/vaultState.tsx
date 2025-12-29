@@ -1,22 +1,22 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { VaultState, VaultStateContextType } from "../types/general";
+import { VaultStatus, VaultStatusContextType } from "../types/general";
 import useVault from "../hooks/useVault";
 
-const VaultStateContext = createContext<VaultStateContextType | undefined>(undefined);
+const VaultStatusContext = createContext<VaultStatusContextType | undefined>(undefined);
 
-export const VaultStateProvider = ({ children }: { children: ReactNode }) => {
-    const { getVaultState } = useVault();
+export const VaultStatusProvider = ({ children }: { children: ReactNode }) => {
+    const { getVaultStatus } = useVault();
 
-    const [state, setState] = useState<VaultState | null>(null);
+    const [status, setStatus] = useState<VaultStatus | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     const refreshState = () => {
         setLoading(true);
 
-        getVaultState({
-            ok: (r) => {
-                setState(r);
+        getVaultStatus({
+            ok: (s) => {
+                setStatus(s);
                 setError(null);
             },
             err: setError
@@ -27,13 +27,13 @@ export const VaultStateProvider = ({ children }: { children: ReactNode }) => {
         refreshState();
     }, []);
 
-    return <VaultStateContext.Provider value={{ state, loading, error, refreshState }}>
+    return <VaultStatusContext.Provider value={{ status, loading, error, refreshState }}>
         {children}
-    </VaultStateContext.Provider>
+    </VaultStatusContext.Provider>
 }
 
-export const useVaultState = () => {
-    const context = useContext(VaultStateContext);
-    if (!context) throw new Error("useVaultState must be used inside an VaultStateProvider.");
+export const useVaultStatus = () => {
+    const context = useContext(VaultStatusContext);
+    if (!context) throw new Error("useVaultStatus must be used inside an VaultStatusProvider.");
     return context;
 }

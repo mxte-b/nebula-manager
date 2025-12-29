@@ -1,5 +1,7 @@
-pub mod vault;
+pub mod crypto;
 pub mod entry;
+pub mod vault;
 
-pub use vault::Vault;
+pub use crypto::VaultCryptoManager;
 pub use entry::Entry;
+pub use vault::Vault;

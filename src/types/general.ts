@@ -58,7 +58,7 @@ export type ToastContextType = {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                   Popups                                   */
+/*                                   Modals                                   */
 /* -------------------------------------------------------------------------- */
 
 export type ConfirmModal = {
@@ -71,18 +71,22 @@ export type ConfirmModal = {
 }
 
 export type ConfirmModalContextType = {
-    popup: ConfirmModal | null,
-    openPopup: (popup: ConfirmModal) => void,
-    closePopup: () => void,
+    modal: ConfirmModal | null,
+    openModal: (modal: ConfirmModal) => void,
+    closeModal: () => void,
 }
 
 /* -------------------------------------------------------------------------- */
 /*                           Vault types and helpers                          */
 /* -------------------------------------------------------------------------- */
-export type VaultState = "Uninitialized" | "Loaded";
+export type VaultState = "Uninitialized" | "Locked" | "Unlocked";
+export type VaultStatus = {
+    state: VaultState,
+    ready: boolean
+}
 
-export type VaultStateContextType = {
-    state: VaultState | null,
+export type VaultStatusContextType = {
+    status: VaultStatus | null,
     loading: boolean,
     error: string | null,
     refreshState: () => void,

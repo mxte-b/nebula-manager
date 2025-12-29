@@ -4,21 +4,21 @@ import { motion } from "motion/react";
 import Icons from "./Icons";
 import CloseButton from "./CloseButton";
 
-const ConfirmModalItem = ({ popup }: { popup: ConfirmModal }) => {
+const ConfirmModalItem = ({ modal }: { modal: ConfirmModal }) => {
 
-    const { closePopup } = useConfirmModal();
-    const Icon = popup.icon ? Icons[popup.icon] : null;
+    const { closeModal } = useConfirmModal();
+    const Icon = modal.icon ? Icons[modal.icon] : null;
 
     return (
         <motion.div
-            className="popup-wrapper"
+            className="modal-wrapper"
             initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
             animate={{ opacity: 1, backdropFilter: "blur(3px)" }}
             exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-            onMouseDown={closePopup}
+            onMouseDown={closeModal}
         >
             <motion.div
-                className={"confirm-popup" + (popup.dangerous ? " dangerous" : "")}
+                className={"confirm-modal" + (modal.dangerous ? " dangerous" : "")}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
@@ -28,23 +28,23 @@ const ConfirmModalItem = ({ popup }: { popup: ConfirmModal }) => {
                 }}
                 onMouseDown={(e) => e.stopPropagation()}
             >
-                <div className="popup-header">
+                <div className="modal-header">
                     <div className="title-icon">
                         {
                             Icon && <Icon />
                         }
                     </div>
-                    <div className="popup-title">{popup.title}</div>
-                    <CloseButton onClick={closePopup} />
+                    <div className="modal-title">{modal.title}</div>
+                    <CloseButton onClick={closeModal} />
                 </div>
-                <div className="popup-message">
-                    {popup.message}
+                <div className="modal-message">
+                    {modal.message}
                 </div>
                 <div className="button-group">
-                    <button type="button" onClick={popup.onCancel}>Cancel</button>
+                    <button type="button" onClick={modal.onCancel}>Cancel</button>
                     <button type="button" className="dangerous" onClick={() => {
-                        popup.onConfirm();
-                        closePopup();
+                        modal.onConfirm();
+                        closeModal();
                     }}>Confirm</button>
                 </div>
             </motion.div>

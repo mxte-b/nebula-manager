@@ -22,7 +22,7 @@ const Vault = (
     }
 ) => {
 
-    const { openPopup, closePopup } = useConfirmModal();
+    const { openModal, closeModal } = useConfirmModal();
 
     return (
         <>
@@ -103,12 +103,12 @@ const Vault = (
                                             hoverFg="#ec3e3eff"
                                             hoverBg="#ec3e3e18"
                                             onClick={() => {
-                                                openPopup({
+                                                openModal({
                                                     title: "Are you sure?",
                                                     message: "This will permanently delete the entry.",
                                                     dangerous: true,
                                                     icon: "ExclamationTriangle",
-                                                    onCancel: closePopup,
+                                                    onCancel: closeModal,
                                                     onConfirm: () => onEntryDelete(e.id)
                                                 })
                                             }}

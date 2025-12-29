@@ -3,12 +3,12 @@ import { useConfirmModal } from "../contexts/confirmModal";
 import ConfirmModalItem from "./ConfirmModaltem";
 
 const ModalManager = () => {
-    const { popup } = useConfirmModal();
+    const { modal } = useConfirmModal();
 
     return (
-        <div className="popups">
+        <div className="modals">
             <AnimatePresence>
-                { popup && <ConfirmModalItem popup={popup} /> }
+                { modal && <ConfirmModalItem modal={modal} /> }
             </AnimatePresence>
         </div>
     ) 

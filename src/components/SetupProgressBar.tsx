@@ -1,6 +1,6 @@
 import { SetupPhase } from "../types/general";
 
-const SetupProgressBar = ({ phase }: { phase: SetupPhase }) => {
+const SetupProgressBar = ({  }: { phase: SetupPhase }) => {
     return (
         <div>
             SetupProgressBar

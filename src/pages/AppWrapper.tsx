@@ -1,19 +1,29 @@
 import { AnimatePresence } from "motion/react";
-import { useVaultState } from "../contexts/vaultState";
+import { useVaultStatus } from "../contexts/vaultState";
 import App from "./App"
 import LoadingScreen from "./LoadingScreen";
 import FatalError from "./FatalError";
 import SetupScreen from "./SetupScreen";
+import UnlockScreen from "./UnlockScreen";
 
 const AppWrapper = () => {
-    const { state, loading, error, refreshState } = useVaultState();
+    const { status, loading, error, refreshState } = useVaultStatus();
 
     const getActiveComponent = () => {
-        if (loading) return <LoadingScreen key="loader" />;
-        if (error) return <FatalError key="error" error={error} />;
-        if (state == "Uninitialized") return <SetupScreen key="setup" onSetupCompleted={refreshState} />
+        if (!status || !status.ready || loading) return <LoadingScreen key="loader" />;
 
-        return <App key="app" />;
+        if (error) return <FatalError key="error" error={error} />;
+
+        switch (status.state) {
+            case "Uninitialized":
+                return <SetupScreen key="setup" onSetupCompleted={refreshState} />
+            case "Locked":
+                return <UnlockScreen key="unlock" onUnlock={refreshState} />
+            case "Unlocked": 
+                return <App key="app" />
+            default:
+                break;
+        }
     }
 
     return (

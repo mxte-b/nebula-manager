@@ -7,7 +7,10 @@ pub mod vault;
 use uuid::Uuid;
 pub use vault::Vault;
 
-use crate::vault::{entry::{ EntryPublic, UpdateEntry }, vault::VaultState};
+use crate::vault::{
+    entry::{EntryPublic, UpdateEntry},
+    vault::VaultStatus,
+};
 
 // Toggle search overlay
 #[tauri::command]
@@ -25,103 +28,127 @@ fn toggle_overlay(app: tauri::AppHandle) {
 }
 
 // Vault commands
-
 #[tauri::command]
 fn vault_setup(vault: State<Arc<Mutex<Vault>>>, master_password: String) -> Result<(), String> {
-    let v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
-    v.set_master_pw(master_password);
-    Ok(())
+    let mut v = vault
+        .lock()
+        .map_err(|_| "Couldn't access vault".to_string())?;
+    Ok(v.set_master_pw(&master_password)?)
+}
+
+#[tauri::command]
+fn vault_unlock(vault: State<Arc<Mutex<Vault>>>, password: String) -> Result<(), String> {
+    let mut v = vault
+        .lock()
+        .map_err(|_| "Couldn't access vault".to_string())?;
+    Ok(v.unlock(&password)?)
 }
 
 #[tauri::command]
 fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> Result<(), String> {
-    println!("Saving entry...");
-    println!("{}", serde_json::to_string_pretty(&entry).unwrap());
-    let mut v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    let mut v = vault
+        .lock()
+        .map_err(|_| "Couldn't access vault".to_string())?;
     v.new_entry(&entry);
     v.save().map_err(|e| format!("Failed to save vault: {}", e))
 }
 
 #[tauri::command]
-fn vault_get_state(vault: State<Arc<Mutex<Vault>>>) -> Result<VaultState, String> {
-    let v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
-    Ok(v.get_state())
+fn vault_get_status(vault: State<Arc<Mutex<Vault>>>) -> Result<VaultStatus, String> {
+    let v = vault
+        .lock()
+        .map_err(|_| "Couldn't access vault".to_string())?;
+    Ok(v.get_status())
 }
 
 #[tauri::command]
 fn vault_get_entries(vault: State<Arc<Mutex<Vault>>>) -> Result<Vec<EntryPublic>, String> {
-    let v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    let v = vault
+        .lock()
+        .map_err(|_| "Couldn't access vault".to_string())?;
     Ok(v.get_entries())
 }
 
 #[tauri::command]
 fn vault_get_entry_password(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> Result<String, String> {
-    let v = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    let v = vault
+        .lock()
+        .map_err(|_| "Couldn't access vault".to_string())?;
     v.get_entry_password(&id)
 }
 
 #[tauri::command]
-fn vault_update_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid, new: UpdateEntry) -> Result<EntryPublic, String> {
-    let mut guard = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+fn vault_update_entry(
+    vault: State<Arc<Mutex<Vault>>>,
+    id: Uuid,
+    new: UpdateEntry,
+) -> Result<EntryPublic, String> {
+    let mut guard = vault
+        .lock()
+        .map_err(|_| "Couldn't access vault".to_string())?;
     guard.update_entry(&id, &new)
 }
 
 #[tauri::command]
 fn vault_toggle_favorite(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> Result<EntryPublic, String> {
-    let mut guard = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    let mut guard = vault
+        .lock()
+        .map_err(|_| "Couldn't access vault".to_string())?;
     guard.toggle_favorite(&id)
 }
 
 #[tauri::command]
 fn vault_delete_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> Result<(), String> {
-    let mut guard = vault.lock().map_err(|_| "Couldn't access vault".to_string())?;
+    let mut guard = vault
+        .lock()
+        .map_err(|_| "Couldn't access vault".to_string())?;
     guard.delete_entry(&id)
 }
-
-
-// Set master pw
-
 
 // Copy entry to clipboard (username / password)
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let vault = Arc::new(Mutex::new(Vault::new()));
 
     let app = tauri::Builder::default()
-        .setup(|app| {
+        .manage(vault.clone())
+        .setup(move |app| {
             // Get app data folder and create (if it's missing)
-            let app_data_dir = app.path().app_data_dir().expect("Failed to determine data directory");
+            let app_data_dir = app
+                .path()
+                .app_data_dir()
+                .expect("Failed to determine data directory");
             std::fs::create_dir_all(&app_data_dir).expect("Failed to create app data directory");
-
-            // Create vault
-            let vault = Arc::new(Mutex::new(
-                Vault::new(app_data_dir.join("vault_encrypted.json"))
-            ));
 
             println!("Save location: {}", app_data_dir.to_str().unwrap());
 
             // Loading the vault from the save file
             {
                 let mut v = vault.lock().unwrap();
+                v.set_path(app_data_dir.join("vault_encrypted.json"));
+
                 match v.load() {
                     Ok(()) => println!("Loaded ok"),
-                    Err(e) => println!("{}", e)
+                    Err(e) => println!("{}", e),
                 }
             }
 
-            // Let tauri manage the vault
-            // This allows changing the vault in commands
-            app.manage(vault);
-
             Ok(())
         })
+        .plugin(tauri_plugin_single_instance::init(|app, _, _| {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.set_focus();
+            }
+        }))
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             toggle_overlay,
             vault_setup,
+            vault_unlock,
             vault_create_entry,
-            vault_get_state,
+            vault_get_status,
             vault_get_entries,
             vault_get_entry_password,
             vault_update_entry,
@@ -152,10 +179,10 @@ pub fn run() {
 
                 // Save the vault on window close
                 let vault = app_handle.state::<Arc<Mutex<Vault>>>();
-                if let Ok(v) = vault.lock() {
+                if let Ok(mut v) = vault.lock() {
                     match v.save() {
                         Ok(()) => println!("Successful save."),
-                        Err(e) => println!("Error while saving: {}", e)
+                        Err(e) => println!("Error while saving: {}", e),
                     }
                 }
 

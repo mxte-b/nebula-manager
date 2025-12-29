@@ -24,7 +24,13 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 time = { version = "0.3", features = ["serde"] }
 uuid = { version = "1.18", features = ["v4", "serde"] }
+argon2 = "0.5.3"
+rand_core = "0.9.3"
+chacha20poly1305 = "0.10.1"
+zeroize = "1.8.2"
+base64 = "0.22.1"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = "2"
+tauri-plugin-single-instance = "2"
 

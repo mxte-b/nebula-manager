@@ -4,9 +4,9 @@ import { ConfirmModal, ConfirmModalContextType } from "../types/general";
 const ConfirmModalContext = createContext<ConfirmModalContextType | undefined>(undefined);
 
 export const ConfirmModalProvider = ({ children }: { children: ReactNode }) => {
-    const [popup, setPopup] = useState<ConfirmModal | null>(null);
+    const [modal, setModal] = useState<ConfirmModal | null>(null);
 
-    return <ConfirmModalContext.Provider value={{ popup: popup, openPopup: setPopup, closePopup: () => setPopup(null) }}>
+    return <ConfirmModalContext.Provider value={{ modal: modal, openModal: setModal, closeModal: () => setModal(null) }}>
         {children}
     </ConfirmModalContext.Provider>
 }

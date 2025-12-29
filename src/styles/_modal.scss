@@ -1,6 +1,6 @@
 @use 'mixins' as *;
 
-.popup-wrapper {
+.modal-wrapper {
     @include flex;
 
     position: absolute;
@@ -13,7 +13,7 @@
     will-change: opacity, backdrop-filter;
 }
 
-.confirm-popup {
+.confirm-modal {
     @include flex(column, flex-start, stretch);
 
     gap: 1rem;
@@ -26,13 +26,13 @@
     will-change: opacity, scale;
     overflow: hidden;
 
-    .popup-header {
+    .modal-header {
         @include flex($justify: space-between);
 
         position: relative;
         height: 30px;
         
-        .popup-title {     
+        .modal-title {     
             font-size: 20px;
             font-weight: bold;
         }
@@ -58,7 +58,7 @@
         border-color: var(--border-danger);
     }
 
-    & > .popup-message {
+    & > .modal-message {
         color: var(--fg-secondary);
     }
 }

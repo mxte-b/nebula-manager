@@ -11,12 +11,10 @@ import Settings from "./Settings";
 import About from "./About";
 import Icons from "../components/Icons";
 import EntryForm from "../components/EntryForm";
-import { Entry, UpdateEntry, VaultState } from "../types/general";
+import { Entry, UpdateEntry, VaultStatus } from "../types/general";
 import useVault from "../hooks/useVault";
 import UpdateForm from "../components/UpdateForm";
 import { useToast } from "../contexts/toast";
-import ToastManager from "../components/ToastManager";
-import PopupManager from "../components/ConfirmModalManager";
 
 await register("CommandOrControl+K", (e) => {
     // Ignore key release
@@ -29,12 +27,12 @@ function App() {
     const [isEntryFormVisible, setIsEntryFormVisible] = useState<boolean>(false);
     const [isUpdateFormVisible, setIsUpdateFormVisible] = useState<boolean>(false);
 
-    const [vaultState, setVaultState] = useState<VaultState | null>(null);
+    const [vaultStatus, setVaultStatus] = useState<VaultStatus | null>(null);
     const [vaultEntries, setVaultEntries] = useState<Entry[] | null>(null);
     const [entryToUpdate, setEntryToUpdate] = useState<string>("");
 
     const { 
-        getVaultState,
+        getVaultStatus,
         getVaultEntries,
         createVaultEntry,
         updateVaultEntry,
@@ -115,8 +113,8 @@ function App() {
         const prevent = (e: Event) => e.preventDefault()
         window.addEventListener("contextmenu", prevent);
 
-        getVaultState({
-            ok: setVaultState,
+        getVaultStatus({
+            ok: setVaultStatus,
             err: (e) => addToast({
                 type: "error",
                 message: `Couldn't get vault state: ${e}`,
@@ -182,10 +180,7 @@ function App() {
                 onClose={() => setIsUpdateFormVisible(false)}
             />
 
-            <div>STATE: { vaultState }</div>
-
-            <ToastManager />
-            <PopupManager />
+            <div>STATE: { vaultStatus?.state }</div>
         </main>
     );
 }

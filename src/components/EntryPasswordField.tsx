@@ -33,7 +33,7 @@ const EntryPasswordField = (
     const handlePasswordCopy = (id: string) => {
         addToast({
             type: "success",
-            message: "Password copied!",
+            message: "Password copied!" + id,
             duration: 20000
         })
     }

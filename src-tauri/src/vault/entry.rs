@@ -1,7 +1,6 @@
-use time::{OffsetDateTime};
 use serde::{Deserialize, Serialize};
-use uuid::{Uuid};
-
+use time::OffsetDateTime;
+use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -17,7 +16,7 @@ pub struct Entry {
     pub url: String,
     pub name: String,
     pub password: String,
-    pub favorite: bool
+    pub favorite: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -33,7 +32,7 @@ pub struct EntryPublic {
     pub label: String,
     pub url: String,
     pub name: String,
-    pub favorite: bool
+    pub favorite: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -41,7 +40,7 @@ pub struct UpdateEntry {
     pub label: Option<String>,
     pub url: Option<String>,
     pub name: Option<String>,
-    pub password: Option<String>
+    pub password: Option<String>,
 }
 
 impl From<&Entry> for EntryPublic {
