@@ -9,7 +9,7 @@ pub use vault::Vault;
 
 use crate::vault::{
     entry::{EntryPublic, UpdateEntry},
-    vault::VaultStatus,
+    vault::{VaultError, VaultErrorKind, VaultErrorSeverity, VaultResult, VaultStatus},
 };
 
 // Toggle search overlay
@@ -29,51 +29,81 @@ fn toggle_overlay(app: tauri::AppHandle) {
 
 // Vault commands
 #[tauri::command]
-fn vault_setup(vault: State<Arc<Mutex<Vault>>>, master_password: String) -> Result<(), String> {
+fn vault_setup(vault: State<Arc<Mutex<Vault>>>, master_password: String) -> VaultResult<()> {
     let mut v = vault
         .lock()
-        .map_err(|_| "Couldn't access vault".to_string())?;
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Warning, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_SETUP"
+        })?;
     Ok(v.set_master_pw(&master_password)?)
 }
 
 #[tauri::command]
-fn vault_unlock(vault: State<Arc<Mutex<Vault>>>, password: String) -> Result<(), String> {
+fn vault_unlock(vault: State<Arc<Mutex<Vault>>>, password: String) -> VaultResult<()> {
     let mut v = vault
         .lock()
-        .map_err(|_| "Couldn't access vault".to_string())?;
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Warning, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_UNLOCK"
+        })?;
     Ok(v.unlock(&password)?)
 }
 
 #[tauri::command]
-fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> Result<(), String> {
+fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> VaultResult<()> {
     let mut v = vault
         .lock()
-        .map_err(|_| "Couldn't access vault".to_string())?;
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Warning, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_ENTRY_CREATE"
+        })?;
     v.new_entry(&entry);
-    v.save().map_err(|e| format!("Failed to save vault: {}", e))
+    v.save()
 }
 
 #[tauri::command]
-fn vault_get_status(vault: State<Arc<Mutex<Vault>>>) -> Result<VaultStatus, String> {
+fn vault_get_status(vault: State<Arc<Mutex<Vault>>>) -> VaultResult<VaultStatus> {
     let v = vault
         .lock()
-        .map_err(|_| "Couldn't access vault".to_string())?;
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Warning, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_GET_STATUS"
+        })?;
     Ok(v.get_status())
 }
 
 #[tauri::command]
-fn vault_get_entries(vault: State<Arc<Mutex<Vault>>>) -> Result<Vec<EntryPublic>, String> {
+fn vault_get_entries(vault: State<Arc<Mutex<Vault>>>) -> VaultResult<Vec<EntryPublic>> {
     let v = vault
         .lock()
-        .map_err(|_| "Couldn't access vault".to_string())?;
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Warning, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_ENTRY_GET"
+        })?;
     Ok(v.get_entries())
 }
 
 #[tauri::command]
-fn vault_get_entry_password(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> Result<String, String> {
+fn vault_get_entry_password(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResult<String> {
     let v = vault
         .lock()
-        .map_err(|_| "Couldn't access vault".to_string())?;
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Warning, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_GET_PASS"
+        })?;
     v.get_entry_password(&id)
 }
 
@@ -82,26 +112,41 @@ fn vault_update_entry(
     vault: State<Arc<Mutex<Vault>>>,
     id: Uuid,
     new: UpdateEntry,
-) -> Result<EntryPublic, String> {
+) -> VaultResult<EntryPublic> {
     let mut guard = vault
         .lock()
-        .map_err(|_| "Couldn't access vault".to_string())?;
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Warning, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_ENTRY_UPDATE"
+        })?;
     guard.update_entry(&id, &new)
 }
 
 #[tauri::command]
-fn vault_toggle_favorite(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> Result<EntryPublic, String> {
+fn vault_toggle_favorite(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResult<EntryPublic> {
     let mut guard = vault
         .lock()
-        .map_err(|_| "Couldn't access vault".to_string())?;
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Warning, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_ENTRY_FAVORITE"
+        })?;
     guard.toggle_favorite(&id)
 }
 
 #[tauri::command]
-fn vault_delete_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> Result<(), String> {
+fn vault_delete_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResult<()> {
     let mut guard = vault
         .lock()
-        .map_err(|_| "Couldn't access vault".to_string())?;
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Warning, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_ENTRY_DELETE"
+        })?;
     guard.delete_entry(&id)
 }
 

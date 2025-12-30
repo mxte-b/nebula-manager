@@ -5,6 +5,7 @@ use base64::{engine::general_purpose::STANDARD, Engine as _};
 use chacha20poly1305::aead::{Aead, OsRng};
 use chacha20poly1305::{AeadCore, Key, KeyInit, XChaCha20Poly1305, XNonce};
 use serde::{Deserialize, Serialize};
+use core::fmt;
 use std::path::PathBuf;
 use time::OffsetDateTime;
 use uuid::Uuid;
@@ -20,12 +21,60 @@ fn bytes_to_b64<T: AsRef<[u8]>>(x: T) -> String {
     STANDARD.encode(x.as_ref())
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                 Vault error                                */
+/* -------------------------------------------------------------------------- */
+#[derive(Serialize, Clone, Debug)]
+pub enum VaultErrorKind {
+    IO,
+    Parse,
+    Version,
+    Access,
+    Auth,
+    Crypto,
+    NotFound,
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub enum VaultErrorSeverity {
+    Info,
+    Warning,
+    Fatal,
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub struct VaultError {
+    pub kind: VaultErrorKind,
+    pub severity: VaultErrorSeverity,
+    pub message: String,
+    pub code: &'static str,
+}
+
+impl std::error::Error for VaultError {}
+
+impl fmt::Display for VaultError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "[{}][{:?}][{:?}] {}",
+            self.code,
+            self.severity,
+            self.kind,
+            self.message
+        )
+    }
+}
+
+pub type VaultResult<T> = Result<T, VaultError>;
+
+/* -------------------------------------------------------------------------- */
+/*                                 Vault data                                 */
+/* -------------------------------------------------------------------------- */
 #[derive(Serialize, Clone)]
 pub enum VaultState {
     Uninitialized,
     Locked,
-    Unlocked,
-    Error(String),
+    Unlocked
 }
 
 #[derive(Serialize, Clone)]
@@ -98,6 +147,9 @@ impl Vault {
         }
     }
 
+    /* -------------------------------------------------------------------------- */
+    /*                                     IO                                     */
+    /* -------------------------------------------------------------------------- */
     pub fn set_path(&mut self, path: PathBuf) {
         self.path = path.clone();
     }
@@ -110,16 +162,33 @@ impl Vault {
         self.path.exists()
     }
 
-    pub fn load(&mut self) -> Result<(), String> {
+    pub fn load(&mut self) -> VaultResult<()> {
         if self.is_initialized() {
             let file_content = std::fs::read_to_string(self.path.clone())
-                .map_err(|e| format!("Couldn't read vault file: {}", e))?;
+                .map_err(|e| VaultError {
+                    kind: VaultErrorKind::IO,
+                    severity: VaultErrorSeverity::Fatal,
+                    code: "E_VAULT_LOAD",
+                    message: format!("Couldn't read vault file: {}", e)
+                })?;
 
             let save = serde_json::from_str::<SaveFileLayout>(&file_content)
-                .map_err(|e| format!("Couldn't parse vault: {}", e))?;
+                .map_err(|e| VaultError {
+                    kind: VaultErrorKind::Parse,
+                    severity: VaultErrorSeverity::Fatal,
+                    code: "E_VAULT_LOAD",
+                    message: format!("Couldn't parse vault: {}", e)
+                })?;
 
             if save.version != self.version {
-                return Err(format!("Incompatible vault version: {}", save.version));
+                return Err(
+                    VaultError { 
+                        kind: VaultErrorKind::Version, 
+                        severity: VaultErrorSeverity::Fatal,
+                        code: "E_VAULT_LOAD",
+                        message: format!("Vault version ({}) doesn't match the application version. ({})", save.version, self.version) 
+                    }
+                );
             }
 
             // Load from vault file
@@ -138,19 +207,40 @@ impl Vault {
         }
     }
 
-    pub fn save(&mut self) -> Result<(), String> {
+    pub fn save(&mut self) -> VaultResult<()> {
         if !matches!(self.state, VaultState::Unlocked) {
-            return Err("Vault not accessible, cannot save.".into());
+            return Err(
+                VaultError { 
+                    kind: VaultErrorKind::Access, 
+                    severity: VaultErrorSeverity::Fatal, 
+                    message: "Attempted to save while vault was not unlocked".into(),
+                    code: "E_VAULT_SAVE"
+                }
+            );
         }
 
         self.encrypt_vault()?;
-        let content =
-            serde_json::to_string_pretty(&self.convert_to_savefile()).map_err(|e| e.to_string())?;
+        let content = serde_json::to_string_pretty(&self.convert_to_savefile())
+            .map_err(|e| VaultError { 
+                kind: VaultErrorKind::Parse, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Serialization failed: {e}"),
+                code: "E_VAULT_SAVE"
+            })?;
 
-        std::fs::write(self.path.clone(), content).map_err(|e| e.to_string())
+        std::fs::write(self.path.clone(), content)
+            .map_err(|e| VaultError { 
+                kind: VaultErrorKind::IO, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Filesystem write failed: {e}"),
+                code: "E_VAULT_SAVE"
+            })
     }
 
-    pub fn set_master_pw(&mut self, master_password: &str) -> Result<(), String> {
+    /* -------------------------------------------------------------------------- */
+    /*                                AUTH / CRYPTO                               */
+    /* -------------------------------------------------------------------------- */
+    pub fn set_master_pw(&mut self, master_password: &str) -> VaultResult<()>{
         let mut password_bytes = master_password.as_bytes().to_vec();
 
         // Generating DEK
@@ -162,11 +252,23 @@ impl Vault {
         OsRng.fill_bytes(&mut salt);
 
         // Generating KEK
-        let mut kek = VaultCryptoManager::derive_kek(&password_bytes, &salt)?;
+        let mut kek = VaultCryptoManager::derive_kek(&password_bytes, &salt)
+            .map_err(|e| VaultError {
+                kind: VaultErrorKind::Crypto, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Failed to derive KEK: {e}"),
+                code: "E_VAULT_SET_PW"
+            })?;
         password_bytes.zeroize();
 
         // Wrap DEK with KEK
-        let (wrapped_dek, dek_nonce) = VaultCryptoManager::wrap_dek(&dek, &kek)?;
+        let (wrapped_dek, dek_nonce) = VaultCryptoManager::wrap_dek(&dek, &kek)
+            .map_err(|e| VaultError {
+                kind: VaultErrorKind::Crypto, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Failed to wrap DEK: {e}"),
+                code: "E_VAULT_SET_PW"
+            })?;
         kek.zeroize();
 
         // Store DEK
@@ -183,26 +285,64 @@ impl Vault {
         Ok(())
     }
 
-    pub fn unlock(&mut self, password: &str) -> Result<(), String> {
+    pub fn unlock(&mut self, password: &str) -> VaultResult<()> {
         if !matches!(self.state, VaultState::Locked) {
-            return Err(format!("Cannot unlock vault since it is not loaded."));
+            return Err(VaultError { 
+                kind: VaultErrorKind::Access, 
+                severity: VaultErrorSeverity::Fatal, 
+                message: "Vault not locked, cannot unlock.".into(), 
+                code: "E_VAULT_UNLOCK"
+            });
         }
 
         let mut password_bytes = password.as_bytes().to_vec();
 
         // Derive KEK
-        let salt = b64_to_bytes(&self.crypto.salt)?;
+        let salt = b64_to_bytes(&self.crypto.salt)
+            .map_err(|e| VaultError {
+                kind: VaultErrorKind::Parse, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Failed to decode from base64: {e}"),
+                code: "E_VAULT_UNLOCK"
+            })?;
 
-        let mut kek = VaultCryptoManager::derive_kek(&password_bytes, &salt)?;
+        let mut kek = VaultCryptoManager::derive_kek(&password_bytes, &salt)
+            .map_err(|e| VaultError {
+                kind: VaultErrorKind::Crypto, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Failed to derive KEK: {e}"),
+                code: "E_VAULT_UNLOCK"
+            })?;
+
         password_bytes.zeroize();
 
         // Unwrap DEK
-        let dek_nonce_bytes = b64_to_bytes(&self.crypto.dek_nonce)?;
-        let wrapped_dek_bytes = b64_to_bytes(&self.crypto.wrapped_dek)?;
+        let dek_nonce_bytes = b64_to_bytes(&self.crypto.dek_nonce)
+            .map_err(|e| VaultError {
+                kind: VaultErrorKind::Parse, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Failed to decode from base64: {e}"),
+                code: "E_VAULT_UNLOCK"
+            })?;
+
+        let wrapped_dek_bytes = b64_to_bytes(&self.crypto.wrapped_dek)
+            .map_err(|e| VaultError {
+                kind: VaultErrorKind::Parse, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Failed to decode from base64: {e}"),
+                code: "E_VAULT_UNLOCK"
+            })?;
+
         let dek_nonce = XNonce::from_slice(&dek_nonce_bytes);
 
         let dek = VaultCryptoManager::unwrap_dek(&wrapped_dek_bytes, &kek, dek_nonce)
-            .map_err(|_| "Password incorrect")?;
+            .map_err(|_| VaultError {
+                kind: VaultErrorKind::Auth, 
+                severity: VaultErrorSeverity::Info, 
+                message: format!("Incorrect password."),
+                code: "E_VAULT_UNLOCK"
+            })?;
+
         kek.zeroize();
 
         // Store DEK in runtime variables
@@ -211,16 +351,40 @@ impl Vault {
         // Decrypt vault data
         let cipher = XChaCha20Poly1305::new(Key::from_slice(&dek));
 
-        let vault_nonce_bytes = b64_to_bytes(&self.crypto.vault_nonce)?;
-        let vault_ciphertext_bytes = b64_to_bytes(&self.crypto.vault_ciphertext)?;
+        let vault_nonce_bytes = b64_to_bytes(&self.crypto.vault_nonce)
+            .map_err(|e| VaultError {
+                kind: VaultErrorKind::Parse, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Failed to decode from base64: {e}"),
+                code: "E_VAULT_UNLOCK"
+            })?;
+
+        let vault_ciphertext_bytes = b64_to_bytes(&self.crypto.vault_ciphertext)
+            .map_err(|e| VaultError {
+                kind: VaultErrorKind::Parse, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Failed to decode from base64: {e}"),
+                code: "E_VAULT_UNLOCK"
+            })?;
+        
         let vault_nonce = XNonce::from_slice(&vault_nonce_bytes);
 
         let mut vault_plaintext_bytes = cipher
             .decrypt(vault_nonce, vault_ciphertext_bytes.as_ref())
-            .map_err(|e| e.to_string())?;
+            .map_err(|_| VaultError {
+                kind: VaultErrorKind::Crypto, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Failed to decrypt vault."),
+                code: "E_VAULT_UNLOCK"
+            })?;
 
         self.entries = serde_json::from_slice::<Vec<Entry>>(&vault_plaintext_bytes)
-            .map_err(|e| format!("Failed to parse vault JSON: {}", e))?;
+            .map_err(|_| VaultError {
+                kind: VaultErrorKind::Parse, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Failed to parse vault."),
+                code: "E_VAULT_UNLOCK"
+            })?;
 
         vault_plaintext_bytes.zeroize();
 
@@ -237,33 +401,52 @@ impl Vault {
         self.state = VaultState::Locked;
     }
 
-    pub fn encrypt_vault(&mut self) -> Result<(), String> {
+    pub fn encrypt_vault(&mut self) -> VaultResult<()> {
         if let Some(runtime) = &self.runtime {
             let vault_nonce = XChaCha20Poly1305::generate_nonce(&mut OsRng);
             let cipher = XChaCha20Poly1305::new(Key::from_slice(&runtime.dek));
 
             let vault_plaintext = serde_json::to_vec_pretty::<Vec<Entry>>(&self.entries)
-                .map_err(|e| e.to_string())?;
+                .map_err(|_| VaultError {
+                    kind: VaultErrorKind::Parse, 
+                    severity: VaultErrorSeverity::Warning, 
+                    message: format!("Failed to parse vault."),
+                    code: "E_VAULT_ENCRYPT"
+                })?;
 
             let ciphertext = cipher
                 .encrypt(&vault_nonce, vault_plaintext.as_slice())
-                .map_err(|e| e.to_string())?;
+                .map_err(|_| VaultError {
+                    kind: VaultErrorKind::Crypto, 
+                    severity: VaultErrorSeverity::Warning, 
+                    message: format!("Failed to encrypt vault."),
+                    code: "E_VAULT_ENCRYPT"
+                })?;
 
             self.crypto.vault_ciphertext = bytes_to_b64(ciphertext);
             self.crypto.vault_nonce = bytes_to_b64(vault_nonce);
         } else {
-            return Err("Vault locked, cannot encrypt.".into());
+            return Err(VaultError {
+                kind: VaultErrorKind::Access, 
+                severity: VaultErrorSeverity::Warning, 
+                message: format!("Vault not initialized."),
+                code: "E_VAULT_ENCRYPT"
+            });
         }
 
         Ok(())
     }
 
-    // // C(reate)
+    /* -------------------------------------------------------------------------- */
+    /*                                   CREATE                                   */
+    /* -------------------------------------------------------------------------- */
     pub fn new_entry(&mut self, entry: &Entry) {
         self.entries.push(entry.clone());
     }
 
-    // // R(read)
+    /* -------------------------------------------------------------------------- */
+    /*                                    READ                                    */
+    /* -------------------------------------------------------------------------- */
     pub fn get_status(&self) -> VaultStatus {
         VaultStatus {
             state: self.state.clone(),
@@ -275,20 +458,27 @@ impl Vault {
         self.entries.iter().map(EntryPublic::from).collect()
     }
 
-    pub fn get_entry_password(&self, id: &Uuid) -> Result<String, String> {
+    pub fn get_entry_password(&self, id: &Uuid) -> VaultResult<String> {
         if let Some(entry) = self.entries.iter().find(|e| e.id == *id) {
             Ok(entry.password.clone())
         } else {
-            Err(format!("Entry '{}' not found", id))
+            Err(VaultError {
+                kind: VaultErrorKind::NotFound, 
+                severity: VaultErrorSeverity::Info, 
+                message: format!("Entry '{}' not found", id),
+                code: "E_VAULT_GET_PASS"
+            })
         }
     }
 
-    // // U(update)
+    /* -------------------------------------------------------------------------- */
+    /*                                   UPDATE                                   */
+    /* -------------------------------------------------------------------------- */
     pub fn update_entry(
         &mut self,
         id: &Uuid,
         updated: &UpdateEntry,
-    ) -> Result<EntryPublic, String> {
+    ) -> VaultResult<EntryPublic> {
         if let Some(entry) = self.entries.iter_mut().find(|e| e.id == *id) {
             if let Some(label) = &updated.label {
                 entry.label = label.clone();
@@ -310,26 +500,43 @@ impl Vault {
 
             Ok(EntryPublic::from(&*entry))
         } else {
-            Err(format!("Entry '{}' not found", id))
+            Err(VaultError {
+                kind: VaultErrorKind::NotFound, 
+                severity: VaultErrorSeverity::Info, 
+                message: format!("Entry '{}' not found", id),
+                code: "E_VAULT_ENTRY_UPDATE"
+            })
         }
     }
 
-    pub fn toggle_favorite(&mut self, id: &Uuid) -> Result<EntryPublic, String> {
+    pub fn toggle_favorite(&mut self, id: &Uuid) -> VaultResult<EntryPublic> {
         if let Some(entry) = self.entries.iter_mut().find(|e| e.id == *id) {
             entry.favorite = !entry.favorite;
             Ok(EntryPublic::from(&*entry))
         } else {
-            Err(format!("Entry '{}' not found", id))
+            Err(VaultError {
+                kind: VaultErrorKind::NotFound, 
+                severity: VaultErrorSeverity::Info, 
+                message: format!("Entry '{}' not found", id),
+                code: "E_VAULT_ENTRY_FAVORITE"
+            })
         }
     }
 
-    // // D(delete)
-    pub fn delete_entry(&mut self, id: &Uuid) -> Result<(), String> {
+    /* -------------------------------------------------------------------------- */
+    /*                                   DELETE                                   */
+    /* -------------------------------------------------------------------------- */
+    pub fn delete_entry(&mut self, id: &Uuid) -> VaultResult<()> {
         if let Some(entry_pos) = self.entries.iter().position(|e| e.id == *id) {
             self.entries.remove(entry_pos);
             Ok(())
         } else {
-            Err(format!("Entry '{}' not found", id))
+            Err(VaultError {
+                kind: VaultErrorKind::NotFound, 
+                severity: VaultErrorSeverity::Info, 
+                message: format!("Entry '{}' not found", id),
+                code: "E_VAULT_ENTRY_DELETE"
+            })
         }
     }
 }
