@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core"
-import { Entry, EntryDTO, Err, Ok, Result, toEntry, toEntryDTO, UpdateEntry, VaultStatus } from "../types/general";
+import { Entry, EntryDTO, Err, Ok, toEntry, toEntryDTO, UpdateEntry, VaultError, VaultResult, VaultStatus } from "../types/general";
 
 /**
  * Custom hook for interacting with the Vault backend.
@@ -13,9 +13,9 @@ const useVault = () => {
         masterPassword: string,
         callbacks ?: {
             ok ?: () => void;
-            err ?: (e: string) => void;
+            err ?: (e: VaultError) => void;
         }
-    ): Promise<Result<null, string>> => {
+    ): Promise<VaultResult<null>> => {
         try {
             await invoke("vault_setup", { masterPassword: masterPassword });
 
@@ -23,7 +23,7 @@ const useVault = () => {
             return Ok(null);
         }
         catch (e) {
-            const error = e instanceof Error ? e.message : String(e);
+            const error = e as VaultError;
 
             callbacks?.err?.(error);
             return Err(error);
@@ -34,9 +34,9 @@ const useVault = () => {
         password: string,
         callbacks ?: {
             ok ?: () => void;
-            err ?: (e: string) => void;
+            err ?: (e: VaultError) => void;
         }
-    ): Promise<Result<null, string>> => {
+    ): Promise<VaultResult<null>> => {
         try {
             await invoke("vault_unlock", { password: password })
 
@@ -44,7 +44,7 @@ const useVault = () => {
             return Ok(null);
         }
         catch (e) {
-            const error = e instanceof Error ? e.message : String(e);
+            const error = e as VaultError;
 
             callbacks?.err?.(error);
             return Err(error);
@@ -54,17 +54,22 @@ const useVault = () => {
     const getVaultStatus = async (
         callbacks ?: {
             ok ?: (r: VaultStatus) => void;
-            err ?: (e: string) => void;
+            err ?: (e: VaultError) => void;
         }
-    ): Promise<Result<VaultStatus, string>> => {
+    ): Promise<VaultResult<VaultStatus>> => {
         try {
             const result = await invoke("vault_get_status") as VaultStatus;
+
+            if (result.last_error) {
+                callbacks?.err?.(result.last_error);
+                return Err(result.last_error);
+            }
 
             callbacks?.ok?.(result);
             return Ok(result);
         }
         catch (e) {
-            const error = e instanceof Error ? e.message : String(e);
+            const error = e as VaultError;
 
             callbacks?.err?.(error);
             return Err(error);
@@ -85,9 +90,9 @@ const useVault = () => {
     const getVaultEntries = async (
         callbacks ?: {
             ok ?: (r: Entry[]) => void;
-            err ?: (e: string) => void;
+            err ?: (e: VaultError) => void;
         }
-    ): Promise<Result<Entry[], string>> => {
+    ): Promise<VaultResult<Entry[]>> => {
         try {
             const result = await invoke("vault_get_entries") as EntryDTO[];
             const parsed = result.map(e => toEntry(e));
@@ -96,7 +101,7 @@ const useVault = () => {
             return Ok(parsed);
         }
         catch (e) {
-            const error = e instanceof Error ? e.message : String(e);
+            const error = e as VaultError;
 
             callbacks?.err?.(error);
             return Err(error);
@@ -122,9 +127,9 @@ const useVault = () => {
         id: string,
         callbacks ?: {
             ok ?: (r: string) => void;
-            err ?: (e: string) => void;
+            err ?: (e: VaultError) => void;
         }
-    ): Promise<Result<string, string>> => {
+    ): Promise<VaultResult<string>> => {
         try {
             const result = await invoke("vault_get_entry_password", { id: id }) as string;
 
@@ -132,7 +137,7 @@ const useVault = () => {
             return Ok(result);
         }
         catch (e) {
-            const error = e instanceof Error ? e.message : String(e);
+            const error = e as VaultError;
 
             callbacks?.err?.(error);
             return Err(error);
@@ -155,9 +160,9 @@ const useVault = () => {
         entry: Entry,
         callbacks ?: {
             ok ?: (r: Entry[]) => void;
-            err ?: (e: string) => void;
+            err ?: (e: VaultError) => void;
         }
-    ): Promise<Result<Entry[], string>> => {
+    ): Promise<VaultResult<Entry[]>> => {
         try {
             await invoke("vault_create_entry", { entry: toEntryDTO(entry) });
 
@@ -171,7 +176,7 @@ const useVault = () => {
             return Ok(result.value);
         }
         catch (e) {
-            const error = e instanceof Error ? e.message : String(e);
+            const error = e as VaultError;
 
             callbacks?.err?.(error);
             return Err(error);
@@ -200,9 +205,9 @@ const useVault = () => {
         updated: UpdateEntry,
         callbacks ?: {
             ok ?: (r: Entry) => void;
-            err ?: (e: string) => void;
+            err ?: (e: VaultError) => void;
         }
-    ): Promise<Result<Entry, string>> => {
+    ): Promise<VaultResult<Entry>> => {
         try {
             const result = await invoke("vault_update_entry", { id: id, new: updated }) as EntryDTO; 
             const parsed = toEntry(result);
@@ -211,7 +216,7 @@ const useVault = () => {
             return Ok(parsed);
         }
         catch (e) {
-            const error = e instanceof Error ? e.message : String(e);
+            const error = e as VaultError;
 
             callbacks?.err?.(error);
             return Err(error);
@@ -239,9 +244,9 @@ const useVault = () => {
         id: string,
         callbacks ?: {
             ok ?: () => void;
-            err ?: (e: string) => void;
+            err ?: (e: VaultError) => void;
         }
-    ): Promise<Result<null, string>> => {
+    ): Promise<VaultResult<null>> => {
         try {
             await invoke("vault_toggle_favorite", { id: id });
 
@@ -249,7 +254,7 @@ const useVault = () => {
             return Ok(null);
         }
         catch (e) {
-            const error = e instanceof Error ? e.message : String(e);
+            const error = e as VaultError;
 
             callbacks?.err?.(error);
             return Err(error);
@@ -275,9 +280,9 @@ const useVault = () => {
         id: string,
         callbacks ?: {
             ok ?: () => void;
-            err ?: (e: string) => void;
+            err ?: (e: VaultError) => void;
         }
-    ): Promise<Result<null, string>> => {
+    ): Promise<VaultResult<null>> => {
         try {
             await invoke("vault_delete_entry", { id: id });
 
@@ -291,7 +296,7 @@ const useVault = () => {
             return Ok(null);
         }
         catch (e) {
-            const error = e instanceof Error ? e.message : String(e);
+            const error = e as VaultError;
 
             callbacks?.err?.(error);
             return Err(error);

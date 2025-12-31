@@ -81,6 +81,7 @@ pub enum VaultState {
 pub struct VaultStatus {
     pub state: VaultState,
     pub ready: bool,
+    pub last_error: Option<VaultError>
 }
 
 #[derive(Serialize, Deserialize, Clone, Default)]
@@ -106,14 +107,14 @@ pub struct SaveFileLayout {
 pub struct Vault {
     path: PathBuf,
     version: String,
+    ready: bool,
     state: VaultState,
+    last_error: Option<VaultError>,
 
     entries: Vec<Entry>,
 
     crypto: VaultCrypto,
-
     runtime: Option<RuntimeKeys>,
-    ready: bool,
 }
 
 impl Drop for Vault {
@@ -132,6 +133,7 @@ impl Vault {
             crypto: VaultCrypto::default(),
             runtime: None,
             ready: false,
+            last_error: None,
         }
     }
 
@@ -144,6 +146,7 @@ impl Vault {
             crypto: VaultCrypto::default(),
             runtime: None,
             ready: false,
+            last_error: None
         }
     }
 
@@ -162,7 +165,21 @@ impl Vault {
         self.path.exists()
     }
 
-    pub fn load(&mut self) -> VaultResult<()> {
+    pub fn load(&mut self) {
+        self.ready = false;
+
+        match self.try_load() {
+            Ok(_) => {
+                self.last_error = None;
+                self.ready = true;
+            },
+            Err(e) => {
+                self.last_error = Some(e);
+            }
+        }
+    }
+
+    pub fn try_load(&mut self) -> VaultResult<()> {
         if self.is_initialized() {
             let file_content = std::fs::read_to_string(self.path.clone())
                 .map_err(|e| VaultError {
@@ -196,7 +213,6 @@ impl Vault {
             self.state = VaultState::Locked;
         }
 
-        self.ready = true;
         Ok(())
     }
 
@@ -447,10 +463,11 @@ impl Vault {
     /* -------------------------------------------------------------------------- */
     /*                                    READ                                    */
     /* -------------------------------------------------------------------------- */
-    pub fn get_status(&self) -> VaultStatus {
+    pub fn get_status(&mut self) -> VaultStatus {
         VaultStatus {
             state: self.state.clone(),
             ready: self.ready.clone(),
+            last_error: self.last_error.take()
         }
     }
 

@@ -79,16 +79,31 @@ export type ConfirmModalContextType = {
 /* -------------------------------------------------------------------------- */
 /*                           Vault types and helpers                          */
 /* -------------------------------------------------------------------------- */
+export type VaultErrorKind = "IO" | "Parse" | "Version" | "Access" | "Auth" | "Crypto" | "NotFound";
+
+export type VaultErrorSeverity = "Info" | "Warning" | "Fatal";
+
+export type VaultError = {
+    kind: VaultErrorKind,
+    serverity: VaultErrorSeverity,
+    message: string,
+    code: string
+}
+
+export type VaultResult<T> = Result<T, VaultError>;
+
 export type VaultState = "Uninitialized" | "Locked" | "Unlocked";
+
 export type VaultStatus = {
     state: VaultState,
-    ready: boolean
+    ready: boolean,
+    last_error: VaultError | null
 }
 
 export type VaultStatusContextType = {
     status: VaultStatus | null,
     loading: boolean,
-    error: string | null,
+    error?: VaultError,
     refreshState: () => void,
 }
 

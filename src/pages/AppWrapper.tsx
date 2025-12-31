@@ -10,9 +10,9 @@ const AppWrapper = () => {
     const { status, loading, error, refreshState } = useVaultStatus();
 
     const getActiveComponent = () => {
-        if (!status || !status.ready || loading) return <LoadingScreen key="loader" />;
-
         if (error) return <FatalError key="error" error={error} />;
+        
+        if (!status || !status.ready || loading) return <LoadingScreen key="loader" />;
 
         switch (status.state) {
             case "Uninitialized":

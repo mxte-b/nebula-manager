@@ -1,6 +1,8 @@
-const FatalError = ({ error }: { error: string }) => {
+import { VaultError } from "../types/general";
+
+const FatalError = ({ error }: { error: VaultError }) => {
     return (
-        <div>FatalError: { error }</div>
+        <div>FatalError: {JSON.stringify(error)}</div>
     )
 }
 

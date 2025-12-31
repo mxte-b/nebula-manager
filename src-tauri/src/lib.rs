@@ -70,7 +70,7 @@ fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> V
 
 #[tauri::command]
 fn vault_get_status(vault: State<Arc<Mutex<Vault>>>) -> VaultResult<VaultStatus> {
-    let v = vault
+    let mut v = vault
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
@@ -172,11 +172,7 @@ pub fn run() {
             {
                 let mut v = vault.lock().unwrap();
                 v.set_path(app_data_dir.join("vault_encrypted.json"));
-
-                match v.load() {
-                    Ok(()) => println!("Loaded ok"),
-                    Err(e) => println!("{}", e),
-                }
+                v.load();
             }
 
             Ok(())
