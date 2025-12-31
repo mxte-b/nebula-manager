@@ -1,23 +1,24 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { VaultError, VaultStatus, VaultStatusContextType } from "../types/general";
+import { VaultStatus, VaultStatusContextType } from "../types/general";
 import useVault from "../hooks/useVault";
+import { useError } from "./error";
 
 const VaultStatusContext = createContext<VaultStatusContextType | undefined>(undefined);
 
 export const VaultStatusProvider = ({ children }: { children: ReactNode }) => {
     const { getVaultStatus } = useVault();
+    const { fatalError, addError, clearFatalError } = useError();
 
     const [status, setStatus] = useState<VaultStatus | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<VaultError | undefined>(undefined);
 
     const refreshState = async () => {
         await getVaultStatus({
             ok: (s) => {
                 setStatus(s);
-                setError(undefined);
+                if (fatalError) clearFatalError();
             },
-            err: setError,
+            err: addError,
         });
     };
 
@@ -27,7 +28,7 @@ export const VaultStatusProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
     }, []);
 
-    return <VaultStatusContext.Provider value={{ status, loading, error, refreshState }}>
+    return <VaultStatusContext.Provider value={{ status, loading, refreshState }}>
         {children}
     </VaultStatusContext.Provider>
 }

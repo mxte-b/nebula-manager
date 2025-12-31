@@ -5,12 +5,14 @@ import LoadingScreen from "./LoadingScreen";
 import FatalError from "./FatalError";
 import SetupScreen from "./SetupScreen";
 import UnlockScreen from "./UnlockScreen";
+import { useError } from "../contexts/error";
 
 const AppWrapper = () => {
-    const { status, loading, error, refreshState } = useVaultStatus();
+    const { status, loading, refreshState } = useVaultStatus();
+    const { fatalError } = useError();
 
     const getActiveComponent = () => {
-        if (error) return <FatalError key="error" error={error} />;
+        if (fatalError) return <FatalError key="error" error={fatalError} />;
         
         if (!status || !status.ready || loading) return <LoadingScreen key="loader" />;
 

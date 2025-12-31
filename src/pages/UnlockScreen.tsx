@@ -1,12 +1,12 @@
 import { FormEvent, useRef } from "react";
 import useVault from "../hooks/useVault";
-import { useToast } from "../contexts/toast";
+import { useError } from "../contexts/error";
 
 const UnlockScreen = ({ onUnlock }: { onUnlock: () => void }) => {
     const passwordRef = useRef<HTMLInputElement>(null);
 
     const { unlockVault } = useVault();
-    const { addToast } = useToast();
+    const { addError} = useError();
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -16,13 +16,7 @@ const UnlockScreen = ({ onUnlock }: { onUnlock: () => void }) => {
 
         unlockVault(password, {
             ok: onUnlock,
-            err: (e) => {
-                addToast({
-                    type: "error",
-                    message: `Couldn't unlock vault: ${e}`,
-                    duration: 5000
-                })
-            },
+            err: addError
         });
     }
 

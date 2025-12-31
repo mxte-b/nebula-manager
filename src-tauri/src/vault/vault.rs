@@ -37,8 +37,8 @@ pub enum VaultErrorKind {
 
 #[derive(Serialize, Clone, Debug)]
 pub enum VaultErrorSeverity {
-    Info,
-    Warning,
+    Soft,
+    Blocking,
     Fatal,
 }
 
@@ -239,7 +239,7 @@ impl Vault {
         let content = serde_json::to_string_pretty(&self.convert_to_savefile())
             .map_err(|e| VaultError { 
                 kind: VaultErrorKind::Parse, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Serialization failed: {e}"),
                 code: "E_VAULT_SAVE"
             })?;
@@ -247,7 +247,7 @@ impl Vault {
         std::fs::write(self.path.clone(), content)
             .map_err(|e| VaultError { 
                 kind: VaultErrorKind::IO, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Filesystem write failed: {e}"),
                 code: "E_VAULT_SAVE"
             })
@@ -271,7 +271,7 @@ impl Vault {
         let mut kek = VaultCryptoManager::derive_kek(&password_bytes, &salt)
             .map_err(|e| VaultError {
                 kind: VaultErrorKind::Crypto, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Failed to derive KEK: {e}"),
                 code: "E_VAULT_SET_PW"
             })?;
@@ -281,7 +281,7 @@ impl Vault {
         let (wrapped_dek, dek_nonce) = VaultCryptoManager::wrap_dek(&dek, &kek)
             .map_err(|e| VaultError {
                 kind: VaultErrorKind::Crypto, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Failed to wrap DEK: {e}"),
                 code: "E_VAULT_SET_PW"
             })?;
@@ -317,7 +317,7 @@ impl Vault {
         let salt = b64_to_bytes(&self.crypto.salt)
             .map_err(|e| VaultError {
                 kind: VaultErrorKind::Parse, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Failed to decode from base64: {e}"),
                 code: "E_VAULT_UNLOCK"
             })?;
@@ -325,7 +325,7 @@ impl Vault {
         let mut kek = VaultCryptoManager::derive_kek(&password_bytes, &salt)
             .map_err(|e| VaultError {
                 kind: VaultErrorKind::Crypto, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Failed to derive KEK: {e}"),
                 code: "E_VAULT_UNLOCK"
             })?;
@@ -336,7 +336,7 @@ impl Vault {
         let dek_nonce_bytes = b64_to_bytes(&self.crypto.dek_nonce)
             .map_err(|e| VaultError {
                 kind: VaultErrorKind::Parse, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Failed to decode from base64: {e}"),
                 code: "E_VAULT_UNLOCK"
             })?;
@@ -344,7 +344,7 @@ impl Vault {
         let wrapped_dek_bytes = b64_to_bytes(&self.crypto.wrapped_dek)
             .map_err(|e| VaultError {
                 kind: VaultErrorKind::Parse, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Failed to decode from base64: {e}"),
                 code: "E_VAULT_UNLOCK"
             })?;
@@ -354,7 +354,7 @@ impl Vault {
         let dek = VaultCryptoManager::unwrap_dek(&wrapped_dek_bytes, &kek, dek_nonce)
             .map_err(|_| VaultError {
                 kind: VaultErrorKind::Auth, 
-                severity: VaultErrorSeverity::Info, 
+                severity: VaultErrorSeverity::Soft, 
                 message: format!("Incorrect password."),
                 code: "E_VAULT_UNLOCK"
             })?;
@@ -370,7 +370,7 @@ impl Vault {
         let vault_nonce_bytes = b64_to_bytes(&self.crypto.vault_nonce)
             .map_err(|e| VaultError {
                 kind: VaultErrorKind::Parse, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Failed to decode from base64: {e}"),
                 code: "E_VAULT_UNLOCK"
             })?;
@@ -378,7 +378,7 @@ impl Vault {
         let vault_ciphertext_bytes = b64_to_bytes(&self.crypto.vault_ciphertext)
             .map_err(|e| VaultError {
                 kind: VaultErrorKind::Parse, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Failed to decode from base64: {e}"),
                 code: "E_VAULT_UNLOCK"
             })?;
@@ -389,7 +389,7 @@ impl Vault {
             .decrypt(vault_nonce, vault_ciphertext_bytes.as_ref())
             .map_err(|_| VaultError {
                 kind: VaultErrorKind::Crypto, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Failed to decrypt vault."),
                 code: "E_VAULT_UNLOCK"
             })?;
@@ -397,7 +397,7 @@ impl Vault {
         self.entries = serde_json::from_slice::<Vec<Entry>>(&vault_plaintext_bytes)
             .map_err(|_| VaultError {
                 kind: VaultErrorKind::Parse, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Failed to parse vault."),
                 code: "E_VAULT_UNLOCK"
             })?;
@@ -425,7 +425,7 @@ impl Vault {
             let vault_plaintext = serde_json::to_vec_pretty::<Vec<Entry>>(&self.entries)
                 .map_err(|_| VaultError {
                     kind: VaultErrorKind::Parse, 
-                    severity: VaultErrorSeverity::Warning, 
+                    severity: VaultErrorSeverity::Blocking, 
                     message: format!("Failed to parse vault."),
                     code: "E_VAULT_ENCRYPT"
                 })?;
@@ -434,7 +434,7 @@ impl Vault {
                 .encrypt(&vault_nonce, vault_plaintext.as_slice())
                 .map_err(|_| VaultError {
                     kind: VaultErrorKind::Crypto, 
-                    severity: VaultErrorSeverity::Warning, 
+                    severity: VaultErrorSeverity::Blocking, 
                     message: format!("Failed to encrypt vault."),
                     code: "E_VAULT_ENCRYPT"
                 })?;
@@ -444,7 +444,7 @@ impl Vault {
         } else {
             return Err(VaultError {
                 kind: VaultErrorKind::Access, 
-                severity: VaultErrorSeverity::Warning, 
+                severity: VaultErrorSeverity::Blocking, 
                 message: format!("Vault not initialized."),
                 code: "E_VAULT_ENCRYPT"
             });
@@ -481,7 +481,7 @@ impl Vault {
         } else {
             Err(VaultError {
                 kind: VaultErrorKind::NotFound, 
-                severity: VaultErrorSeverity::Info, 
+                severity: VaultErrorSeverity::Soft, 
                 message: format!("Entry '{}' not found", id),
                 code: "E_VAULT_GET_PASS"
             })
@@ -519,7 +519,7 @@ impl Vault {
         } else {
             Err(VaultError {
                 kind: VaultErrorKind::NotFound, 
-                severity: VaultErrorSeverity::Info, 
+                severity: VaultErrorSeverity::Soft, 
                 message: format!("Entry '{}' not found", id),
                 code: "E_VAULT_ENTRY_UPDATE"
             })
@@ -533,7 +533,7 @@ impl Vault {
         } else {
             Err(VaultError {
                 kind: VaultErrorKind::NotFound, 
-                severity: VaultErrorSeverity::Info, 
+                severity: VaultErrorSeverity::Soft, 
                 message: format!("Entry '{}' not found", id),
                 code: "E_VAULT_ENTRY_FAVORITE"
             })
@@ -550,7 +550,7 @@ impl Vault {
         } else {
             Err(VaultError {
                 kind: VaultErrorKind::NotFound, 
-                severity: VaultErrorSeverity::Info, 
+                severity: VaultErrorSeverity::Soft, 
                 message: format!("Entry '{}' not found", id),
                 code: "E_VAULT_ENTRY_DELETE"
             })

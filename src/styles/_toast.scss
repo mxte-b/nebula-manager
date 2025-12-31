@@ -4,14 +4,17 @@ $bg-default: rgb(32 32 32);
 $bg-success: rgb(12 34 12);
 $bg-error: rgb(39 25 25);
 $bg-warning: rgb(51 48 32);
+$bg-info: rgb(25 32 39);
 $border-default: rgb(65 65 65);
 $border-success: rgb(96 146 101);
 $border-error: rgb(170 80 80);
 $border-warning: rgb(150 143 79);
+$border-info: rgb(79 143 150);
 $color-default: var(--fg);
 $color-success: rgb(200 255 204);
 $color-error: rgb(255 134 134);
 $color-warning: rgb(255 239 146);
+$color-info: rgb(146 239 255);
 
 .toasts {
     @include flex(column);
@@ -118,6 +121,16 @@ $color-warning: rgb(255 239 146);
         
         .toast-progress {
             background-color: $color-error;
+        }
+    }
+
+    &.toast-info {
+        background-color: $bg-info;
+        color: $color-info;
+        border-color: $border-info;
+        
+        .toast-progress {
+            background-color: $color-info;
         }
     }
 }

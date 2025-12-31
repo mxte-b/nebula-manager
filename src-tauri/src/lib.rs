@@ -34,7 +34,7 @@ fn vault_setup(vault: State<Arc<Mutex<Vault>>>, master_password: String) -> Vaul
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Warning, 
+            severity: VaultErrorSeverity::Blocking, 
             message: "Vault not accessible".into(),
             code: "E_VAULT_SETUP"
         })?;
@@ -47,7 +47,7 @@ fn vault_unlock(vault: State<Arc<Mutex<Vault>>>, password: String) -> VaultResul
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Warning, 
+            severity: VaultErrorSeverity::Blocking, 
             message: "Vault not accessible".into(),
             code: "E_VAULT_UNLOCK"
         })?;
@@ -60,7 +60,7 @@ fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> V
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Warning, 
+            severity: VaultErrorSeverity::Blocking, 
             message: "Vault not accessible".into(),
             code: "E_VAULT_ENTRY_CREATE"
         })?;
@@ -74,7 +74,7 @@ fn vault_get_status(vault: State<Arc<Mutex<Vault>>>) -> VaultResult<VaultStatus>
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Warning, 
+            severity: VaultErrorSeverity::Blocking, 
             message: "Vault not accessible".into(),
             code: "E_VAULT_GET_STATUS"
         })?;
@@ -87,7 +87,7 @@ fn vault_get_entries(vault: State<Arc<Mutex<Vault>>>) -> VaultResult<Vec<EntryPu
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Warning, 
+            severity: VaultErrorSeverity::Blocking, 
             message: "Vault not accessible".into(),
             code: "E_VAULT_ENTRY_GET"
         })?;
@@ -100,7 +100,7 @@ fn vault_get_entry_password(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultR
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Warning, 
+            severity: VaultErrorSeverity::Blocking, 
             message: "Vault not accessible".into(),
             code: "E_VAULT_GET_PASS"
         })?;
@@ -117,7 +117,7 @@ fn vault_update_entry(
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Warning, 
+            severity: VaultErrorSeverity::Blocking, 
             message: "Vault not accessible".into(),
             code: "E_VAULT_ENTRY_UPDATE"
         })?;
@@ -130,7 +130,7 @@ fn vault_toggle_favorite(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResu
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Warning, 
+            severity: VaultErrorSeverity::Blocking, 
             message: "Vault not accessible".into(),
             code: "E_VAULT_ENTRY_FAVORITE"
         })?;
@@ -143,7 +143,7 @@ fn vault_delete_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResult<
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Warning, 
+            severity: VaultErrorSeverity::Blocking, 
             message: "Vault not accessible".into(),
             code: "E_VAULT_ENTRY_DELETE"
         })?;

@@ -9,10 +9,12 @@ import CloseButton from "./CloseButton";
 const ToastItem = (
 {
     toast,
+    progress = false,
     onClose
 }
 :{
     toast: Toast,
+    progress ?: boolean
     onClose: (id: string) => void
 }
 ) => {
@@ -21,6 +23,7 @@ const ToastItem = (
         ["success", <Icons.CheckCircleFill />],
         ["warning", <Icons.ExclamationCircleFill />],
         ["error", <Icons.XCircleFill />],
+        ["info", <Icons.InfoCircle />]
     ]);
 
     const toastIcon = useMemo(() => toastIconMap.get(toast.type ?? "success"), [toast]);
@@ -83,7 +86,8 @@ const ToastItem = (
                     onClose(toast.id);
                 }}/>
 
-                <ToastProgress toast={toast} />
+                { progress && <ToastProgress toast={toast} /> }
+                
                 <AnimatePresence>
                     {
                         toast.count && 

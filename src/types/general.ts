@@ -40,7 +40,7 @@ export type RouterContextType = {
 /* -------------------------------------------------------------------------- */
 /*                                Toast system                                */
 /* -------------------------------------------------------------------------- */
-export type ToastType = "success" | "warning" | "error";
+export type ToastType = "success" | "warning" | "error" | "info";
 
 export type Toast = {
     id: string;
@@ -81,11 +81,11 @@ export type ConfirmModalContextType = {
 /* -------------------------------------------------------------------------- */
 export type VaultErrorKind = "IO" | "Parse" | "Version" | "Access" | "Auth" | "Crypto" | "NotFound";
 
-export type VaultErrorSeverity = "Info" | "Warning" | "Fatal";
+export type VaultErrorSeverity = "Soft" | "Blocking" | "Fatal";
 
 export type VaultError = {
     kind: VaultErrorKind,
-    serverity: VaultErrorSeverity,
+    severity: VaultErrorSeverity,
     message: string,
     code: string
 }
@@ -103,7 +103,6 @@ export type VaultStatus = {
 export type VaultStatusContextType = {
     status: VaultStatus | null,
     loading: boolean,
-    error?: VaultError,
     refreshState: () => void,
 }
 

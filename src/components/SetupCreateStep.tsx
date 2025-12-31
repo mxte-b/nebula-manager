@@ -1,14 +1,14 @@
 import { useRef } from "react";
 import { PhaseProps } from "../types/general";
 import useVault from "../hooks/useVault";
-import { useToast } from "../contexts/toast";
+import { useError } from "../contexts/error";
 
 const SetupCreateStep = ({ next, back }: PhaseProps) => {
 
     const passwordInpuRef = useRef<HTMLInputElement>(null);
 
     const { setupVault } = useVault();
-    const { addToast } = useToast();
+    const { addError } = useError();
 
     const handlePasswordCreate = () => {
         const password = passwordInpuRef.current?.value;
@@ -17,11 +17,7 @@ const SetupCreateStep = ({ next, back }: PhaseProps) => {
 
         setupVault(password, {
             ok: next,
-            err: (e) => addToast({
-                type: "error",
-                message: `Couldn't set up vault: ${e}`,
-                duration: 5000
-            })
+            err: addError
         });
     }
 

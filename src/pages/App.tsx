@@ -15,6 +15,7 @@ import { Entry, UpdateEntry, VaultStatus } from "../types/general";
 import useVault from "../hooks/useVault";
 import UpdateForm from "../components/UpdateForm";
 import { useToast } from "../contexts/toast";
+import { useError } from "../contexts/error";
 
 await register("CommandOrControl+K", (e) => {
     // Ignore key release
@@ -44,17 +45,15 @@ function App() {
         addToast
     } = useToast();
 
+    const { addError } = useError();
+
     const handleNewEntrySubmit = async (entry: Entry) => {
         createVaultEntry(entry, {
             ok: (e) => {
                 setIsEntryFormVisible(false);
                 setVaultEntries(e);
             },
-            err: (e) => addToast({
-                type: "error",
-                message: `Couldn't create entry: ${e}`,
-                duration: 5000,
-            })
+            err: addError
         });
     }
 
@@ -69,11 +68,7 @@ function App() {
                     duration: 5000,
                 })
             },
-            err: (e) => addToast({
-                type: "error",
-                message: `Couldn't update entry: ${e}`,
-                duration: 5000,
-            })
+            err: addError
         });
     }
 
@@ -82,11 +77,7 @@ function App() {
             ok: () => {
                 setVaultEntries(p => p?.map(e => e.id === id ? {...e, favorite: !e.favorite} as Entry : e) || null)
             },
-            err: (e) => addToast({
-                type: "error",
-                message: `Couldn't favourite entry: ${e}`,
-                duration: 5000,
-            })
+            err: addError
         });
     }
 
@@ -100,11 +91,7 @@ function App() {
                     duration: 5000,
                 })
             },
-            err: (e) => addToast({
-                type: "error",
-                message: `Couldn't delete entry: ${e}`,
-                duration: 5000,
-            })
+            err: addError
         });
     }
 
@@ -115,20 +102,12 @@ function App() {
 
         getVaultStatus({
             ok: setVaultStatus,
-            err: (e) => addToast({
-                type: "error",
-                message: `Couldn't get vault state: ${e}`,
-                duration: 5000
-            })
+            err: addError
         })
 
         getVaultEntries({
             ok: setVaultEntries,
-            err: (e) => addToast({
-                type: "error",
-                message: `Couldn't get vault entries: ${e}`,
-                duration: 5000
-            })
+            err: addError
         });
 
         return () => window.removeEventListener("contextmenu", prevent);

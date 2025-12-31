@@ -7,6 +7,7 @@ import { SplitText } from "gsap/SplitText";
 import Tooltip from "./Tooltip";
 import HoverableIcon from "./HoverableIcon";
 import { useToast } from "../contexts/toast";
+import { useError } from "../contexts/error";
 
 gsap.registerPlugin(SplitText);
 
@@ -29,12 +30,13 @@ const EntryPasswordField = (
 
     const { getVaultEntryPassword } = useVault();
     const { addToast } = useToast();
+    const { addError } = useError();
 
     const handlePasswordCopy = (id: string) => {
         addToast({
             type: "success",
             message: "Password copied!" + id,
-            duration: 20000
+            duration: 5000
         })
     }
 
@@ -44,11 +46,7 @@ const EntryPasswordField = (
         if (next) {
             getVaultEntryPassword(id, {
                 ok: setPassword,
-                err: (e) => addToast({
-                    type: "error",
-                    message: `Couldn't get password: ${e}`,
-                    duration: 5000,
-                })
+                err: addError
             });
 
             setPasswordShown(true);
