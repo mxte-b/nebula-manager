@@ -7,6 +7,8 @@ import Eye from "../assets/eye.svg?react"
 import EyeFill from "../assets/eye-fill.svg?react"
 import EyeSlash from "../assets/eye-slash.svg?react"
 import EyeSlashFill from "../assets/eye-slash-fill.svg?react"
+import FilePlus from "../assets/file-plus.svg?react"
+import FileUpload from "../assets/file-upload.svg?react"
 import Gear from "../assets/gear.svg?react"
 import Globe from "../assets/globe.svg?react"
 import Key from "../assets/key.svg?react"
@@ -36,6 +38,8 @@ const Icons = {
     EyeFill,
     EyeSlash,
     EyeSlashFill,
+    FilePlus,
+    FileUpload,
     Gear,
     Globe,
     Key,

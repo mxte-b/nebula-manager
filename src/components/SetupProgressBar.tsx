@@ -4,7 +4,7 @@ const SetupProgressBar = ({  }: { phase: SetupPhase }) => {
     return (
         <div>
             SetupProgressBar
-        </div>
+        </div> 
     );
 };
 
