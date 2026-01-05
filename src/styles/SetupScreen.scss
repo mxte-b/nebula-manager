@@ -1,24 +1,25 @@
+@use "stepper";
 @use "mixins" as *;
 
 .setup-screen {
-    @include flex(column, flex-start);
+    @include flex(column, space-between);
 
     gap: 1rem;
     height: calc(100vh - 4rem);
     margin: 2rem;
     padding: 1rem;
     border-radius: 15px;
-    background: linear-gradient(to bottom, var(--bg-accent), var(--bg-1) 30%);
+    background: linear-gradient(to top, var(--bg-accent), var(--bg-1) 30%);
 }
 
 .setup-header {
     @include flex;
 
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 
     img {
-        width: 90px;
+        width: 80px;
     }
 
     .brand {
@@ -27,12 +28,12 @@
 
     .brand-name {
         font-family: 'Bruno Ace', cursive;
-        font-size: 35px;
+        font-size: 30px;
     }
 
     .brand-tagline {
         color: var(--fg-secondary);
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -41,6 +42,7 @@
     
     gap: 2rem;
     width: 500px;
+    max-height: 430px;
     flex-grow: 1;
 
     .get-started {
@@ -62,6 +64,7 @@
         @include flex;
 
         gap: 1rem;
+        flex-grow: 1
     }
 }
 
@@ -71,11 +74,19 @@
     gap: 1.5rem;
     height: 100%;
     padding: 1.5rem;
-    border: 2px solid var(--border-1);
+    border: 1px solid var(--border-1);
     border-radius: 10px;
-    transition: border-color 0.2s ease;
+    box-shadow: 0 4px 5px rgb(0 0 0 / 13%);
+    transition: border-color 0.2s ease, scale 0.15s ease;
+    will-change: scale;
     cursor: pointer;
     flex-basis: 50%;
+
+    &-icon-wrapper {
+        @include flex;
+
+        flex-grow: 1;
+    }
 
     &-icon {
         @include flex;
@@ -83,7 +94,7 @@
         width: 80px;
         padding: 1.5rem;
         border-radius: 50%;
-        background-color: var(--bga-1);
+        background-color: var(--bga);
         transition: background-color 0.2s ease;
         flex-shrink: 0;
         aspect-ratio: 1 / 1;
@@ -113,6 +124,22 @@
         text-align: center;
     }
 
+    &:hover {
+        border-color: var(--border-2);
+
+        svg {
+            color: var(--fg);
+        }
+
+        .card-icon {
+            background-color: var(--bga-1);
+        }
+    }
+
+    &:active {
+        scale: 0.98;
+    }
+
     &.active {
         border-color: var(--border-accent-1);
 
@@ -128,13 +155,27 @@
 
 .button-continue {
     padding: 0.7rem 3rem;
-    border: none;
+    border: 1px solid var(--border-3);
     border-radius: 10px;
-    background-color: var(--bg-accent);
-    color: var(--fg-accent);
+    background-color: var(--bg-3);
+    color: var(--fg);
+    box-shadow: 0 4px 5px rgb(0 0 0 / 13%);
+    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, scale 0.15s ease;
+    will-change: scale;
+
+    &:hover {
+        background-color: var(--bg-accent);
+        color: var(--fg-accent);
+        border-color: var(--border-accent-1);
+    }
+
+    &:active {
+        scale: 0.98;
+    }
 }
 
 footer {
     color: var(--fg-secondary);
     font-size: 12px;
+    padding-block: 1rem;
 }

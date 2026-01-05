@@ -7,13 +7,7 @@ const SetupWelcomeStep = ({ next }: RootPhaseProps) => {
 
     return (
         <>
-            <header className="setup-header">
-                <img src="/icon.png" alt="Nebula Manager Icon" />
-                <div className="brand">
-                    <div className="brand-name">Nebula Manager</div>
-                    <div className="brand-tagline">A private, hassle-free password manager</div>
-                </div>
-            </header>
+            
 
             <main className="setup-main">
                 <div className="get-started">
@@ -23,21 +17,25 @@ const SetupWelcomeStep = ({ next }: RootPhaseProps) => {
 
                 <div className="setup-options">
                     <div className={"card" + (option == "create" ? " active" : "")} onClick={() => setOption("create")}>
-                        <div className="card-icon">
-                            <Icons.FilePlus />
+                        <div className="card-icon-wrapper">
+                            <div className="card-icon">
+                                <Icons.FilePlus />
+                            </div>
                         </div>
                         <div className="card-bottom">
                             <div className="card-title">Create new</div>
-                            <div className="card-description">Protect your passwords with a new, encrypted vault.</div>
+                            <div className="card-description">Protect your passwords with a brand new, encrypted vault.</div>
                         </div>
                     </div>
                     <div className={"card" + (option == "import" ? " active" : "")} onClick={() => setOption("import")}>
-                        <div className="card-icon">
-                            <Icons.FileUpload />
+                        <div className="card-icon-wrapper">
+                            <div className="card-icon">
+                                <Icons.FileUpload />
+                            </div>
                         </div>
                         <div className="card-bottom">
                             <div className="card-title">Import</div>
-                            <div className="card-description">Already have a vault? Import it here to securely access it.</div>
+                            <div className="card-description">Already have a vault set up? Import it here to securely access it.</div>
                         </div>
                     </div>
                 </div>
