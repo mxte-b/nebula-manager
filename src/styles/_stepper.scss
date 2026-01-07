@@ -67,6 +67,7 @@ $step-color-completed: #ae71b1;
         height: 100%;
         background-color: $step-color-current;
         transition: transform 0.2s ease;
+        transition-delay: calc(0.1s * var(--i));
         transform: scaleX(0);
         transform-origin: left;
         content: '';

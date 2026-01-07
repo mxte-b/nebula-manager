@@ -1,4 +1,4 @@
-import { Step } from "../types/general";
+import { CSSProperties, useEffect, useRef } from "react";
 
 const Stepper = (
     { 
@@ -10,8 +10,16 @@ const Stepper = (
         activeStepId: number,
     }
 ) => {
+    const prev = useRef(activeStepId);
+
+    const direction = activeStepId > prev.current ? "forwards" : "backwards";
+
+    useEffect(() => {
+        prev.current = activeStepId;
+    }, [activeStepId]);
+
     return (
-        <div className="stepper">
+        <div className={"stepper " + direction}>
             {
                 steps.map((s, i) => 
                     <>
@@ -22,7 +30,7 @@ const Stepper = (
                                 "stepper-line"
                                 + (i <= activeStepId ? " completed" : "")
                                 + (i == activeStepId + 1 ? " in-progress": "")
-                            }></div>
+                            } style={{ "--i": direction == "forwards" ? i - 1 : steps.length - i - 1 } as CSSProperties}></div>
                         }
 
                         {/* Stepper step */}
@@ -30,7 +38,7 @@ const Stepper = (
                             "stepper-step"
                             + (i < activeStepId ? " completed" : "")
                             + (i == activeStepId ? " in-progress": "")
-                        }>
+                        } style={{ "--i": direction == "forwards" ? i : steps.length - i  } as CSSProperties}>
                             <div className="step-circle"></div>
                             <div className="step-details">
                                 <div className="step-number">STEP {i + 1}</div>
