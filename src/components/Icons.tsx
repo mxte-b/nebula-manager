@@ -1,4 +1,5 @@
 import Bookmark from "../assets/bookmark.svg?react"
+import Check from "../assets/check-lg.svg?react"
 import CheckCircleFill from "../assets/check-circle-fill.svg?react"
 import Copy from "../assets/copy.svg?react"
 import ExclamationCircleFill from "../assets/exclamation-circle-fill.svg?react"
@@ -30,6 +31,7 @@ import XCircleFill from "../assets/x-circle-fill.svg?react"
 
 const Icons = {
     Bookmark,
+    Check,
     CheckCircleFill,
     Copy,
     ExclamationCircleFill,

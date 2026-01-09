@@ -2,7 +2,7 @@ import { JSX, useMemo, useState } from "react";
 import SetupWelcomeStep from "../components/SetupWelcomeStep";
 import SetupCreateStep from "../components/SetupCreateStep";
 import SetupImportStep from "../components/SetupImportStep";
-import { SetupPhase, Step } from "../types/general";
+import { SetupPhase } from "../types/general";
 import { AnimatePresence } from "motion/react";
 import SetupDoneStep from "../components/SetupDoneStep";
 import "../styles/SetupScreen.scss";
