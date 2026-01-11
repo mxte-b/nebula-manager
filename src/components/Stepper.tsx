@@ -28,7 +28,7 @@ const Stepper = (
                         {/* Stepper line */}
                         {
                             i > 0 && 
-                            <div className={
+                            <div key={`line-${i}`} className={
                                 "stepper-line"
                                 + (i <= activeStepId ? " completed" : "")
                                 + (i == activeStepId + 1 ? " in-progress": "")
@@ -36,7 +36,7 @@ const Stepper = (
                         }
 
                         {/* Stepper step */}
-                        <div className={
+                        <div key={`step-${i}`} className={
                             "stepper-step"
                             + (i < activeStepId ? " completed" : "")
                             + (i == activeStepId ? " in-progress": "")

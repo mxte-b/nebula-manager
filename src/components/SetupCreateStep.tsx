@@ -2,16 +2,18 @@ import { useRef } from "react";
 import { PhaseProps } from "../types/general";
 import useVault from "../hooks/useVault";
 import { useError } from "../contexts/error";
+import Icons from "./Icons";
+import PasswordStrengthMeter from "./PasswordStrengthMeter";
 
 const SetupCreateStep = ({ next, back }: PhaseProps) => {
 
-    const passwordInpuRef = useRef<HTMLInputElement>(null);
+    const passwordInputRef = useRef<HTMLInputElement>(null);
 
     const { setupVault } = useVault();
     const { addError } = useError();
 
     const handlePasswordCreate = () => {
-        const password = passwordInpuRef.current?.value;
+        const password = passwordInputRef.current?.value;
 
         if (!password) return;
 
@@ -23,21 +25,33 @@ const SetupCreateStep = ({ next, back }: PhaseProps) => {
 
     return (
         <>
-            <button className="secondary" onClick={back}>
-                Back
+            <button className="setup-back" onClick={back}>
+                <Icons.ArrowLeft />
             </button>
-            <header className="setup-header">
-                <h1>Create master password</h1>
-                <p>To secure your vault, please enter a strong password.</p>
-            </header>
 
-            <form className="password-form form">
-                <label htmlFor="password">Password</label>
-                <input type="password" name="password" id="password" ref={passwordInpuRef} />
-                <button type="button" className="secondary" onClick={handlePasswordCreate}>
-                    Secure vault
-                </button>
-            </form>
+            <main className="setup-main">
+                <header className="main-header">
+                    <h1>Create master password</h1>
+                    <p>To secure your vault, please enter a strong password that you will remember. If you lose your password, you lose your data.</p>
+                </header>
+
+                <form className="password-form form" autoComplete="off" onSubmit={(e) => {
+                    e.preventDefault();
+                    handlePasswordCreate();
+                }}>
+                    <div className="form-group">
+                        <div className="form-input">
+                            <label htmlFor="password">Password</label>
+                            <input autoComplete="off" placeholder="Enter a strong password" type="password" name="password" id="password" ref={passwordInputRef} />
+                            <PasswordStrengthMeter password="asd" />
+                        </div>
+                    </div>
+                    <button type="submit" className="button-continue">
+                        Continue
+                    </button>
+                </form>
+
+            </main>
 
             <footer className="setup-footer">
                 Your data is encrypted locally and never leaves your device.

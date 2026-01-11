@@ -10,7 +10,7 @@ const SetupWelcomeStep = ({ next }: RootPhaseProps) => {
             
 
             <main className="setup-main">
-                <div className="get-started">
+                <div className="main-header">
                     <h1>Let's get you started!</h1>
                     <p>Your passwords deserve privacy too. Choose an option to begin.</p>
                 </div>

@@ -1,3 +1,48 @@
+@use "mixins" as *;
+
 .form {
+    --group-gap: 2rem;
+    --input-gap: 1rem;
+    --input-height: 45px;
+
+    @include flex(column, $align: stretch);
+
+    gap: var(--group-gap);
     background-color: var(--bg-1);
+
+    &-group {
+        @include flex(column, $align: flex-start);
+
+        gap: var(--input-gap);
+    }
+
+    &-input {
+        @include flex(column, $align: flex-start);
+
+        gap: 0.5rem;
+        width: 100%;
+
+        label {
+            font-size: 14px;
+            padding-left: 3px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            height: var(--input-height);
+            border: 1px solid var(--border-1);
+            border-radius: 10px;
+            background-color: var(--bg-2);
+            color: var(--fg);
+            font-size: 16px;
+            outline: none;
+            padding-inline: 10px;
+        }
+
+        input::-ms-reveal,
+        input::-ms-clear {
+            display: none;
+        }
+    }
 }

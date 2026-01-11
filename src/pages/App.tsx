@@ -117,7 +117,6 @@ function App() {
         <main className="dashboard">
             <SideBar />
             
-            
             <div className="content-wrapper">
                 <Router>
                     <Route path="vault" element={
@@ -158,8 +157,6 @@ function App() {
                 onSubmit={handleEntryUpdateSubmit}
                 onClose={() => setIsUpdateFormVisible(false)}
             />
-
-            <div>STATE: { vaultStatus?.state }</div>
         </main>
     );
 }

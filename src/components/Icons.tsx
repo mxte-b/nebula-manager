@@ -1,3 +1,4 @@
+import ArrowLeft from "../assets/arrow-left.svg?react"
 import Bookmark from "../assets/bookmark.svg?react"
 import Check from "../assets/check-lg.svg?react"
 import CheckCircleFill from "../assets/check-circle-fill.svg?react"
@@ -30,6 +31,7 @@ import X from "../assets/x.svg?react"
 import XCircleFill from "../assets/x-circle-fill.svg?react"
 
 const Icons = {
+    ArrowLeft,
     Bookmark,
     Check,
     CheckCircleFill,
