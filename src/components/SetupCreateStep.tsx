@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { PhaseProps } from "../types/general";
 import useVault from "../hooks/useVault";
 import { useError } from "../contexts/error";
@@ -6,15 +6,12 @@ import Icons from "./Icons";
 import PasswordStrengthMeter from "./PasswordStrengthMeter";
 
 const SetupCreateStep = ({ next, back }: PhaseProps) => {
-
-    const passwordInputRef = useRef<HTMLInputElement>(null);
+    const [password, setPassword] = useState<string>("");
 
     const { setupVault } = useVault();
     const { addError } = useError();
 
     const handlePasswordCreate = () => {
-        const password = passwordInputRef.current?.value;
-
         if (!password) return;
 
         setupVault(password, {
@@ -42,8 +39,15 @@ const SetupCreateStep = ({ next, back }: PhaseProps) => {
                     <div className="form-group">
                         <div className="form-input">
                             <label htmlFor="password">Password</label>
-                            <input autoComplete="off" placeholder="Enter a strong password" type="password" name="password" id="password" ref={passwordInputRef} />
-                            <PasswordStrengthMeter password="asd" />
+                            <input
+                                autoComplete="off" 
+                                placeholder="Enter a strong password" 
+                                type="password" 
+                                name="password" 
+                                id="password"
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <PasswordStrengthMeter password={password} />
                         </div>
                     </div>
                     <button type="submit" className="button-continue">
