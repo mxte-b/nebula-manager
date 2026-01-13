@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useRef } from "react";
+import { CSSProperties, Fragment, useEffect, useRef } from "react";
 import Icons from "./Icons";
 import { AnimatePresence, motion } from "motion/react";
 
@@ -24,11 +24,11 @@ const Stepper = (
         <div className={"stepper " + direction}>
             {
                 steps.map((s, i) => 
-                    <>
+                    <Fragment key={`step-wrapper-${i}`}>
                         {/* Stepper line */}
                         {
                             i > 0 && 
-                            <div key={`line-${i}`} className={
+                            <div className={
                                 "stepper-line"
                                 + (i <= activeStepId ? " completed" : "")
                                 + (i == activeStepId + 1 ? " in-progress": "")
@@ -36,7 +36,7 @@ const Stepper = (
                         }
 
                         {/* Stepper step */}
-                        <div key={`step-${i}`} className={
+                        <div className={
                             "stepper-step"
                             + (i < activeStepId ? " completed" : "")
                             + (i == activeStepId ? " in-progress": "")
@@ -68,7 +68,7 @@ const Stepper = (
                                 <div className="step-label">{s}</div>
                             </div>
                         </div>
-                    </>
+                    </Fragment>
                 )
             }
         </div> 
