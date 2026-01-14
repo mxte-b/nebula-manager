@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { PhaseProps } from "../types/general";
 import useVault from "../hooks/useVault";
 import { useError } from "../contexts/error";
 import Icons from "./Icons";
 import PasswordStrengthMeter from "./PasswordStrengthMeter";
+import { motion } from "motion/react"
 
 const SetupCreateStep = ({ next, back }: PhaseProps) => {
     const [password, setPassword] = useState<string>("");
@@ -21,11 +22,13 @@ const SetupCreateStep = ({ next, back }: PhaseProps) => {
     }
 
     return (
-        <>
-            <button className="setup-back" onClick={back}>
-                <Icons.ArrowLeft />
-            </button>
-
+        <motion.div 
+            initial={{ x: 16, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="step-wrapper" 
+            key={"create"}
+        >
             <main className="setup-main">
                 <header className="main-header">
                     <h1>Create master password</h1>
@@ -60,7 +63,7 @@ const SetupCreateStep = ({ next, back }: PhaseProps) => {
             <footer className="setup-footer">
                 Your data is encrypted locally and never leaves your device.
             </footer>
-        </>
+        </motion.div>
     );
 };
 

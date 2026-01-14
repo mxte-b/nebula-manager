@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { RootPhaseProps } from "../types/general";
 import Icons from "./Icons";
+import { motion } from "motion/react"
 
 const SetupWelcomeStep = ({ next }: RootPhaseProps) => {
     const [option, setOption] = useState<"create" | "import">("create");
 
     return (
-        <>
-            
-
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="step-wrapper" 
+            key={"welcome"}
+        >
             <main className="setup-main">
                 <div className="main-header">
                     <h1>Let's get you started!</h1>
@@ -48,7 +53,7 @@ const SetupWelcomeStep = ({ next }: RootPhaseProps) => {
             <footer className="setup-footer">
                 Your data is encrypted locally and never leaves your device.
             </footer>
-        </>
+        </motion.div>
     );
 };
 

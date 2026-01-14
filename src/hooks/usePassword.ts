@@ -2,22 +2,16 @@ import { COMMON_PASSWORDS } from "../types/common-passwords";
 import { PasswordEvaluation, PasswordStrength } from "../types/general"
 
 const COMMONS = new Set(COMMON_PASSWORDS);
-const MESSAGES: Record<PasswordStrength, string> = {
-    "Weak": "This password is too weak",
-    "Okay": "This password is okay",
-    "Strong": "This password is strong",
-    "Very strong": "This password is very strong",
-};
 
 const MAX_ENTROPY = 80; 
 
 const PENALTY_WEIGHTS = {
-    CLASS: 0.2,
+    CLASS: 0.7,
     LENGTH: 0.2,
 }
 
 const MAX_PENALTIES = {
-    CLASS: 0.3,
+    CLASS: 0.6,
     LENGTH: 0.3,
 }
 
@@ -58,34 +52,44 @@ const usePassword = () => {
         return Array.from(password).length * Math.log2(symbolSpace);
     }
 
-    const getStrength = (password: string) : PasswordStrength => {
+    const evaluatePassword = (password: string): PasswordEvaluation => {
         let score = 0;
+        const suggestions: string[] = [];
 
-        // Check if the password is empty or among the most common 1k
-        if (password.length == 0 || COMMONS.has(normalizePassword(password))) {
+        // Check if the password is empty
+        if (password.length == 0) {
             score = 0;
+        }
+        // Check if it is among the most common 1k
+        else if (COMMONS.has(normalizePassword(password))) {
+            score = 0;
+            suggestions.push("This password is compromised, consider choosing another")
         }
         else {
             // Calculate entropy
             const normalizedEntropy = Math.min(1, getEntropy(password) / MAX_ENTROPY);
+            if (normalizedEntropy < 0.6) {
+                suggestions.push("Increase character variety")
+            }
 
             // Apply penalties
             const symbolClassPenalty = Math.min(MAX_PENALTIES.CLASS, PENALTY_WEIGHTS.CLASS * (1 - getSymbolCount(password) / 95));
-            const lengthPenalty = Math.min(MAX_PENALTIES.LENGTH, PENALTY_WEIGHTS.LENGTH * Math.pow(2, -password.length / 10));
+            if (symbolClassPenalty > 0.1) {
+                suggestions.push("Add more character types (e.g. digits, special characters)")
+            }
+
+            const lengthPenalty = Math.min(MAX_PENALTIES.LENGTH, PENALTY_WEIGHTS.LENGTH * (password.length < 8 ? 1 : 0));
+
+            if (lengthPenalty > 0.1) {
+                suggestions.push("Consider making your password longer")
+            }
 
             score = Math.min(1, Math.max(0, normalizedEntropy - symbolClassPenalty - lengthPenalty));
-            console.log(score, symbolClassPenalty, lengthPenalty, normalizedEntropy)
         }
 
+        const strength = scoreToStrength(score);
 
-        return scoreToStrength(score);
-    }
-
-    const evaluatePassword = (password: string): PasswordEvaluation => {
-        const strength = getStrength(password);
-        const message = MESSAGES[strength];
-
-        return { strength: strength, message: message };
+        return { strength: strength, suggestions: suggestions };
     }
 
     const generatePassword = () => {

@@ -3,10 +3,11 @@ import SetupWelcomeStep from "../components/SetupWelcomeStep";
 import SetupCreateStep from "../components/SetupCreateStep";
 import SetupImportStep from "../components/SetupImportStep";
 import { SetupPhase } from "../types/general";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import SetupDoneStep from "../components/SetupDoneStep";
 import "../styles/SetupScreen.scss";
 import Stepper from "../components/Stepper";
+import Icons from "../components/Icons";
 
 const SetupScreen = ({ onSetupCompleted }: { onSetupCompleted: () => void }) => {
 
@@ -27,12 +28,23 @@ const SetupScreen = ({ onSetupCompleted }: { onSetupCompleted: () => void }) => 
     const activeStepId = useMemo(() => phase == "welcome" ? 0 : phase == "done" ? 2 : 1, [phase]);
 
     return (
-        <div className="setup-screen">
+        <motion.div
+            key={"setup"}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="setup-screen"
+        >
             <Stepper steps={stepperSteps} activeStepId={activeStepId} />
+            { activeStepId == 1 && 
+                <button className="setup-back" onClick={home}>
+                    <Icons.ArrowLeft />
+                </button>
+            }
             <AnimatePresence mode="wait">
                 { steps[phase] }
             </AnimatePresence>
-        </div>
+        </motion.div>
     )
 }
 

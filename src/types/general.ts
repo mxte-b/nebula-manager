@@ -163,7 +163,7 @@ export type PasswordStrength = "Weak" | "Okay" | "Strong" | "Very strong";
 
 export type PasswordEvaluation = {
     strength: PasswordStrength,
-    message?: string
+    suggestions: string[]
 }
 
 /* -------------------------------------------------------------------------- */

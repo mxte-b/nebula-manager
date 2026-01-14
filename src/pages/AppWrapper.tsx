@@ -9,7 +9,7 @@ import { useError } from "../contexts/error";
 
 const AppWrapper = () => {
     const { status, loading, refreshState } = useVaultStatus();
-    const { fatalError } = useError();
+    const { fatalError, addError } = useError();
 
     const getActiveComponent = () => {
         if (fatalError) return <FatalError key="error" error={fatalError} />;
@@ -24,6 +24,12 @@ const AppWrapper = () => {
             case "Unlocked": 
                 return <App key="app" />
             default:
+                addError({
+                    kind: "NotFound",
+                    severity: "Fatal",
+                    code: "E_NEX_COMPONENT",
+                    message: "Target component not found"
+                });
                 break;
         }
     }

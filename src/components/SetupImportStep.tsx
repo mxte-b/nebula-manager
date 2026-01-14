@@ -1,8 +1,9 @@
 import { PhaseProps } from "../types/general";
+import { motion } from "motion/react"
 
 const SetupImportStep = ({ next, back }: PhaseProps) => {
     return (
-        <>
+        <motion.div className="step-wrapper" key={"import"}>
             <button className="secondary" onClick={back}>
                 Back
             </button>
@@ -20,7 +21,7 @@ const SetupImportStep = ({ next, back }: PhaseProps) => {
             <footer className="setup-footer">
                 Your data is encrypted locally and never leaves your device.
             </footer>
-        </>
+        </motion.div>
     );
 };
 
