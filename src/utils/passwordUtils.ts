@@ -15,7 +15,7 @@ const MAX_PENALTIES = {
     LENGTH: 0.3,
 }
 
-const usePassword = () => {
+const passwordUtils = () => {
 
     const normalizePassword = (password: string): string => {
         return password.normalize("NFKC").toLowerCase().trim();
@@ -89,11 +89,21 @@ const usePassword = () => {
 
         const strength = scoreToStrength(score);
 
+        if (score > 0.8) suggestions.splice(0, suggestions.length);
+
         return { strength: strength, suggestions: suggestions };
     }
 
-    const generatePassword = () => {
+    const generatePassword = (length: number = 16): string => {
+        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+        const indicies = new Uint32Array(length);
+        crypto.getRandomValues(indicies);
+        
+        let password = "";
 
+        indicies.forEach(c => password += chars[c % chars.length]);
+
+        return password;
     }
 
     return {
@@ -102,4 +112,4 @@ const usePassword = () => {
     }
 }
 
-export default usePassword;
+export default passwordUtils;

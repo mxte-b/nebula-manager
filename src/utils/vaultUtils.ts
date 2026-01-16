@@ -7,7 +7,7 @@ import { Entry, EntryDTO, Err, Ok, toEntry, toEntryDTO, UpdateEntry, VaultError,
  * Provides methods to fetch, create, and manage vault entries.
  * Supports both callback-based handling and Result-based async/await handling.
  */
-const useVault = () => {
+const vaultUtils = () => {
 
     const setupVault = async (
         masterPassword: string,
@@ -316,4 +316,4 @@ const useVault = () => {
     }
 }
 
-export default useVault;
+export default vaultUtils;

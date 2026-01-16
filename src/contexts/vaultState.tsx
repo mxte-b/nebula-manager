@@ -1,12 +1,12 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { VaultStatus, VaultStatusContextType } from "../types/general";
-import useVault from "../hooks/useVault";
+import vaultUtils from "../utils/vaultUtils";
 import { useError } from "./error";
 
 const VaultStatusContext = createContext<VaultStatusContextType | undefined>(undefined);
 
 export const VaultStatusProvider = ({ children }: { children: ReactNode }) => {
-    const { getVaultStatus } = useVault();
+    const { getVaultStatus } = vaultUtils();
     const { fatalError, addError, clearFatalError } = useError();
 
     const [status, setStatus] = useState<VaultStatus | null>(null);

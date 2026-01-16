@@ -25,6 +25,7 @@ import PencilFill from "../assets/pencil-fill.svg?react"
 import Search from "../assets/search.svg?react"
 import ShieldLock from "../assets/shield-lock.svg?react"
 import Star from "../assets/star.svg?react"
+import Stars from "../assets/stars.svg?react"
 import StarFill from "../assets/star-fill.svg?react"
 import Trash from "../assets/trash.svg?react"
 import TrashFill from "../assets/trash-fill.svg?react"
@@ -60,6 +61,7 @@ const Icons = {
     Search,
     ShieldLock,
     Star,
+    Stars,
     StarFill,
     Trash,
     TrashFill,

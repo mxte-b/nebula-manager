@@ -49,10 +49,6 @@ const SetupWelcomeStep = ({ next }: RootPhaseProps) => {
                     Continue
                 </button>
             </main>
-
-            <footer className="setup-footer">
-                Your data is encrypted locally and never leaves your device.
-            </footer>
         </motion.div>
     );
 };

@@ -213,6 +213,7 @@
     width: fit-content;
     width: 32px;
     height: 32px;
+    flex-shrink: 0;
     cursor: pointer;
 
     .icon-hoverable {

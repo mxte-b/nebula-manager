@@ -1,16 +1,22 @@
 import { useState } from "react";
 import { PhaseProps } from "../types/general";
-import useVault from "../hooks/useVault";
+import vaultUtils from "../utils/vaultUtils";
 import { useError } from "../contexts/error";
 import Icons from "./Icons";
 import PasswordStrengthMeter from "./PasswordStrengthMeter";
 import { motion } from "motion/react"
+import ToggleableIcon from "./ToggleableIcon";
+import passwordUtils from "../utils/passwordUtils";
+import HoverableIcon from "./HoverableIcon";
+import Tooltip from "./Tooltip";
 
-const SetupCreateStep = ({ next, back }: PhaseProps) => {
+const SetupCreateStep = ({ next }: PhaseProps) => {
     const [password, setPassword] = useState<string>("");
+    const [passwordShown, setPasswordShown] = useState<boolean>(false);
 
-    const { setupVault } = useVault();
+    const { setupVault } = vaultUtils();
     const { addError } = useError();
+    const { generatePassword } = passwordUtils();
 
     const handlePasswordCreate = () => {
         if (!password) return;
@@ -42,14 +48,40 @@ const SetupCreateStep = ({ next, back }: PhaseProps) => {
                     <div className="form-group">
                         <div className="form-input">
                             <label htmlFor="password">Password</label>
-                            <input
-                                autoComplete="off" 
-                                placeholder="Enter a strong password" 
-                                type="password" 
-                                name="password" 
-                                id="password"
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                            <div className="form-input-wrapper">
+                                <input
+                                    autoComplete="off"
+                                    placeholder="Enter a strong password"
+                                    type={ passwordShown ? "text" : "password" }
+                                    name="password"
+                                    id="password"
+                                    value={ password }
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+
+                                <Tooltip text="Generate">
+                                    <HoverableIcon
+                                        onClick={() => {
+                                            setPassword(generatePassword());
+                                            setPasswordShown(true);
+                                        }}
+                                        hoverFg="#d3a747ff"
+                                        hoverBg="#d3a74718"
+                                    >
+                                        <Icons.Stars />
+                                    </HoverableIcon>
+                                </Tooltip>
+
+                                <Tooltip text={passwordShown ? "Hide" : "Show"}>
+                                    <ToggleableIcon
+                                        defaultElement={<Icons.EyeFill />}
+                                        toggledElement={<Icons.EyeSlashFill />}
+                                        hoverFg="#ffa2eb"
+                                        hoverBg="#ffa2eb25"
+                                        onToggle={() => setPasswordShown(p => !p)}
+                                    />
+                                </Tooltip>
+                            </div>
                             <PasswordStrengthMeter password={password} />
                         </div>
                     </div>
@@ -59,10 +91,6 @@ const SetupCreateStep = ({ next, back }: PhaseProps) => {
                 </form>
 
             </main>
-
-            <footer className="setup-footer">
-                Your data is encrypted locally and never leaves your device.
-            </footer>
         </motion.div>
     );
 };

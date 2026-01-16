@@ -6,7 +6,7 @@
     @include flex(column, space-between);
 
     position: relative;
-    gap: 1rem;
+    gap: 2rem;
     height: calc(100vh - 4rem);
     margin: 2rem;
     padding: 1rem;
@@ -199,7 +199,7 @@
     box-shadow: 0 4px 5px rgb(0 0 0 / 13%);
     transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, scale 0.15s ease;
     will-change: scale;
-    font-weight: bold;
+    font-weight: 500;
 
     &:hover {
         background-color: var(--bg-accent);

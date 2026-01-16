@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import usePassword from "../hooks/usePassword";
+import passwordUtils from "../utils/passwordUtils";
 import { PasswordStrength } from "../types/general";
 import { AnimatePresence, motion } from "motion/react";
 import Icons from "./Icons";
@@ -8,7 +8,7 @@ const strengthIndexMap: PasswordStrength[] = ["Weak", "Okay", "Strong", "Very st
 
 const PasswordStrengthMeter = ({ password }: { password: string }) => {
     
-    const { evaluatePassword } = usePassword();
+    const { evaluatePassword } = passwordUtils();
     
     const evaluation = useMemo(() => evaluatePassword(password), [password]);
     

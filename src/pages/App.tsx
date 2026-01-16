@@ -12,10 +12,11 @@ import About from "./About";
 import Icons from "../components/Icons";
 import EntryForm from "../components/EntryForm";
 import { Entry, UpdateEntry, VaultStatus } from "../types/general";
-import useVault from "../hooks/useVault";
+import vaultUtils from "../utils/vaultUtils";
 import UpdateForm from "../components/UpdateForm";
 import { useToast } from "../contexts/toast";
 import { useError } from "../contexts/error";
+import { motion } from "motion/react";
 
 await register("CommandOrControl+K", (e) => {
     // Ignore key release
@@ -39,7 +40,7 @@ function App() {
         updateVaultEntry,
         toggleFavorite,
         deleteVaultEntry,
-    } = useVault();
+    } = vaultUtils();
 
     const {
         addToast
@@ -114,7 +115,13 @@ function App() {
     }, []);
 
     return (
-        <main className="dashboard">
+        <motion.main
+            key={"dashboard"}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="dashboard"
+        >
             <SideBar />
             
             <div className="content-wrapper">
@@ -157,7 +164,7 @@ function App() {
                 onSubmit={handleEntryUpdateSubmit}
                 onClose={() => setIsUpdateFormVisible(false)}
             />
-        </main>
+        </motion.main>
     );
 }
 

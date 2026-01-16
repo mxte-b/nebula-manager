@@ -31,18 +31,42 @@
         input {
             width: 100%;
             height: var(--input-height);
-            border: 1px solid var(--border-1);
-            border-radius: 10px;
+            border: none;
             background-color: var(--bg-1);
             color: var(--fg);
+            font-family: Inter, sans-serif;
             font-size: 16px;
             outline: none;
-            padding-inline: 10px;
+            font-variant-ligatures: none;
+            font-weight: 400;
+        }
+
+        input::placeholder {
+            font-family: Inter, sans-serif;
         }
 
         input::-ms-reveal,
         input::-ms-clear {
             display: none;
         }
+    }
+
+    &-input-wrapper {
+        @include flex;
+
+        gap: 10px;
+        width: 100%;
+        border: 1px solid var(--border-1);
+        border-radius: 10px;
+        background-color: var(--bg-1);
+        color: var(--fg);
+        font-size: 16px;
+        outline: none;
+        transition: box-shadow 0.15s ease;
+        padding-inline: 10px;
+    }
+
+    &-input-wrapper:focus-within {
+        box-shadow: 0 0 0 2px var(--border-2);
     }
 }

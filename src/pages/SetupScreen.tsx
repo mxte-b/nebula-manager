@@ -36,6 +36,7 @@ const SetupScreen = ({ onSetupCompleted }: { onSetupCompleted: () => void }) => 
             className="setup-screen"
         >
             <Stepper steps={stepperSteps} activeStepId={activeStepId} />
+
             { activeStepId == 1 && 
                 <button className="setup-back" onClick={home}>
                     <Icons.ArrowLeft />
@@ -44,6 +45,10 @@ const SetupScreen = ({ onSetupCompleted }: { onSetupCompleted: () => void }) => 
             <AnimatePresence mode="wait">
                 { steps[phase] }
             </AnimatePresence>
+
+            <footer className="setup-footer">
+                Your data is encrypted locally and never leaves your device.
+            </footer>
         </motion.div>
     )
 }

@@ -2,7 +2,13 @@ import { motion } from "motion/react"
 
 const SetupDoneStep = ( { onDone }: { onDone: () => void } ) => {
     return (
-        <motion.div className="step-wrapper" key={"done"}>
+        <motion.div 
+            initial={{ x: 16, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="step-wrapper" 
+            key={"done"}
+        >
             <header className="setup-header">
                 <h1>Setup complete</h1>
                 <p>Your password vault is now ready and secured. Click Finish to get started.</p>
@@ -13,10 +19,6 @@ const SetupDoneStep = ( { onDone }: { onDone: () => void } ) => {
                     Finish
                 </button>
             </main>
-
-            <footer className="setup-footer">
-                Your data is encrypted locally and never leaves your device.
-            </footer>
         </motion.div>
     );
 };

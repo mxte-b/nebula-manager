@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Icons from "./Icons";
 import ToggleableIcon from "./ToggleableIcon";
-import useVault from "../hooks/useVault";
+import vaultUtils from "../utils/vaultUtils";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
 import Tooltip from "./Tooltip";
@@ -28,7 +28,7 @@ const EntryPasswordField = (
     const placeholderSplitRef = useRef<SplitText | null>(null);
     const passwordSplitRef = useRef<SplitText | null>(null);
 
-    const { getVaultEntryPassword } = useVault();
+    const { getVaultEntryPassword } = vaultUtils();
     const { addToast } = useToast();
     const { addError } = useError();
 
