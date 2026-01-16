@@ -9,13 +9,12 @@ const SetupDoneStep = ( { onDone }: { onDone: () => void } ) => {
             className="step-wrapper" 
             key={"done"}
         >
-            <header className="setup-header">
-                <h1>Setup complete</h1>
-                <p>Your password vault is now ready and secured. Click Finish to get started.</p>
-            </header>
-
-            <main className="setup-actions">
-                <button className="secondary" onClick={onDone}>
+            <main className="setup-main">
+                <header className="main-header">
+                    <h1>Setup complete</h1>
+                    <p>Your password vault is now ready and secured. Click Finish to get started.</p>
+                </header>
+                <button className="button-continue" onClick={onDone}>
                     Finish
                 </button>
             </main>
