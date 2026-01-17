@@ -1,14 +1,14 @@
 import { AnimatePresence } from "motion/react";
-import { useConfirmModal } from "../contexts/confirmModal";
-import ConfirmModalItem from "./ConfirmModaltem";
+import { useModal } from "../contexts/modal";
+import ModalItem from "./ModalItem";
 
 const ModalManager = () => {
-    const { modal } = useConfirmModal();
+    const { modal } = useModal();
 
     return (
         <div className="modals">
             <AnimatePresence>
-                { modal && <ConfirmModalItem modal={modal} /> }
+                { modal && <ModalItem modal={modal} /> }
             </AnimatePresence>
         </div>
     ) 

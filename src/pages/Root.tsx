@@ -1,15 +1,15 @@
 import { ToastProvider } from "../contexts/toast";
-import { ConfirmModalProvider } from "../contexts/confirmModal";
+import { ModalProvider } from "../contexts/modal";
 import { RouterProvider } from "../contexts/router";
 import { VaultStatusProvider } from "../contexts/vaultState";
 import { ErrorProvider } from "../contexts/error";
 import AppWrapper from "./AppWrapper";
 import ToastManager from "../components/ToastManager";
-import ModalManager from "../components/ConfirmModalManager";
+import ModalManager from "../components/ModalManager";
 
 const Root = () => {
     return (
-        <ConfirmModalProvider>
+        <ModalProvider>
             <ToastProvider>
                 <ErrorProvider>
                     <VaultStatusProvider>
@@ -21,7 +21,7 @@ const Root = () => {
                     </VaultStatusProvider>
                 </ErrorProvider>
             </ToastProvider>
-        </ConfirmModalProvider>
+        </ModalProvider>
     )
 }
 

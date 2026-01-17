@@ -181,33 +181,34 @@ const EntryPasswordField = (
         <div className="entry-password">
             <div className="password-split" ref={passwordDomRef}>
                 <div className="placeholder">
-                    ••••••••••••••••••••
+                    ••••••••••••••••••••••••
                 </div>
                 <div className="password" title={password || ""}>
                     {password}
                 </div>
             </div>
 
-            <Tooltip text="Copy">
-                <HoverableIcon 
-                    hoverFg="#699dd8ff" 
-                    hoverBg="#699dd818"
-                    onClick={() => handlePasswordCopy(id)}
-                >
-                    <Icons.Copy/>
-                </HoverableIcon>
-            </Tooltip>
-
-            <Tooltip text={passwordShown ? "Hide" : "Show"}>
-                <ToggleableIcon 
-                    defaultElement={<Icons.EyeFill />}
-                    toggledElement={<Icons.EyeSlashFill />}
-                    hoverFg="#ffa2eb"
-                    hoverBg="#ffa2eb25"
-                    enabled={toggleEnabled}
-                    onToggle={handlePasswordShow}
-                />
-            </Tooltip>
+            <div className="password-actions">
+                <Tooltip text="Copy">
+                    <HoverableIcon
+                        hoverFg="#699dd8ff"
+                        hoverBg="#699dd818"
+                        onClick={() => handlePasswordCopy(id)}
+                    >
+                        <Icons.Copy/>
+                    </HoverableIcon>
+                </Tooltip>
+                <Tooltip text={passwordShown ? "Hide" : "Show"}>
+                    <ToggleableIcon
+                        defaultElement={<Icons.EyeFill />}
+                        toggledElement={<Icons.EyeSlashFill />}
+                        hoverFg="#ffa2eb"
+                        hoverBg="#ffa2eb25"
+                        enabled={toggleEnabled}
+                        onToggle={handlePasswordShow}
+                    />
+                </Tooltip>
+            </div>
         </div>
     )
 }

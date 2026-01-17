@@ -96,18 +96,18 @@
     }
 
     .entry-name {
-        width: 25%;
+        width: 20%;
     }
 
     .entry-password {
-        @include flex($justify: space-between);
+        @include flex($justify: flex-start);
 
         gap: 0.5rem;
         min-width: 250px;
 
         .password-split {
             position: relative;
-
+            
             .password {
                 position: absolute;
                 top: 0;
@@ -115,10 +115,18 @@
                 opacity: 0;
             }
         }
+
+        .password-actions {
+            @include flex;
+
+            gap: 0.5rem;
+            flex-grow: 1;
+        }
     }
 
     .entry-last-use {
-        width: 95px;
+        width: 0;
+        min-width: fit-content;
         padding-right: 0;
     }
 

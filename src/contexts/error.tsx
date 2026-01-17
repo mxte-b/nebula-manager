@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import { VaultError } from "../types/general";
-import { useConfirmModal } from "./confirmModal";
+import { useModal } from "./modal";
 import { useToast } from "./toast";
 
 interface ErrorContextType {
@@ -13,7 +13,7 @@ const ErrorContext = createContext<ErrorContextType | undefined>(undefined);
 
 export const ErrorProvider = ({ children }: { children: ReactNode }) => {
     const [fatalError, setFatalError] = useState<VaultError | undefined>(undefined);
-    const { openModal } = useConfirmModal();
+    const { openModal } = useModal();
     const { addToast } = useToast();
 
     const addError = (error: VaultError) => {
@@ -25,6 +25,7 @@ export const ErrorProvider = ({ children }: { children: ReactNode }) => {
 
             case "Blocking":
                 openModal({
+                    type: "confirm",
                     title: "An error occured",
                     message: error.message,
                     onConfirm: () => {},

@@ -61,18 +61,31 @@ export type ToastContextType = {
 /*                                   Modals                                   */
 /* -------------------------------------------------------------------------- */
 
-export type ConfirmModal = {
+export type ModalType = "confirm" | "message";
+
+type ModalBase = {
     title: string,
     message: string,
-    dangerous?: boolean,
     icon?: keyof typeof Icons
-    onCancel: () => void,
-    onConfirm: () => void,
 }
 
-export type ConfirmModalContextType = {
-    modal: ConfirmModal | null,
-    openModal: (modal: ConfirmModal) => void,
+type ConfirmModal = {
+    type: "confirm",
+    dangerous?: boolean;
+    onConfirm: () => void,
+    onCancel: () => void
+}
+
+type MessageModal =  {
+    type: "message",
+    onAcknowledge: () => void
+}
+
+export type Modal = ModalBase & (ConfirmModal | MessageModal);
+
+export type ModalContextType = {
+    modal: Modal | null,
+    openModal: (modal: Modal) => void,
     closeModal: () => void,
 }
 

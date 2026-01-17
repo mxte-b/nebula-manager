@@ -13,7 +13,7 @@
     will-change: opacity, backdrop-filter;
 }
 
-.confirm-modal {
+.modal {
     @include flex(column, flex-start, stretch);
 
     gap: 1rem;

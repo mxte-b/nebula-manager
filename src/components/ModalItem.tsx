@@ -1,13 +1,39 @@
-import { useConfirmModal } from "../contexts/confirmModal";
-import { ConfirmModal } from "../types/general";
+import { useModal } from "../contexts/modal";
+import { Modal } from "../types/general";
 import { motion } from "motion/react";
 import Icons from "./Icons";
 import CloseButton from "./CloseButton";
 
-const ConfirmModalItem = ({ modal }: { modal: ConfirmModal }) => {
+const ModalItem = ({ modal }: { modal: Modal }) => {
 
-    const { closeModal } = useConfirmModal();
+    const { closeModal } = useModal();
     const Icon = modal.icon ? Icons[modal.icon] : null;
+
+    const getCSSClasses = () => {
+        let classList = ["modal", "type-" + modal.type];
+
+        if (modal.type == "confirm" && modal.dangerous) classList.push(" dangerous");
+
+        return classList.join(" ");
+    }
+
+    const getCTAs = () => {
+        if (modal.type == "confirm") {
+            return <>
+                <button type="button" onClick={modal.onCancel}>Cancel</button>
+                <button type="button" className="dangerous" onClick={() => {
+                    modal.onConfirm();
+                    closeModal();
+                }}>Confirm</button>
+            </>
+        }
+        else if (modal.type == "message") {
+            return <button type="button" className="prominent" onClick={() => {
+                modal.onAcknowledge();
+                closeModal();
+            }}>Ok</button>
+        }
+    }
 
     return (
         <motion.div
@@ -18,7 +44,7 @@ const ConfirmModalItem = ({ modal }: { modal: ConfirmModal }) => {
             onMouseDown={closeModal}
         >
             <motion.div
-                className={"confirm-modal" + (modal.dangerous ? " dangerous" : "")}
+                className={getCSSClasses()}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
@@ -41,15 +67,11 @@ const ConfirmModalItem = ({ modal }: { modal: ConfirmModal }) => {
                     {modal.message}
                 </div>
                 <div className="button-group">
-                    <button type="button" onClick={modal.onCancel}>Cancel</button>
-                    <button type="button" className="dangerous" onClick={() => {
-                        modal.onConfirm();
-                        closeModal();
-                    }}>Confirm</button>
+                    { getCTAs() }
                 </div>
             </motion.div>
         </motion.div>
     )
 }
 
-export default ConfirmModalItem;
+export default ModalItem;
