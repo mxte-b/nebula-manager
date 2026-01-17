@@ -1,9 +1,10 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
-use std::{sync::Arc, sync::Mutex};
+use std::{sync::{Arc, Mutex}};
 use tauri::{Manager, RunEvent, State, WindowEvent};
 
 pub mod vault;
+use tauri_plugin_clipboard_manager::ClipboardExt;
 use uuid::Uuid;
 pub use vault::Vault;
 
@@ -11,6 +12,16 @@ use crate::vault::{
     entry::{EntryPublic, UpdateEntry},
     vault::{VaultError, VaultErrorKind, VaultErrorSeverity, VaultResult, VaultStatus},
 };
+
+use sha2::{Sha256, Digest};
+use hex::encode;
+
+fn sha256_hash(text: &str) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(text.as_bytes());
+    let result = hasher.finalize();
+    encode(result)
+}
 
 // Toggle search overlay
 #[tauri::command]
@@ -96,7 +107,7 @@ fn vault_get_entries(vault: State<Arc<Mutex<Vault>>>) -> VaultResult<Vec<EntryPu
 
 #[tauri::command]
 fn vault_get_entry_password(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResult<String> {
-    let v = vault
+    let mut v = vault
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
@@ -150,14 +161,125 @@ fn vault_delete_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResult<
     guard.delete_entry(&id)
 }
 
-// Copy entry to clipboard (username / password)
+#[tauri::command]
+fn vault_copy_entry_password(
+    app_handle: tauri::AppHandle, 
+    vault: State<Arc<Mutex<Vault>>>, 
+    last_hash_state: State<Arc<Mutex<Option<String>>>>,
+    id: Uuid
+) -> VaultResult<()> {
+    let mut v = vault
+        .lock()
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Blocking, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_COPY_PASS"
+        })?;
+
+    let text = v.get_entry_password(&id)?;
+    let hash = sha256_hash(&text);
+
+    {
+        let mut h = last_hash_state.lock().map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Blocking, 
+            message: "Clipboard hash not accessible".into(),
+            code: "E_VAULT_COPY_PASS_HASH"
+        })?;
+
+        *h = Some(hash.clone());
+    }
+
+    app_handle.clipboard().write_text(text).map_err(|_| VaultError {
+        kind: VaultErrorKind::Internal, 
+        severity: VaultErrorSeverity::Blocking, 
+        message: "Couldn't copy to clipboard".into(),
+        code: "E_VAULT_COPY_PASS_CLIP"
+    })
+}
+
+#[tauri::command]
+fn vault_copy_entry_name(
+    app_handle: tauri::AppHandle, 
+    vault: State<Arc<Mutex<Vault>>>,
+    last_hash_state: State<Arc<Mutex<Option<String>>>>,
+    id: Uuid
+) -> VaultResult<()> {
+    let mut v = vault
+        .lock()
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Blocking, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_COPY_NAME"
+        })?;
+
+    let text = v.get_entry_name(&id)?;
+    let hash = sha256_hash(&text);
+
+    {
+        let mut h = last_hash_state.lock().map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Blocking, 
+            message: "Clipboard hash not accessible".into(),
+            code: "E_VAULT_COPY_PASS_HASH"
+        })?;
+
+        *h = Some(hash.clone());
+    }
+
+    app_handle.clipboard().write_text(text).map_err(|_| VaultError {
+        kind: VaultErrorKind::Internal, 
+        severity: VaultErrorSeverity::Blocking, 
+        message: "Couldn't copy to clipboard".into(),
+        code: "E_VAULT_COPY_NAME_CLIP"
+    })
+}
+
+#[tauri::command]
+fn vault_clear_clipboard_safe(app_handle: tauri::AppHandle, last_hash_state: State<Arc<Mutex<Option<String>>>>) -> VaultResult<()> {
+    let clip = app_handle.clipboard();
+
+    let text = clip.read_text().map_err(|_| VaultError {
+        kind: VaultErrorKind::Internal, 
+        severity: VaultErrorSeverity::Blocking, 
+        message: "Couldn't read from clipboard".into(),
+        code: "E_VAULT_CLEAR_CLIP_READ"
+    })?;
+
+    let hash = sha256_hash(&text);
+
+    let mut h = last_hash_state.lock().map_err(|_| VaultError {
+        kind: VaultErrorKind::Access, 
+        severity: VaultErrorSeverity::Blocking, 
+        message: "Clipboard hash not accessible".into(),
+        code: "E_VAULT_COPY_PASS_HASH"
+    })?;
+
+    // Clear clipboard if the hash didnt change (it still contains the password)
+    if h.as_ref() == Some(&hash) {
+        clip.clear().map_err(|_| VaultError {
+            kind: VaultErrorKind::Internal, 
+            severity: VaultErrorSeverity::Blocking, 
+            message: "Couldn't clear clipboard".into(),
+            code: "E_VAULT_CLEAR_CLIP"
+        })?;
+
+        *h = None;
+    }
+
+    Ok(())
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let vault = Arc::new(Mutex::new(Vault::new()));
+    let last_clipboard_hash = Arc::new(Mutex::new(None::<String>));
 
     let app = tauri::Builder::default()
         .manage(vault.clone())
+        .manage(last_clipboard_hash.clone())
         .setup(move |app| {
             // Get app data folder and create (if it's missing)
             let app_data_dir = app
@@ -184,11 +306,15 @@ pub fn run() {
         }))
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_clipboard_manager::init())
         .invoke_handler(tauri::generate_handler![
             toggle_overlay,
             vault_setup,
             vault_unlock,
             vault_create_entry,
+            vault_copy_entry_password,
+            vault_copy_entry_name,
+            vault_clear_clipboard_safe,
             vault_get_status,
             vault_get_entries,
             vault_get_entry_password,
@@ -220,11 +346,18 @@ pub fn run() {
 
                 // Save the vault on window close
                 let vault = app_handle.state::<Arc<Mutex<Vault>>>();
+                let last_hash_state = app_handle.state::<Arc<Mutex<Option<String>>>>();
+
                 if let Ok(mut v) = vault.lock() {
                     match v.save() {
                         Ok(()) => println!("Successful save."),
                         Err(e) => println!("Error while saving: {}", e),
                     }
+                }
+
+                match vault_clear_clipboard_safe(app_handle.clone(), last_hash_state.clone()) {
+                    Ok(()) => println!("Successful clipboard clear."),
+                    Err(e) => println!("Error while clearing clipboard: {}", e),
                 }
 
                 app_handle.cleanup_before_exit();

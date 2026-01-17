@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import Icons from "./Icons";
 import ToggleableIcon from "./ToggleableIcon";
-import vaultUtils from "../utils/vaultUtils";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
 import Tooltip from "./Tooltip";
 import HoverableIcon from "./HoverableIcon";
 import { useToast } from "../contexts/toast";
 import { useError } from "../contexts/error";
+import { useVault } from "../contexts/vault";
 
 gsap.registerPlugin(SplitText);
 
@@ -28,15 +28,14 @@ const EntryPasswordField = (
     const placeholderSplitRef = useRef<SplitText | null>(null);
     const passwordSplitRef = useRef<SplitText | null>(null);
 
-    const { getVaultEntryPassword } = vaultUtils();
+    const { getEntryPassword, copyEntryDetail } = useVault();
     const { addToast } = useToast();
     const { addError } = useError();
 
     const handlePasswordCopy = (id: string) => {
-        addToast({
-            type: "success",
-            message: "Password copied!" + id,
-            duration: 5000
+        copyEntryDetail(id, "password", 30000, {
+            ok: () => addToast({ type: "success", message: "ok", duration: 5000 }),
+            err: addError
         })
     }
 
@@ -44,7 +43,7 @@ const EntryPasswordField = (
         if (isAnimating.current) return;
 
         if (next) {
-            getVaultEntryPassword(id, {
+            getEntryPassword(id, {
                 ok: setPassword,
                 err: addError
             });

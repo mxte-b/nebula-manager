@@ -9,6 +9,8 @@
     "global-shortcut:allow-is-registered",
     "global-shortcut:allow-register",
     "global-shortcut:allow-unregister",
-    "core:webview:allow-internal-toggle-devtools"
+    "core:webview:allow-internal-toggle-devtools",
+    "clipboard-manager:allow-clear",
+    "clipboard-manager:allow-write-text"
   ]
 }

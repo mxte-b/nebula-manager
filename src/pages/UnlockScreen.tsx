@@ -1,12 +1,12 @@
 import { FormEvent, useRef } from "react";
-import vaultUtils from "../utils/vaultUtils";
 import { useError } from "../contexts/error";
 import { motion } from "motion/react";
+import { useVault } from "../contexts/vault";
 
 const UnlockScreen = ({ onUnlock }: { onUnlock: () => void }) => {
     const passwordRef = useRef<HTMLInputElement>(null);
 
-    const { unlockVault } = vaultUtils();
+    const { unlockVault } = useVault();
     const { addError} = useError();
 
     const handleSubmit = (e: FormEvent) => {

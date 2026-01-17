@@ -30,10 +30,16 @@ const Vault = (
                 <h1>My passwords</h1>
                 <div className="info-grid">
                     <div className="favorites">
-                        <div>Favorites</div>
+                        <h2>Favorites</h2>
+                        <div className="favorites-list">
+                            { entries && entries.filter(e => e.favorite).map(e => <>
+                                <Favicon label={e.label} url={e.url} />
+                                <span title={e.label}>{e.label}</span>
+                            </>) }
+                        </div>
                     </div>
                     <div className="recents">
-                        <div>Recently used</div>
+                        <h2>Recently used</h2>
                     </div>
                 </div>
                 <h2>Security overview</h2>

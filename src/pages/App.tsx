@@ -3,7 +3,7 @@ import "../styles/NumberTicker.scss";
 import { useEffect, useState } from "react";
 import SideBar from "../components/SideBar";
 import { invoke } from "@tauri-apps/api/core";
-import { register } from "@tauri-apps/plugin-global-shortcut";
+import { isRegistered, register } from "@tauri-apps/plugin-global-shortcut";
 import { Route, Router } from "../components/Router";
 import Vault from "./Vault";
 import Export from "./Export";
@@ -11,105 +11,61 @@ import Settings from "./Settings";
 import About from "./About";
 import Icons from "../components/Icons";
 import EntryForm from "../components/EntryForm";
-import { Entry, UpdateEntry, VaultStatus } from "../types/general";
-import vaultUtils from "../utils/vaultUtils";
+import { Entry, UpdateEntry } from "../types/general";
 import UpdateForm from "../components/UpdateForm";
 import { useToast } from "../contexts/toast";
-import { useError } from "../contexts/error";
 import { motion } from "motion/react";
+import { useVault } from "../contexts/vault";
 
-await register("CommandOrControl+K", (e) => {
-    // Ignore key release
-    if (e.state == "Released") return;
+// Assign the overlay shortcut
+await isRegistered("CommandOrControl+K").then(async (r) => {
+    if (!r) {
+        await register("CommandOrControl+K", (e) => {
+        // Ignore key release
+        if (e.state == "Released") return;
 
-    invoke("toggle_overlay");
-});
+        invoke("toggle_overlay");
+    });
+    }
+})
 
 function App() {
     const [isEntryFormVisible, setIsEntryFormVisible] = useState<boolean>(false);
     const [isUpdateFormVisible, setIsUpdateFormVisible] = useState<boolean>(false);
 
-    const [vaultStatus, setVaultStatus] = useState<VaultStatus | null>(null);
-    const [vaultEntries, setVaultEntries] = useState<Entry[] | null>(null);
+    const { entries } = useVault();
     const [entryToUpdate, setEntryToUpdate] = useState<string>("");
 
-    const { 
-        getVaultStatus,
-        getVaultEntries,
-        createVaultEntry,
-        updateVaultEntry,
-        toggleFavorite,
-        deleteVaultEntry,
-    } = vaultUtils();
+    const { createEntry, updateEntry, toggleFavorite, deleteEntry } = useVault();
+    const { addToast } = useToast();
 
-    const {
-        addToast
-    } = useToast();
-
-    const { addError } = useError();
-
-    const handleNewEntrySubmit = async (entry: Entry) => {
-        createVaultEntry(entry, {
-            ok: (e) => {
-                setIsEntryFormVisible(false);
-                setVaultEntries(e);
-            },
-            err: addError
-        });
-    }
+    const handleNewEntrySubmit = async (entry: Entry) => createEntry(entry).then(() => setIsEntryFormVisible(false));
 
     const handleEntryUpdateSubmit = (id: string, entry: UpdateEntry) => {
-        updateVaultEntry(id, entry, {
-            ok: (newEntry) => {
-                setIsUpdateFormVisible(false);
-                setVaultEntries(p => p?.map(e => e.id === id ? newEntry : e) || null)
-                addToast({
-                    type: "success",
-                    message: "Update successful!",
-                    duration: 5000,
-                })
-            },
-            err: addError
+        updateEntry(id, entry).then(() => {
+            setIsUpdateFormVisible(false);
+            addToast({
+                type: "success",
+                message: "Update successful!",
+                duration: 5000,
+            })
         });
     }
 
-    const handleEntryFavorite = (id: string) => {
-        toggleFavorite(id, {
-            ok: () => {
-                setVaultEntries(p => p?.map(e => e.id === id ? {...e, favorite: !e.favorite} as Entry : e) || null)
-            },
-            err: addError
-        });
-    }
+    const handleEntryFavorite = (id: string) => toggleFavorite(id);
 
     const handleEntryDelete = (id: string) => {
-        deleteVaultEntry(id, {
-            ok: () => {
-                setVaultEntries(p => p?.filter(e => e.id != id) || null)
-                addToast({
-                    type: "success",
-                    message: "Deletion successful!",
-                    duration: 5000,
-                })
-            },
-            err: addError
-        });
+        deleteEntry(id).then(() => addToast({
+            type: "success",
+            message: "Deletion successful!",
+            duration: 5000,
+        }))
     }
 
     useEffect(() => {
         // Disable context menu
         const prevent = (e: Event) => e.preventDefault()
         window.addEventListener("contextmenu", prevent);
-
-        getVaultStatus({
-            ok: setVaultStatus,
-            err: addError
-        })
-
-        getVaultEntries({
-            ok: setVaultEntries,
-            err: addError
-        });
 
         return () => window.removeEventListener("contextmenu", prevent);
     }, []);
@@ -128,7 +84,7 @@ function App() {
                 <Router>
                     <Route path="vault" element={
                         <Vault 
-                            entries={vaultEntries}
+                            entries={entries}
                             onEntryDelete={handleEntryDelete}
                             onEntryUpdate={(e) => {
                                 setEntryToUpdate(e);
@@ -159,7 +115,7 @@ function App() {
             />
 
             <UpdateForm
-                entry={vaultEntries?.find(x => x.id == entryToUpdate)}
+                entry={entries?.find(x => x.id == entryToUpdate)}
                 visible={isUpdateFormVisible}
                 onSubmit={handleEntryUpdateSubmit}
                 onClose={() => setIsUpdateFormVisible(false)}

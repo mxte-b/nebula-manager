@@ -99,7 +99,7 @@ export type Step = {
 /* -------------------------------------------------------------------------- */
 /*                           Vault types and helpers                          */
 /* -------------------------------------------------------------------------- */
-export type VaultErrorKind = "IO" | "Parse" | "Version" | "Access" | "Auth" | "Crypto" | "NotFound";
+export type VaultErrorKind = "IO" | "Parse" | "Version" | "Access" | "Auth" | "Crypto" | "NotFound" | "Internal";
 
 export type VaultErrorSeverity = "Soft" | "Blocking" | "Fatal";
 
@@ -118,12 +118,6 @@ export type VaultStatus = {
     state: VaultState,
     ready: boolean,
     last_error: VaultError | null
-}
-
-export type VaultStatusContextType = {
-    status: VaultStatus | null,
-    loading: boolean,
-    refreshState: () => void,
 }
 
 export type Entry = {
@@ -153,6 +147,64 @@ export type UpdateEntry = {
     url?: string,
     name?: string,
     password?: string
+}
+
+export type VaultCallbacks<T = void> = {
+    ok?: (result: T) => void;
+    err?: (error: VaultError) => void;
+};
+
+export type VaultContextType = {
+    // Status
+    status: VaultStatus | null,
+    loading: boolean,
+    refreshStatus: () => void,
+
+    // Auth
+    setupVault: (
+        masterPassword: string,
+        callbacks?: VaultCallbacks
+    ) => Promise<VaultResult<null>>;
+
+    unlockVault: (
+        password: string,
+        callbacks?: VaultCallbacks
+    ) => Promise<VaultResult<null>>;
+
+    // Entries
+    entries: Entry[] | null,
+    createEntry: (
+        entry: Entry,
+        callbacks?: VaultCallbacks<Entry[]>
+    ) => Promise<VaultResult<Entry[]>>;
+
+    updateEntry: (
+        id: string,
+        updated: UpdateEntry,
+        callbacks?: VaultCallbacks<Entry>
+    ) => Promise<VaultResult<Entry>>;
+
+    toggleFavorite: (
+        id: string,
+        callbacks?: VaultCallbacks
+    ) => Promise<VaultResult<null>>;
+
+    deleteEntry: (
+        id: string,
+        callbacks?: VaultCallbacks
+    ) => Promise<VaultResult<null>>;
+
+    getEntryPassword: (
+        id: string,
+        callbacks?: VaultCallbacks<string>
+    ) => Promise<VaultResult<string>>;
+
+    copyEntryDetail: (
+        id: string,
+        detail: "name" | "password",
+        autoClearTime?: number,
+        callbacks?: VaultCallbacks
+    ) => Promise<VaultResult<null>>;
 }
 
 export const toEntry = (e: EntryDTO): Entry => ({

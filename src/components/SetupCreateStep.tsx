@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { PhaseProps } from "../types/general";
-import vaultUtils from "../utils/vaultUtils";
 import { useError } from "../contexts/error";
 import Icons from "./Icons";
 import PasswordStrengthMeter from "./PasswordStrengthMeter";
@@ -9,12 +8,13 @@ import ToggleableIcon from "./ToggleableIcon";
 import passwordUtils from "../utils/passwordUtils";
 import HoverableIcon from "./HoverableIcon";
 import Tooltip from "./Tooltip";
+import { useVault } from "../contexts/vault";
 
 const SetupCreateStep = ({ next }: PhaseProps) => {
     const [password, setPassword] = useState<string>("");
     const [passwordShown, setPasswordShown] = useState<boolean>(false);
 
-    const { setupVault } = vaultUtils();
+    const { setupVault } = useVault();
     const { addError } = useError();
     const { generatePassword } = passwordUtils();
 
