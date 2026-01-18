@@ -167,7 +167,7 @@ fn vault_copy_entry_password(
     vault: State<Arc<Mutex<Vault>>>, 
     last_hash_state: State<Arc<Mutex<Option<String>>>>,
     id: Uuid
-) -> VaultResult<()> {
+) -> VaultResult<String> {
     let mut v = vault
         .lock()
         .map_err(|_| VaultError {
@@ -196,7 +196,9 @@ fn vault_copy_entry_password(
         severity: VaultErrorSeverity::Blocking, 
         message: "Couldn't copy to clipboard".into(),
         code: "E_VAULT_COPY_PASS_CLIP"
-    })
+    })?;
+
+    v.touch_entry(&id)
 }
 
 #[tauri::command]
@@ -205,7 +207,7 @@ fn vault_copy_entry_name(
     vault: State<Arc<Mutex<Vault>>>,
     last_hash_state: State<Arc<Mutex<Option<String>>>>,
     id: Uuid
-) -> VaultResult<()> {
+) -> VaultResult<String> {
     let mut v = vault
         .lock()
         .map_err(|_| VaultError {
@@ -234,7 +236,9 @@ fn vault_copy_entry_name(
         severity: VaultErrorSeverity::Blocking, 
         message: "Couldn't copy to clipboard".into(),
         code: "E_VAULT_COPY_NAME_CLIP"
-    })
+    })?;
+
+    v.touch_entry(&id)
 }
 
 #[tauri::command]

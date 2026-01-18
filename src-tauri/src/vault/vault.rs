@@ -4,6 +4,7 @@ use argon2::password_hash::rand_core::RngCore;
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use chacha20poly1305::aead::{Aead, OsRng};
 use chacha20poly1305::{AeadCore, Key, KeyInit, XChaCha20Poly1305, XNonce};
+use time::format_description::well_known::Rfc3339;
 use core::fmt;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
@@ -473,7 +474,6 @@ impl Vault {
 
     pub fn get_entry_name(&mut self, id: &Uuid) -> VaultResult<String> {
         if let Some(entry) = self.entries.iter_mut().find(|e| e.id == *id) {
-            entry.last_used = OffsetDateTime::now_utc();
             Ok(entry.name.clone())
         } else {
             Err(VaultError {
@@ -487,7 +487,6 @@ impl Vault {
 
     pub fn get_entry_password(&mut self, id: &Uuid) -> VaultResult<String> {
         if let Some(entry) = self.entries.iter_mut().find(|e| e.id == *id) {
-            entry.last_used = OffsetDateTime::now_utc();
             Ok(entry.password.clone())
         } else {
             Err(VaultError {
@@ -543,6 +542,25 @@ impl Vault {
                 severity: VaultErrorSeverity::Soft,
                 message: format!("Entry '{}' not found", id),
                 code: "E_VAULT_ENTRY_FAVORITE",
+            })
+        }
+    }
+
+    pub fn touch_entry(&mut self, id: &Uuid) -> VaultResult<String> {
+        if let Some(entry) = self.entries.iter_mut().find(|e| e.id == *id) {
+            entry.last_used = OffsetDateTime::now_utc();
+            entry.last_used.format(&Rfc3339).map_err(|e| VaultError {
+                kind: VaultErrorKind::Internal,
+                severity: VaultErrorSeverity::Soft,
+                message: format!("Failed to format last_used timestamp: {e}"),
+                code: "E_TIME_FORMAT",
+            })
+        } else {
+            Err(VaultError {
+                kind: VaultErrorKind::NotFound,
+                severity: VaultErrorSeverity::Soft,
+                message: format!("Entry '{}' not found", id),
+                code: "E_VAULT_ENTRY_TOUCH",
             })
         }
     }

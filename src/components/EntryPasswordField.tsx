@@ -180,7 +180,7 @@ const EntryPasswordField = (
         <div className="entry-password">
             <div className="password-split" ref={passwordDomRef}>
                 <div className="placeholder">
-                    ••••••••••••••••••••••••
+                    ••••••••••••••••••••
                 </div>
                 <div className="password" title={password || ""}>
                     {password}

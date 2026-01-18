@@ -15,6 +15,7 @@
         padding: 0 0.5rem;
         background-clip: padding-box;
         border-bottom: 1px solid var(--border-1);
+        white-space: nowrap;
     }
 
     thead tr {
@@ -25,7 +26,6 @@
 
     thead th {
         color: var(--fg-secondary-1);
-        font-family: 'JetBrains Mono', monospace;
         text-align: left;
         font-weight: normal;
     }
@@ -41,7 +41,6 @@
 
     tbody tr td {
         color: var(--fg-secondary);
-        font-family: 'JetBrains Mono', monospace;
         font-size: 14px;
     }
 
@@ -49,7 +48,7 @@
         padding-right: 0;
     }
 
-    td:nth-child(2) {
+    td.col-label {
         width: 25%;
     }
 
@@ -95,7 +94,7 @@
         border-bottom-right-radius: 10px;
     }
 
-    .entry-name {
+    .col-name {
         width: 20%;
     }
 
@@ -124,9 +123,9 @@
         }
     }
 
-    .entry-last-use {
-        width: 0;
-        min-width: fit-content;
+    .col-last-use {
+        width: 115px;
+        min-width: 115px;
         padding-right: 0;
     }
 

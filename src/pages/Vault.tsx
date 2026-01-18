@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import HoverableIcon from "../components/HoverableIcon";
 import Tooltip from "../components/Tooltip";
 import { useModal } from "../contexts/modal";
+import ReadableTime from "../components/ReadableTime";
 
 const Vault = (
     { 
@@ -52,7 +53,7 @@ const Vault = (
                             <th>Label</th>
                             <th>Name</th>
                             <th>Password</th>
-                            <th className="entry-last-use">Last Used</th>
+                            <th className="col-last-use">Last Used</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -61,7 +62,7 @@ const Vault = (
                         entries &&
                         entries.map(e =>
                             <tr className="entry" key={e.id}>
-                                <td className="entry-favorite">
+                                <td className="col-favorite">
                                     <Tooltip text="Favorite">
                                         <ToggleableIcon
                                             defaultElement={<Icons.Star />}
@@ -73,20 +74,22 @@ const Vault = (
                                         />
                                     </Tooltip>
                                 </td>
-                                <td>
+                                <td className="col-label">
                                     <div className="entry-label">
                                         <Favicon label={e.label} url={e.url} />
                                         <span title={e.label}>{e.label}</span>
                                     </div>
                                 </td>
-                                <td className="entry-name">
+                                <td className="col-name">
                                     <span title={e.name}>{e.name}</span>
                                 </td>
                                 <td>
                                     <EntryPasswordField id={e.id} />
                                 </td>
-                                <td className="entry-last-use">{e.lastUsed.toLocaleDateString()}</td>
-                                <td>
+                                <td className="col-last-use">
+                                    <ReadableTime time={e.lastUsed} />
+                                </td>
+                                <td className="col-actions">
                                     <div className="entry-actions">
                                         <Tooltip text="Edit">
                                             <HoverableIcon

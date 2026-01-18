@@ -211,7 +211,9 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
         callbacks ?: VaultCallbacks
     ): Promise<VaultResult<null>> => {
         try {
-            await invoke(detail == "password" ? "vault_copy_entry_password" : "vault_copy_entry_name", { id: id });
+            const lastUsed = await invoke(detail == "password" ? "vault_copy_entry_password" : "vault_copy_entry_name", { id: id }) as string;
+
+            setEntries(p => p?.map(e => e.id === id ? {...e, lastUsed: new Date(lastUsed)} as Entry : e) || null)
 
             setTimeout(async () => {
                 await invoke("vault_clear_clipboard_safe");
