@@ -200,3 +200,75 @@ section.content {
     gap: 1rem;
     flex-grow: 1;
 }
+
+.button-group {
+    @include flex($justify: space-between, $align: flex-end);
+
+    gap: 1rem;
+    flex-grow: 1;
+
+    & > button {
+        height: 35px;
+        border: 1px solid transparent;
+        border-radius: 5px;
+        background-color: var(--bg-3);
+        color: var(--fg-secondary);
+        transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, scale 0.2s ease;
+        will-change: scale;
+        flex-grow: 1;
+        flex-basis: 0;
+    }
+
+    & > button:hover {
+        color: var(--fg);
+        border-color: var(--border-1);
+    }
+
+    & > button.prominent {
+        background-color: var(--bg-accent);
+        color: var(--fg-accent);
+    }
+
+    & > button.dangerous, & > button.error {
+        background-color: var(--bga-danger);
+        color: var(--fg-danger);
+    }
+
+    & > button.info {
+        background-color: var(--bga-info);
+        color: var(--fg-info);
+    }
+
+    & > button.warning {
+        background-color: var(--bga-warning);
+        color: var(--fg-warning);
+    }
+
+
+    & > button:active {
+        scale: 0.98;
+    }
+
+    & > button.prominent:hover {
+        color: var(--fg-accent);
+        border-color: var(--border-accent);
+    }
+
+    & > button.dangerous:hover, & > button.error:hover {
+        background-color: var(--bga-danger-1);
+        color: var(--fg);
+        border-color: var(--border-danger);
+    }
+
+    & > button.info:hover {
+        background-color: var(--bga-info-1);
+        color: var(--fg);
+        border-color: var(--border-info);
+    }
+
+    & > button.warning:hover {
+        background-color: var(--bga-warning-1);
+        color: var(--fg);
+        border-color: var(--border-warning);
+    }
+}

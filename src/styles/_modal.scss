@@ -16,7 +16,7 @@
 .modal {
     @include flex(column, flex-start, stretch);
 
-    gap: 1rem;
+    gap: 1.5rem;
     width: 400px;
     padding: 1rem;
     border: 1px solid var(--border-accent-1);
@@ -54,8 +54,16 @@
         }
     }
 
-    &.dangerous {
-        border-color: var(--border-danger);
+    &.dangerous, &.error {
+        border-color: var(--border-error);
+    }
+
+    &.info {
+        border-color: var(--border-info);
+    }
+
+    &.warning {
+        border-color: var(--border-warning);
     }
 
     & > .modal-message {

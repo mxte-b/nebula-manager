@@ -1,12 +1,13 @@
 type Interval = {
     ms: number,
-    postfix: string
+    prefix?: string,
+    postfix: string,
 }
 
 const INTERVALS: Interval[] = [
   { ms: 1000, postfix: "second" },
   { ms: 60 * 1000, postfix: "minute" },
-  { ms: 60 * 60 * 1000, postfix: "hour" },
+  { ms: 60 * 60 * 1000, postfix: "hour", prefix: "an" },
   { ms: 24 * 60 * 60 * 1000, postfix: "day" },
   { ms: 7 * 24 * 60 * 60 * 1000, postfix: "week" },
   { ms: 30 * 24 * 60 * 60 * 1000, postfix: "month" },
@@ -25,7 +26,7 @@ export const timeSinceDate = (t: Date, includeSeconds: boolean = false): string 
         if (elapsed >= interval.ms) {
             const count = Math.floor(elapsed / interval.ms);
 
-            return `${count == 1 ? "a" : count} ${interval.postfix}${count == 1 ? "" : "s"} ago`
+            return `${count == 1 ? interval.prefix || "a" : count} ${interval.postfix}${count == 1 ? "" : "s"} ago`
         }
     }
 

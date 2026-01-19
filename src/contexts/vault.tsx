@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { Entry, EntryDTO, Err, Ok, toEntry, toEntryDTO, UpdateEntry, VaultCallbacks, VaultContextType, VaultError, VaultResult, VaultStatus } from "../types/general";
 import { useError } from "./error";
 import { invoke } from "@tauri-apps/api/core";
@@ -11,6 +11,8 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
     const [entries, setEntries] = useState<Entry[] | null>(null);
     const [status, setStatus] = useState<VaultStatus | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+
+    const lastClearTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
     const setupVault = async (
         masterPassword: string,
@@ -215,8 +217,17 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
 
             setEntries(p => p?.map(e => e.id === id ? {...e, lastUsed: new Date(lastUsed)} as Entry : e) || null)
 
-            setTimeout(async () => {
-                await invoke("vault_clear_clipboard_safe");
+            if (lastClearTimeoutRef.current) {
+                clearTimeout(lastClearTimeoutRef.current);
+            }
+
+            lastClearTimeoutRef.current = setTimeout(async () => {
+                invoke("vault_clear_clipboard_safe")
+                    .catch(e => {
+                        const error = e as VaultError;
+                        callbacks?.err?.(error);
+                    });
+                lastClearTimeoutRef.current = undefined;
             }, autoClearTime || 30000);
 
             callbacks?.ok?.();

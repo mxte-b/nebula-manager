@@ -14,8 +14,10 @@ gsap.registerPlugin(SplitText);
 const EntryPasswordField = (
     { 
         id,
+        maxCharacters = 20
     }: { 
         id: string,
+        maxCharacters?: number
     }
 ) => {
     const [password, setPassword] = useState<string | null>(null);
@@ -34,7 +36,6 @@ const EntryPasswordField = (
 
     const handlePasswordCopy = (id: string) => {
         copyEntryDetail(id, "password", 30000, {
-            ok: () => addToast({ type: "success", message: "ok", duration: 5000 }),
             err: addError
         })
     }
@@ -180,10 +181,12 @@ const EntryPasswordField = (
         <div className="entry-password">
             <div className="password-split" ref={passwordDomRef}>
                 <div className="placeholder">
-                    ••••••••••••••••••••
+                    {"•".repeat(maxCharacters)}
                 </div>
                 <div className="password" title={password || ""}>
-                    {password}
+                    {
+                        password && password.length > maxCharacters - 3 ? password.substring(0, maxCharacters - 3) + "..." : password
+                    }
                 </div>
             </div>
 

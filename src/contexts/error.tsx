@@ -17,7 +17,6 @@ export const ErrorProvider = ({ children }: { children: ReactNode }) => {
     const { addToast } = useToast();
 
     const addError = (error: VaultError) => {
-        console.log(error)
         switch (error.severity) {
             case "Fatal":
                 setFatalError(error);
@@ -25,11 +24,11 @@ export const ErrorProvider = ({ children }: { children: ReactNode }) => {
 
             case "Blocking":
                 openModal({
-                    type: "confirm",
+                    type: "message",
+                    variant: "error",
                     title: "An error occured",
                     message: error.message,
-                    onConfirm: () => {},
-                    onCancel: () => {},
+                    onAcknowledge: () => {},
                 });
                 break;
 

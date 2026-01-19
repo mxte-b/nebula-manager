@@ -34,6 +34,7 @@
         font-size: 14px;
         transition: opacity 0.15s ease, transform 0.15s ease, scale 0.15s ease;
         will-change: opacity;
+        user-select: none;
         text-align: center;
         transform: translate3d(var(--offset-x), -5px, 0);
         pointer-events: none;

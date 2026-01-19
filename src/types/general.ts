@@ -78,6 +78,7 @@ type ConfirmModal = {
 
 type MessageModal =  {
     type: "message",
+    variant: "info" | "warning" | "error",
     onAcknowledge: () => void
 }
 

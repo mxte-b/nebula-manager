@@ -7,12 +7,26 @@ import CloseButton from "./CloseButton";
 const ModalItem = ({ modal }: { modal: Modal }) => {
 
     const { closeModal } = useModal();
-    const Icon = modal.icon ? Icons[modal.icon] : null;
+
+    const getIcon = () => {
+        if (modal.icon) return Icons[modal.icon];
+
+        if (modal.type == "message") {
+            switch (modal.variant) {
+                case "info": return Icons.InfoCircle
+                case "warning": return Icons.ExclamationTriangle
+                case "error": return Icons.ExclamationCircleFill
+            }
+        }
+
+        return null;
+    }
 
     const getCSSClasses = () => {
         let classList = ["modal", "type-" + modal.type];
 
-        if (modal.type == "confirm" && modal.dangerous) classList.push(" dangerous");
+        if (modal.type == "confirm" && modal.dangerous) classList.push("dangerous");
+        if (modal.type == "message") classList.push(modal.variant);
 
         return classList.join(" ");
     }
@@ -21,19 +35,21 @@ const ModalItem = ({ modal }: { modal: Modal }) => {
         if (modal.type == "confirm") {
             return <>
                 <button type="button" onClick={modal.onCancel}>Cancel</button>
-                <button type="button" className="dangerous" onClick={() => {
+                <button type="button" className={modal.dangerous ? "dangerous" : "prominent"} onClick={() => {
                     modal.onConfirm();
                     closeModal();
                 }}>Confirm</button>
             </>
         }
         else if (modal.type == "message") {
-            return <button type="button" className="prominent" onClick={() => {
+            return <button type="button" className={modal.variant} onClick={() => {
                 modal.onAcknowledge();
                 closeModal();
-            }}>Ok</button>
+            }}>Okay</button>
         }
     }
+
+    const Icon = getIcon();
 
     return (
         <motion.div

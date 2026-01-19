@@ -243,23 +243,27 @@ fn vault_copy_entry_name(
 
 #[tauri::command]
 fn vault_clear_clipboard_safe(app_handle: tauri::AppHandle, last_hash_state: State<Arc<Mutex<Option<String>>>>) -> VaultResult<()> {
-    let clip = app_handle.clipboard();
-
-    let text = clip.read_text().map_err(|_| VaultError {
-        kind: VaultErrorKind::Internal, 
-        severity: VaultErrorSeverity::Blocking, 
-        message: "Couldn't read from clipboard".into(),
-        code: "E_VAULT_CLEAR_CLIP_READ"
-    })?;
-
-    let hash = sha256_hash(&text);
-
     let mut h = last_hash_state.lock().map_err(|_| VaultError {
         kind: VaultErrorKind::Access, 
         severity: VaultErrorSeverity::Blocking, 
         message: "Clipboard hash not accessible".into(),
         code: "E_VAULT_COPY_PASS_HASH"
     })?;
+
+    if h.is_none() {
+        return Ok(())
+    }
+
+    let clip = app_handle.clipboard();
+
+    let text = match clip.read_text() {
+        Ok(t) => t,
+        Err(_) => {
+            return Ok(());
+        }
+    };
+
+    let hash = sha256_hash(&text);
 
     // Clear clipboard if the hash didnt change (it still contains the password)
     if h.as_ref() == Some(&hash) {

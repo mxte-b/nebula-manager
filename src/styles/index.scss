@@ -20,47 +20,64 @@
 }
 
 :root {
+    // Background colors - DEFAULT
     --bg: #121212;
     --bg-1: #161616;
     --bg-2: #1b1b1b;
     --bg-3: #202020;
+
+    // Background colors - ACCENT
     --bg-accent: #332330;
+
+    // Background colors - ALPHA
     --bga: #ffffff08;
     --bga-1: #ffffff0e;
+
+    // Background colors - STATES
+    --bg-info: #152124;
+    --bga-info:#1d2c30b4;
+    --bga-info-1:#264047c2;
+    --bg-success: #0c220c;
+    --bg-warning: #333020;
+    --bga-warning: #2e2a1ac2;
+    --bga-warning-1: #474127c2;
+    --bg-danger: #271919;
     --bga-danger: #ff1d1d1a;
     --bga-danger-1: #ff1b1b70;
+
+    // Border colors - DEFAULT
     --border: #141414;
     --border-1: #303030;
     --border-2: #474747;
     --border-3: #5e5e5e;
+
+    // Border colors - ACCENT
     --border-accent: #92608771;
     --border-accent-1: #f172d68c;
+
+    // Border colors - STATES
+    --border-info: #4f8f96;
+    --border-success: #609265;
+    --border-warning: #968f4f;
+    --border-error: #8f2020;
     --border-danger: #ff1d1d5d;
+
+    // Foreground - DEFAULT
     --fg: #e5e7eb;
     --fg-secondary: #a3a3a3;
     --fg-secondary-1: #cfcfcf;
     --fg-inactive: #6B6B6B;
+
+    // Foreground - ACCENT
     --fg-accent: #ffa2eb;
+
+    // Foreground - STATES
     --fg-danger: #ff3434;
+    --fg-success: rgb(200 255 204);
+    --fg-error: rgb(255 134 134);
+    --fg-warning: rgb(255 239 146);
+    --fg-info: rgb(146 239 255);
     --accent: #ff44d6;
-
-    /* Alternative accent */
-    --accent-blue: #4cc9ff;
-    --accent-blue-soft: #9be4ff;
-    --accent-blue-muted: #2b6f8f;
-
-    /* Foregrounds */
-    --fg-blue: #7dd7ff;
-    --fg-blue-strong: #4cc9ff;
-
-    /* Background accents */
-    --bg-blue-accent: #1b2a33;
-    --bga-blue: #4cc9ff14;
-    --bga-blue-1: #4cc9ff26;
-
-    /* Borders */
-    --border-blue: #4cc9ff55;
-    --border-blue-1: #4cc9ff88;
 
     background: var(--bg);
     color: var(--fg);
