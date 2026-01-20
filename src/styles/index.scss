@@ -32,6 +32,7 @@
     // Background colors - ALPHA
     --bga: #ffffff08;
     --bga-1: #ffffff0e;
+    --bga-2: #00000067;
 
     // Background colors - STATES
     --bg-info: #152124;
@@ -73,10 +74,10 @@
 
     // Foreground - STATES
     --fg-danger: #ff3434;
-    --fg-success: rgb(200 255 204);
-    --fg-error: rgb(255 134 134);
-    --fg-warning: rgb(255 239 146);
-    --fg-info: rgb(146 239 255);
+    --fg-success: #c8ffcc;
+    --fg-error: #ff8686;
+    --fg-warning: #ffef92;
+    --fg-info: #92efff;
     --accent: #ff44d6;
 
     background: var(--bg);

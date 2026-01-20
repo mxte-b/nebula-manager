@@ -17,6 +17,7 @@ import { useToast } from "../contexts/toast";
 import { motion } from "motion/react";
 import { useVault } from "../contexts/vault";
 import { useModal } from "../contexts/modal";
+import { useError } from "../contexts/error";
 
 // Assign the overlay shortcut
 await isRegistered("CommandOrControl+K").then(async (r) => {
@@ -39,7 +40,7 @@ function App() {
 
     const { createEntry, updateEntry, toggleFavorite, deleteEntry } = useVault();
     const { addToast } = useToast();
-    const { openModal } = useModal();
+    const { addError } = useError();
 
     const handleNewEntrySubmit = async (entry: Entry) => createEntry(entry).then(() => setIsEntryFormVisible(false));
 
@@ -68,6 +69,15 @@ function App() {
         // Disable context menu
         const prevent = (e: Event) => e.preventDefault()
         window.addEventListener("contextmenu", prevent);
+
+        setTimeout(() => {
+            addError({
+                kind: "Internal",
+                severity: "Fatal",
+                message: "asdjhuioashduiahsiudhasiudhasuihd",
+                code: "E_TEST_FATAL"
+            });
+        }, 10000);
 
         return () => window.removeEventListener("contextmenu", prevent);
     }, []);
