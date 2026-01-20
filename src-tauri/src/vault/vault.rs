@@ -12,7 +12,7 @@ use time::OffsetDateTime;
 use uuid::Uuid;
 use zeroize::Zeroize;
 
-const VERSION: &str = "0.6.0";
+const VERSION: &str = "0.8.0";
 
 fn b64_to_bytes(x: &str) -> Result<Vec<u8>, String> {
     STANDARD.decode(x).map_err(|e| e.to_string())
@@ -549,6 +549,7 @@ impl Vault {
     pub fn touch_entry(&mut self, id: &Uuid) -> VaultResult<String> {
         if let Some(entry) = self.entries.iter_mut().find(|e| e.id == *id) {
             entry.last_used = OffsetDateTime::now_utc();
+            entry.uses += 1;
             entry.last_used.format(&Rfc3339).map_err(|e| VaultError {
                 kind: VaultErrorKind::Internal,
                 severity: VaultErrorSeverity::Soft,

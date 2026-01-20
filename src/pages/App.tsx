@@ -74,7 +74,7 @@ function App() {
             addError({
                 kind: "Internal",
                 severity: "Fatal",
-                message: "asdjhuioashduiahsiudhasiudhasuihd",
+                message: "Ez egy hiba",
                 code: "E_TEST_FATAL"
             });
         }, 10000);

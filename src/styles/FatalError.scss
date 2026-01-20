@@ -98,8 +98,6 @@
         @include flex(column, flex-start, stretch);
 
         gap: 0.5rem;
-
-        // min-width: 60%;
         padding: 1.5rem;
         border: 1px solid color.mix(#ff8686, transparent, 20%);
         border-radius: 10px;

@@ -25,6 +25,7 @@ const EntryForm = (
             createdAt: now,
             modifiedAt: now,
             lastUsed: now,
+            uses: 0,
             favorite: false,
             label: (document.getElementById("label") as HTMLInputElement).value,
             url: (document.getElementById("website") as HTMLInputElement).value,

@@ -12,6 +12,7 @@ pub struct Entry {
     pub modified_at: OffsetDateTime,
     #[serde(with = "time::serde::rfc3339")]
     pub last_used: OffsetDateTime,
+    pub uses: u32,
     pub label: String,
     pub url: String,
     pub name: String,
@@ -29,6 +30,7 @@ pub struct EntryPublic {
     pub modified_at: OffsetDateTime,
     #[serde(with = "time::serde::rfc3339")]
     pub last_used: OffsetDateTime,
+    pub uses: u32,
     pub label: String,
     pub url: String,
     pub name: String,
@@ -50,6 +52,7 @@ impl From<&Entry> for EntryPublic {
             created_at: entry.created_at,
             modified_at: entry.modified_at,
             last_used: entry.last_used,
+            uses: entry.uses,
             label: entry.label.clone(),
             url: entry.url.clone(),
             name: entry.name.clone(),
