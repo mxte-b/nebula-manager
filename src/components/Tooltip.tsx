@@ -6,10 +6,12 @@ const TOOLTIP_DEFAULT_Y_OFFSET = -40;
 
 const Tooltip = ({
     text,
+    onExitComplete,
     children
 }:
 {
     text: string,
+    onExitComplete?: () => void,
     children: ReactNode
 }) => {
 
@@ -70,25 +72,37 @@ const Tooltip = ({
         debouncedObserve.current();
     }
 
+    
     useEffect(() => {
-        if (!tooltipWrapperRef.current) return;
+        const tooltip = tooltipRef.current;
+        const wrapper = tooltipWrapperRef.current;
 
+        console.log(tooltip)
+        
+        if (!tooltip || !wrapper) return;
+        
         if (!sectionRef.current) {
-            sectionRef.current = tooltipWrapperRef.current.closest("section.content");
-
+            sectionRef.current = wrapper.closest("section.content");
+            
             if (!sectionRef.current) {
                 sectionRef.current = document.body;
-                return;
             }
         }
-
+        
         setTimeout(handleResize, 100);
+        
+        const handleTransitionEnd = (e: TransitionEvent) => {
+            console.log(e.propertyName)
+            if (e.propertyName != "opacity") return;
+            if (!wrapper.matches(":hover")) onExitComplete?.();
+        }
 
-        // Observe the window for changes
+        tooltip.addEventListener("transitionend", handleTransitionEnd);
         sectionRef.current.addEventListener("scroll", debouncedObserve.current);
         window.addEventListener("resize", handleResize);
 
         return () => {
+            tooltip.removeEventListener("transitionend", handleTransitionEnd)
             sectionRef.current?.removeEventListener("scroll", debouncedObserve.current);
             window.removeEventListener("resize", handleResize);
         }

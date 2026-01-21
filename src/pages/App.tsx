@@ -70,15 +70,6 @@ function App() {
         const prevent = (e: Event) => e.preventDefault()
         window.addEventListener("contextmenu", prevent);
 
-        setTimeout(() => {
-            addError({
-                kind: "Internal",
-                severity: "Fatal",
-                message: "Ez egy hiba",
-                code: "E_TEST_FATAL"
-            });
-        }, 10000);
-
         return () => window.removeEventListener("contextmenu", prevent);
     }, []);
 

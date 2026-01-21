@@ -10,8 +10,8 @@ pub struct Entry {
     pub created_at: OffsetDateTime,
     #[serde(with = "time::serde::rfc3339")]
     pub modified_at: OffsetDateTime,
-    #[serde(with = "time::serde::rfc3339")]
-    pub last_used: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339::option", default)]
+    pub last_used: Option<OffsetDateTime>,
     pub uses: u32,
     pub label: String,
     pub url: String,
@@ -28,8 +28,8 @@ pub struct EntryPublic {
     pub created_at: OffsetDateTime,
     #[serde(with = "time::serde::rfc3339")]
     pub modified_at: OffsetDateTime,
-    #[serde(with = "time::serde::rfc3339")]
-    pub last_used: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339::option", default)]
+    pub last_used: Option<OffsetDateTime>,
     pub uses: u32,
     pub label: String,
     pub url: String,

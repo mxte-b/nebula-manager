@@ -19,9 +19,10 @@ const HoverableIcon = (
             className="icon-hoverable" 
             onClick={onClick}
             style={{
-            "--hover-fg": hoverFg,
-            "--hover-bg": hoverBg
-        } as React.CSSProperties}>
+                "--hover-fg": hoverFg,
+                "--hover-bg": hoverBg
+            } as React.CSSProperties}
+        >
            {children}
         </div>
     )

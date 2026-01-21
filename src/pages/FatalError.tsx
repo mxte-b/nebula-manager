@@ -1,10 +1,26 @@
 import { VaultError } from "../types/general";
 import "../styles/FatalError.scss";
 import { motion } from "motion/react";
+import Icons from "../components/Icons";
+import { writeText } from "@tauri-apps/plugin-clipboard-manager";
+import HoverableIcon from "../components/HoverableIcon";
+import Tooltip from "../components/Tooltip";
+import { useEffect, useState } from "react";
 
 const FatalError = ({ error }: { error: VaultError }) => {
-    return (
+    const [copiedRecently, setCopiedRecently] = useState<boolean>(false);
 
+    useEffect(() => {
+        let t = undefined;
+
+        if (copiedRecently) {
+            t = setTimeout(() => setCopiedRecently(false), 5000);
+        }
+
+        return () => clearTimeout(t);
+    }, [copiedRecently]);
+
+    return (
         <motion.div 
             key={"fatal"}
             initial={{ opacity: 0 }}
@@ -28,7 +44,24 @@ const FatalError = ({ error }: { error: VaultError }) => {
                         <span className="title">Type: </span>{error.kind}
                     </div>
                     <div className="fatal-error-message">
-                        <span className="title">Message: </span>{error.message}
+                        <div className="title">Message: </div>
+                        <div>{error.message}</div>
+                        
+                        <Tooltip 
+                            text={copiedRecently ? "Copied!" : "Copy"}
+                            onExitComplete={() => setCopiedRecently(false)}
+                        >
+                            <HoverableIcon
+                                hoverFg="#ff8686"
+                                hoverBg="#c0666650"
+                                onClick={() => {
+                                    writeText(error.message);
+                                    setCopiedRecently(true);
+                                }}
+                            >
+                                <Icons.Copy />
+                            </HoverableIcon>
+                        </Tooltip>
                     </div>
                 </div>
             </div>

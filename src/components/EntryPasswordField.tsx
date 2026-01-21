@@ -23,6 +23,7 @@ const EntryPasswordField = (
     const [password, setPassword] = useState<string | null>(null);
     const [passwordShown, setPasswordShown] = useState<boolean>(false);
     const [toggleEnabled, setToggleEnabled] = useState<boolean>(true);
+    const [copiedRecently, setCopiedRecently] = useState<boolean>(false);
     
     const isFirstRender = useRef<boolean>(true);
     const isAnimating = useRef<boolean>(false);
@@ -31,7 +32,6 @@ const EntryPasswordField = (
     const passwordSplitRef = useRef<SplitText | null>(null);
 
     const { getEntryPassword, copyEntryDetail } = useVault();
-    const { addToast } = useToast();
     const { addError } = useError();
 
     const handlePasswordCopy = (id: string) => {
@@ -144,6 +144,16 @@ const EntryPasswordField = (
     }
 
     useEffect(() => {
+        let t = undefined;
+
+        if (copiedRecently) {
+            t = setTimeout(() => setCopiedRecently(false), 5000);
+        }
+
+        return () => clearTimeout(t);
+    }, [copiedRecently]);
+
+    useEffect(() => {
         if (isFirstRender.current) {
             // Skip the first render
             isFirstRender.current = false;
@@ -191,11 +201,17 @@ const EntryPasswordField = (
             </div>
 
             <div className="password-actions">
-                <Tooltip text="Copy">
+                <Tooltip 
+                    text={copiedRecently ? "Copied!" : "Copy"}
+                    onExitComplete={() => setCopiedRecently(false)}
+                >
                     <HoverableIcon
                         hoverFg="#699dd8ff"
                         hoverBg="#699dd818"
-                        onClick={() => handlePasswordCopy(id)}
+                        onClick={() => {
+                            handlePasswordCopy(id);
+                            setCopiedRecently(true);
+                        }}
                     >
                         <Icons.Copy/>
                     </HoverableIcon>

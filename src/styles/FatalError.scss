@@ -117,7 +117,9 @@
     }
 
     &-message {
-        user-select: text;
+        @include flex(row);
+
+        gap: 0.5rem;
     }
 
     &-note {
@@ -126,7 +128,7 @@
         text-align: center;
     }
 
-    span.title {
+    .title {
         color: #c06666;
     }
 }
