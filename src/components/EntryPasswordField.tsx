@@ -5,7 +5,6 @@ import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
 import Tooltip from "./Tooltip";
 import HoverableIcon from "./HoverableIcon";
-import { useToast } from "../contexts/toast";
 import { useError } from "../contexts/error";
 import { useVault } from "../contexts/vault";
 

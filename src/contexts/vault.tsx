@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
-import { Entry, EntryDTO, Err, Ok, toEntry, toEntryDTO, UpdateEntry, VaultCallbacks, VaultContextType, VaultError, VaultResult, VaultStatus } from "../types/general";
+import { Entry, EntryDTO, EntryUseResult, Err, Ok, toEntry, toEntryDTO, UpdateEntry, VaultCallbacks, VaultContextType, VaultError, VaultResult, VaultStatus } from "../types/general";
 import { useError } from "./error";
 import { invoke } from "@tauri-apps/api/core";
 
@@ -213,9 +213,9 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
         callbacks ?: VaultCallbacks
     ): Promise<VaultResult<null>> => {
         try {
-            const lastUsed = await invoke(detail == "password" ? "vault_copy_entry_password" : "vault_copy_entry_name", { id: id }) as string;
+            const entryUseResult = await invoke(detail == "password" ? "vault_copy_entry_password" : "vault_copy_entry_name", { id: id }) as EntryUseResult;
 
-            setEntries(p => p?.map(e => e.id === id ? {...e, lastUsed: new Date(lastUsed)} as Entry : e) || null)
+            setEntries(p => p?.map(e => e.id === id ? {...e, lastUsed: new Date(entryUseResult.lastUse), uses: entryUseResult.uses} as Entry : e) || null)
 
             if (lastClearTimeoutRef.current) {
                 clearTimeout(lastClearTimeoutRef.current);

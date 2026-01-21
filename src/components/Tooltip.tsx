@@ -77,8 +77,6 @@ const Tooltip = ({
         const tooltip = tooltipRef.current;
         const wrapper = tooltipWrapperRef.current;
 
-        console.log(tooltip)
-        
         if (!tooltip || !wrapper) return;
         
         if (!sectionRef.current) {
@@ -92,7 +90,6 @@ const Tooltip = ({
         setTimeout(handleResize, 100);
         
         const handleTransitionEnd = (e: TransitionEvent) => {
-            console.log(e.propertyName)
             if (e.propertyName != "opacity") return;
             if (!wrapper.matches(":hover")) onExitComplete?.();
         }

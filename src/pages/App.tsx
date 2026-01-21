@@ -16,8 +16,6 @@ import UpdateForm from "../components/UpdateForm";
 import { useToast } from "../contexts/toast";
 import { motion } from "motion/react";
 import { useVault } from "../contexts/vault";
-import { useModal } from "../contexts/modal";
-import { useError } from "../contexts/error";
 
 // Assign the overlay shortcut
 await isRegistered("CommandOrControl+K").then(async (r) => {
@@ -40,7 +38,6 @@ function App() {
 
     const { createEntry, updateEntry, toggleFavorite, deleteEntry } = useVault();
     const { addToast } = useToast();
-    const { addError } = useError();
 
     const handleNewEntrySubmit = async (entry: Entry) => createEntry(entry).then(() => setIsEntryFormVisible(false));
 

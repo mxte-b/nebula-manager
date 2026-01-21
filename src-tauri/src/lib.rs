@@ -10,7 +10,7 @@ pub use vault::Vault;
 
 use crate::vault::{
     entry::{EntryPublic, UpdateEntry},
-    vault::{VaultError, VaultErrorKind, VaultErrorSeverity, VaultResult, VaultStatus},
+    vault::{EntryUseResult, VaultError, VaultErrorKind, VaultErrorSeverity, VaultResult, VaultStatus},
 };
 
 use sha2::{Sha256, Digest};
@@ -167,7 +167,7 @@ fn vault_copy_entry_password(
     vault: State<Arc<Mutex<Vault>>>, 
     last_hash_state: State<Arc<Mutex<Option<String>>>>,
     id: Uuid
-) -> VaultResult<String> {
+) -> VaultResult<EntryUseResult> {
     let mut v = vault
         .lock()
         .map_err(|_| VaultError {
@@ -198,7 +198,7 @@ fn vault_copy_entry_password(
         code: "E_VAULT_COPY_PASS_CLIP"
     })?;
 
-    v.touch_entry(&id)
+    v.use_entry(&id)
 }
 
 #[tauri::command]
@@ -207,7 +207,7 @@ fn vault_copy_entry_name(
     vault: State<Arc<Mutex<Vault>>>,
     last_hash_state: State<Arc<Mutex<Option<String>>>>,
     id: Uuid
-) -> VaultResult<String> {
+) -> VaultResult<EntryUseResult> {
     let mut v = vault
         .lock()
         .map_err(|_| VaultError {
@@ -238,7 +238,7 @@ fn vault_copy_entry_name(
         code: "E_VAULT_COPY_NAME_CLIP"
     })?;
 
-    v.touch_entry(&id)
+    v.use_entry(&id)
 }
 
 #[tauri::command]

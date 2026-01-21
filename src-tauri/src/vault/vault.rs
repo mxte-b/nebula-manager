@@ -7,7 +7,6 @@ use chacha20poly1305::{AeadCore, Key, KeyInit, XChaCha20Poly1305, XNonce};
 use core::fmt;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use time::format_description::well_known::Rfc3339;
 use time::OffsetDateTime;
 use uuid::Uuid;
 use zeroize::Zeroize;
@@ -101,6 +100,14 @@ pub struct RuntimeKeys {
 pub struct SaveFileLayout {
     pub version: String,
     pub crypto: VaultCrypto,
+}
+
+#[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct EntryUseResult {
+    #[serde(with = "time::serde::rfc3339")]
+    pub last_use: OffsetDateTime,
+    pub uses: u32,
 }
 
 pub struct Vault {
@@ -546,19 +553,16 @@ impl Vault {
         }
     }
 
-    pub fn touch_entry(&mut self, id: &Uuid) -> VaultResult<String> {
+    pub fn use_entry(&mut self, id: &Uuid) -> VaultResult<EntryUseResult> {
         if let Some(entry) = self.entries.iter_mut().find(|e| e.id == *id) {
             let now = OffsetDateTime::now_utc();
 
             entry.last_used = Some(now);
             entry.uses += 1;
 
-            now.format(&Rfc3339).map_err(|e| VaultError {
-                kind: VaultErrorKind::Internal,
-                severity: VaultErrorSeverity::Soft,
-                message: format!("Failed to format last_used timestamp: {e}"),
-                code: "E_ENTRY_TOUCH_TIME",
-            })
+            let uses = entry.uses;
+
+            Ok(EntryUseResult { last_use: now, uses: uses })
         } else {
             Err(VaultError {
                 kind: VaultErrorKind::NotFound,

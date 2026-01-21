@@ -8,6 +8,8 @@ import HoverableIcon from "../components/HoverableIcon";
 import Tooltip from "../components/Tooltip";
 import { useModal } from "../contexts/modal";
 import ReadableTime from "../components/ReadableTime";
+import FavoritePasswords from "../components/FavoritePasswords";
+import RecentlyUsedPasswords from "../components/RecentlyUsedPasswords";
 
 const Vault = (
     { 
@@ -28,19 +30,17 @@ const Vault = (
     return (
         <>
             <div className="wrapper">
+
                 <h1>My passwords</h1>
+
                 <div className="info-grid">
                     <div className="favorites">
                         <h2>Favorites</h2>
-                        <div className="favorites-list">
-                            { entries && entries.filter(e => e.favorite).map(e => <>
-                                <Favicon label={e.label} url={e.url} />
-                                <span title={e.label}>{e.label}</span>
-                            </>) }
-                        </div>
+                        <FavoritePasswords />
                     </div>
                     <div className="recents">
                         <h2>Recently used</h2>
+                        <RecentlyUsedPasswords />
                     </div>
                 </div>
                 <h2>Security overview</h2>

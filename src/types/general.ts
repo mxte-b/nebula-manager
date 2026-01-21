@@ -224,6 +224,11 @@ export const toEntryDTO = (e: Entry): EntryDTO => ({
     lastUsed: e.lastUsed?.toISOString() || null
 });
 
+export type EntryUseResult = {
+    lastUse: string,
+    uses: number,
+}
+
 /* -------------------------------------------------------------------------- */
 /*                               Password types                               */
 /* -------------------------------------------------------------------------- */
