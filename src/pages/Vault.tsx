@@ -71,8 +71,8 @@ const Vault = (
                                     role="row"
                                     key={e.id}
                                 >
-                                    <div className="table-col favorite" role="cell">
-                                        <Tooltip text="Favorite">
+                                    <div className="table-col favorite" id={e.label} role="cell">
+                                        <Tooltip text={e.favorite ? "Unfavorite" : "Favorite"}>
                                             <ToggleableIcon
                                                 defaultElement={<Icons.Star />}
                                                 toggledElement={<Icons.StarFill />}

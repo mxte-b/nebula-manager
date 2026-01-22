@@ -46,14 +46,20 @@ const Tooltip = ({
         const tooltipRelativeLeft = Math.round(tooltipRect.left - sectionRectRef.current.left);
         const tooltipRelativeRight = Math.round(sectionRectRef.current.right - tooltipRect.right);
 
-        let offset = 0;
+        const previousOffset = parseFloat(getComputedStyle(tooltipRef.current).getPropertyValue("--offset-x")) || 0;
+
+        let offset = previousOffset;
         if (tooltipRelativeLeft < TOOLTIP_MIN_EDGE_DIST) {
-            offset = TOOLTIP_MIN_EDGE_DIST - tooltipRelativeLeft;
+            offset += TOOLTIP_MIN_EDGE_DIST - tooltipRelativeLeft;
         }
         else if (tooltipRelativeRight < TOOLTIP_MIN_EDGE_DIST) {
-            offset = tooltipRelativeRight - TOOLTIP_MIN_EDGE_DIST;
+            offset += tooltipRelativeRight - TOOLTIP_MIN_EDGE_DIST;
         }
-        
+
+        if (tooltipRelativeLeft > TOOLTIP_MIN_EDGE_DIST && previousOffset > 0) {
+            offset += TOOLTIP_MIN_EDGE_DIST - tooltipRelativeLeft;
+        }
+
         if (offset != 0) {
             tooltipRef.current.style.setProperty("--offset-x", `${offset}px`);
         }
@@ -72,7 +78,6 @@ const Tooltip = ({
         debouncedObserve.current();
     }
 
-    
     useEffect(() => {
         const tooltip = tooltipRef.current;
         const wrapper = tooltipWrapperRef.current;
@@ -105,6 +110,9 @@ const Tooltip = ({
         }
     }, []);
 
+    useEffect(() => {
+        setTimeout(handleResize, 100);
+    }, [text])
 
     return (
         <div className="tooltip-wrapper" ref={tooltipWrapperRef}>
