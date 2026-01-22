@@ -43,25 +43,28 @@ const Tooltip = ({
         }
         
         // Overflow detection - X axis
-        const tooltipRelativeLeft = Math.round(tooltipRect.left - sectionRectRef.current.left);
-        const tooltipRelativeRight = Math.round(sectionRectRef.current.right - tooltipRect.right);
+        const tooltipRelativeLeft = tooltipRect.left - sectionRectRef.current.left;
+        const tooltipRelativeRight = sectionRectRef.current.right - tooltipRect.right;
 
         const previousOffset = parseFloat(getComputedStyle(tooltipRef.current).getPropertyValue("--offset-x")) || 0;
-
+        
         let offset = previousOffset;
-        if (tooltipRelativeLeft < TOOLTIP_MIN_EDGE_DIST) {
+
+        if (tooltipRelativeLeft < TOOLTIP_MIN_EDGE_DIST - 0.5) {
             offset += TOOLTIP_MIN_EDGE_DIST - tooltipRelativeLeft;
         }
-        else if (tooltipRelativeRight < TOOLTIP_MIN_EDGE_DIST) {
+        else if (tooltipRelativeRight < TOOLTIP_MIN_EDGE_DIST - 0.5) {
             offset += tooltipRelativeRight - TOOLTIP_MIN_EDGE_DIST;
         }
-
-        if (tooltipRelativeLeft > TOOLTIP_MIN_EDGE_DIST && previousOffset > 0) {
+        
+        if (tooltipRelativeLeft > TOOLTIP_MIN_EDGE_DIST + 0.5 && previousOffset > 0) {
             offset += TOOLTIP_MIN_EDGE_DIST - tooltipRelativeLeft;
         }
 
-        if (offset != 0) {
-            tooltipRef.current.style.setProperty("--offset-x", `${offset}px`);
+        if (Math.abs(offset) < 0.5) offset = 0;
+
+        if (Math.abs(offset - previousOffset) >= 1) {
+            tooltipRef.current.style.setProperty("--offset-x", `${Math.round(offset)}px`);
         }
     }
 
