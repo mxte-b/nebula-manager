@@ -1,6 +1,8 @@
 @use 'mixins' as *;
 
-.entries {
+.table {
+    @include flex(column, flex-start, stretch);
+
     gap: 0;
     border: 0;
     border-radius: 10px;
@@ -10,50 +12,46 @@
     border-collapse: separate;
     border-spacing: 0;
 
-    th,
-    td {
-        padding: 0 0.5rem;
-        background-clip: padding-box;
-        border-bottom: 1px solid var(--border-1);
-        white-space: nowrap;
+    &-row {
+        display: grid;
+        align-items: center;
+        min-height: 0;
+        will-change: height, opacity, transform;
+        flex-shrink: 0;
+        padding-inline: 0.25rem;
+        grid-template-columns:
+            40px     /* Favorite */
+            1.7fr    /* Label */
+            1.3fr    /* Name */
+            2fr      /* Password */
+            0.8fr    /* Last use */
+            80px;    /* Actions */
     }
 
-    thead tr {
+    &-row * {
+        will-change: unset !important;
+    }
+
+    &-row.headers {
         height: 35px;
-        border-radius: 10px;
+        min-height: 35px;
+        border-radius: 10px 10px 0 0;
         background-color: var(--bga);
     }
 
-    thead th {
+    &-header, &-col {
+        padding: 0 0.25rem;
+        white-space: nowrap;
+    }
+
+    &-header {
         color: var(--fg-secondary-1);
         text-align: left;
         font-weight: normal;
     }
 
-    /* Table corner rounding */
-    thead th:first-child {
-        border-top-left-radius: 10px;
-    }
-
-    thead th:last-child {
-        border-top-right-radius: 10px;
-    }
-
-    tbody tr td {
-        color: var(--fg-secondary);
-        font-size: 14px;
-    }
-
-    td:first-child {
-        padding-right: 0;
-    }
-
-    td.col-label {
-        width: 25%;
-    }
-
-    td:has(.entry-password) {
-        padding-right: 0;
+    &-body {
+        will-change: height;
     }
 
     .entry-actions {
@@ -66,43 +64,40 @@
         pointer-events: none;
     }
 
-    tbody tr {
+    &-row.entry {
         align-items: center;
-        gap: 1rem;
         height: 55px;
-        transition: background-color 0.1s ease;
 
+        // min-height: 55px;
+        color: var(--fg-secondary);
+        font-size: 14px;
+        transition: background-color 0.1s ease;
+    
         &:hover .entry-actions {
             opacity: 1;
             pointer-events: all;
         }
-
+    
         &:hover{
             background-color: var(--bg-2);
         }
-
+    
         &:last-child td {
             border-bottom: 0;
         }
     }
 
-    tbody tr:last-child td:first-child {
-        border-bottom-left-radius: 10px;
-    }
-
-    tbody tr:last-child td:last-child {
-        border-bottom-right-radius: 10px;
-    }
-
-    .col-name {
-        width: 20%;
+    &-row:last-child {
+        border: 1px solid transparent;
+        border-radius: 0 0 10px 10px;
     }
 
     .entry-password {
         @include flex($justify: flex-start);
 
         gap: 0.5rem;
-        min-width: 250px;
+
+        // min-width: 250px;
         font-family: "JetBrains Mono", monospace;
 
         .password-split {
@@ -124,14 +119,11 @@
         }
     }
 
-    .col-last-use {
-        width: 115px;
-        min-width: 115px;
-        padding-right: 0;
-    }
+    &-col.last-use {
+        // width: 115px;
 
-    tbody * {
-        user-select: text;
+        // min-width: 115px;
+        padding-right: 0;
     }
 }
 

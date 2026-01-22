@@ -83,8 +83,7 @@ function App() {
             <div className="content-wrapper">
                 <Router>
                     <Route path="vault" element={
-                        <Vault 
-                            entries={entries}
+                        <Vault
                             onEntryDelete={handleEntryDelete}
                             onEntryUpdate={(e) => {
                                 setEntryToUpdate(e);

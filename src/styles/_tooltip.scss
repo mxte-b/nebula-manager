@@ -34,6 +34,7 @@
         font-family: "JetBrains Mono", monospace;
         font-size: 14px;
         transition: opacity 0.15s ease, transform 0.15s ease, scale 0.15s ease;
+        will-change: unset !important;
         will-change: opacity;
         user-select: none;
         text-align: center;
