@@ -9,19 +9,26 @@ import passwordUtils from "../utils/passwordUtils";
 import HoverableIcon from "./HoverableIcon";
 import Tooltip from "./Tooltip";
 import { useVault } from "../contexts/vault";
+import Form from "./Form";
+import FormGroup from "./FormGroup";
+import Input from "./Input";
+import { FormProvider } from "../contexts/form";
+
+type PasswordFormData = {
+    password: string
+}
 
 const SetupCreateStep = ({ next }: PhaseProps) => {
-    const [password, setPassword] = useState<string>("");
     const [passwordShown, setPasswordShown] = useState<boolean>(false);
 
     const { setupVault } = useVault();
     const { addError } = useError();
     const { generatePassword } = passwordUtils();
 
-    const handlePasswordCreate = () => {
-        if (!password) return;
+    const handlePasswordCreate = (data: PasswordFormData) => {
+        if (!data.password) return;
 
-        setupVault(password, {
+        setupVault(data.password, {
             ok: next,
             err: addError
         });
@@ -41,7 +48,48 @@ const SetupCreateStep = ({ next }: PhaseProps) => {
                     <p>To secure your vault, please enter a strong password that you will remember. If you lose your password, you lose your data.</p>
                 </header>
 
-                <form className="password-form form" autoComplete="off" onSubmit={(e) => {
+                <FormProvider>
+                <Form<PasswordFormData>
+                    onSubmit={handlePasswordCreate}
+                >
+                    <FormGroup>
+                        <Input 
+                            required
+                            name="password"
+                            type={ passwordShown ? "text" : "password" }
+                            placeholder="Enter a strong password"
+                            actions={(field) =>
+                                <>
+                                    <Tooltip text="Generate">
+                                        <HoverableIcon
+                                            onClick={() => {
+                                                field.setValue(generatePassword());
+                                                setPasswordShown(true);
+                                            }}
+                                            hoverFg="#d3a747ff"
+                                            hoverBg="#d3a74718"
+                                        >
+                                            <Icons.Stars />
+                                        </HoverableIcon>
+                                    </Tooltip>
+
+                                    <Tooltip text={passwordShown ? "Hide" : "Show"}>
+                                        <ToggleableIcon
+                                            defaultElement={<Icons.EyeFill />}
+                                            toggledElement={<Icons.EyeSlashFill />}
+                                            hoverFg="#ffa2eb"
+                                            hoverBg="#ffa2eb25"
+                                            onToggle={() => setPasswordShown(p => !p)}
+                                        />
+                                    </Tooltip>
+                                </>
+                            }
+                        />
+                    </FormGroup>
+                </Form>
+                </FormProvider>
+
+                {/* <form className="password-form form" autoComplete="off" onSubmit={(e) => {
                     e.preventDefault();
                     handlePasswordCreate();
                 }}>
@@ -83,12 +131,14 @@ const SetupCreateStep = ({ next }: PhaseProps) => {
                                 </Tooltip>
                             </div>
                             <PasswordStrengthMeter password={password} />
-                        </div>
+                        </div
+                        
+                        >
                     </div>
                     <button type="submit" className="button-continue">
                         Continue
                     </button>
-                </form>
+                </form> */}
 
             </main>
         </motion.div>

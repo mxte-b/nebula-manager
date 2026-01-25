@@ -248,3 +248,30 @@ export type Result<T, E> =
 
 export const Ok = <T>(value: T): Result<T, never> => ({ok: true, value: value});
 export const Err = <T>(error: T): Result<never, T> => ({ok: false, error: error});
+
+
+/* -------------------------------------------------------------------------- */
+/*                                 Form types                                 */
+/* -------------------------------------------------------------------------- */
+export type FormField = {
+    value: unknown;
+    touched: boolean;
+    error: string | null;
+}
+
+export type FormContextType = {
+    form: Record<string, FormField>;
+    registerField: (name: string) => void;
+    unregisterField: (name: string) => void;
+    setValue: (field: string, value: unknown) => void;
+    setError: (field: string, error: string | null) => void;
+};
+
+export type InputRule = {
+    regex: RegExp;
+    errorMessage: string;
+}
+
+export type InputActions = {
+    setValue: (value: unknown) => void;
+}
