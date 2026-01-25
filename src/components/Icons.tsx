@@ -22,6 +22,7 @@ import Person from "../assets/person.svg?react"
 import Plus from "../assets/plus-lg.svg?react"
 import Pencil from "../assets/pencil.svg?react"
 import PencilFill from "../assets/pencil-fill.svg?react"
+import Recent from "../assets/recent.svg?react"
 import Search from "../assets/search.svg?react"
 import ShieldLock from "../assets/shield-lock.svg?react"
 import Star from "../assets/star.svg?react"
@@ -58,6 +59,7 @@ const Icons = {
     Plus,
     Pencil,
     PencilFill,
+    Recent,
     Search,
     ShieldLock,
     Star,

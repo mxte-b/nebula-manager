@@ -55,11 +55,7 @@ function App() {
     const handleEntryFavorite = (id: string) => toggleFavorite(id);
 
     const handleEntryDelete = (id: string) => {
-        deleteEntry(id).then(() => addToast({
-            type: "success",
-            message: "Deletion successful!",
-            duration: 5000,
-        }))
+        deleteEntry(id)
     }
 
     useEffect(() => {

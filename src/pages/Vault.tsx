@@ -7,10 +7,9 @@ import HoverableIcon from "../components/HoverableIcon";
 import Tooltip from "../components/Tooltip";
 import { useModal } from "../contexts/modal";
 import ReadableTime from "../components/ReadableTime";
-import FavoritePasswords from "../components/FavoritePasswords";
-import RecentlyUsedPasswords from "../components/RecentlyUsedPasswords";
 import { AnimatePresence, motion } from "motion/react";
 import { useVault } from "../contexts/vault";
+import FilteredEntryList from "../components/FilteredEntryList";
 
 const Vault = (
     { 
@@ -32,21 +31,27 @@ const Vault = (
         <>
             <div className="wrapper">
 
-                <h1>My passwords</h1>
+                <h1>Dashboard</h1>
 
                 <div className="info-grid">
-                    <div className="favorites">
+                    <div className="info-grid-item favorites">
                         <h2>Favorites</h2>
-                        <FavoritePasswords />
+                        <FilteredEntryList filterFunction={(e, c) => e?.filter(e => e.favorite).sort((a, b) => b.uses - a.uses).slice(0, c)} />
+                        <div className="item-background">
+                            <Icons.Star className="icon" />
+                        </div>
                     </div>
-                    <div className="recents">
+                    <div className="info-grid-item recents">
                         <h2>Recently used</h2>
-                        <RecentlyUsedPasswords />
+                        <FilteredEntryList filterFunction={(e, c) => e?.sort((a, b) => (b.lastUsed?.getTime() || 0) - (a.lastUsed?.getTime() || 0)).slice(0, c)} />
+                        <div className="item-background">
+                            <Icons.Recent className="icon" />
+                        </div>
                     </div>
                 </div>
                 <h2>Security overview</h2>
                 <div>0 toasts</div>
-                <h2>All - {entries?.length} entries</h2>
+                <h2>All passwords - {entries?.length} entries</h2>
 
                 <div className="table">
                     <div className="table-row headers" role="row">
