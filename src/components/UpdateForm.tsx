@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Entry, UpdateEntry } from "../types/general";
 import { AnimatePresence, motion } from "motion/react";
 import Icons from "./Icons";
@@ -24,6 +24,10 @@ const UpdateForm = ({
 
         onSubmit(entry.id, updated);
     };
+
+    useEffect(() => {
+        setUpdated({});
+    }, [entry]);
 
     return (
         <AnimatePresence>
