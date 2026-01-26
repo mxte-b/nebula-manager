@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useRef, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { FormContextType, FormField } from "../types/general";
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
@@ -7,7 +7,7 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
 
     const [form, setForm] = useState<Record<string, FormField>>({});
 
-    const registerField = (name: string) => setForm(p => ({...p, [name]: {value: "", error: null, touched: false } }));
+    const registerField = (name: string, defaultValue?: unknown) => setForm(p => ({...p, [name]: {value: (defaultValue ?? "") as string, error: null, touched: false } }));
 
     const unregisterField = (name: string) => setForm(p => {
         const { [name]: _, ...rest } = p;
@@ -18,7 +18,26 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
 
     const setError = (field: string, error: string | null) => setForm(p => ({...p, [field]: {...p[field], error } }));
 
-    return <FormContext.Provider value={{ form: form, registerField, unregisterField, setValue, setError }}>
+    const validateFields = () => {
+        // Make all errors appear
+        setForm(prev => {
+            const updated: typeof prev = {};
+
+            for (const [key, field] of Object.entries(prev)) {
+
+                updated[key] = {
+                    ...field,
+                    touched: true
+                };
+            }
+
+            return updated;
+        });
+
+        return Object.values(form).every(f => f.error === null);
+    }
+
+    return <FormContext.Provider value={{ form: form, registerField, unregisterField, setValue, setError, validateFields }}>
         {children}
     </FormContext.Provider>
 }
@@ -27,4 +46,10 @@ export const useForm = () => {
     const context = useContext(FormContext);
     if (!context) throw new Error("useForm must be used inside an FormProvider.");
     return context;
+}
+
+export const useFormFieldValue = (field: string) => {
+    const { form } = useForm();
+
+    return (form[field]?.value ?? "") as string;
 }

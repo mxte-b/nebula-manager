@@ -172,7 +172,6 @@ const EntryPasswordField = (
 
         // Split the password every time it updates
         if (password) {
-            passwordSplitRef.current?.revert();
             passwordSplitRef.current = new SplitText(passwordDomRef.current.querySelector(".password"), { type: "chars", aria: "none" });
         }
 

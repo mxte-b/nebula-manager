@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { RootPhaseProps } from "../types/general";
-import Icons from "./Icons";
+import { RootPhaseProps } from "../../types/general";
+import Icons from "../Icons";
 import { motion } from "motion/react"
 
 const SetupWelcomeStep = ({ next }: RootPhaseProps) => {

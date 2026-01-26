@@ -1,4 +1,4 @@
-import { PhaseProps } from "../types/general";
+import { PhaseProps } from "../../types/general";
 import { motion } from "motion/react"
 
 const SetupImportStep = ({ next, back }: PhaseProps) => {

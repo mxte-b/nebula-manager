@@ -10,12 +10,12 @@ import Export from "./Export";
 import Settings from "./Settings";
 import About from "./About";
 import Icons from "../components/Icons";
-import EntryForm from "../components/EntryForm";
 import { Entry, UpdateEntry } from "../types/general";
 import UpdateForm from "../components/UpdateForm";
 import { useToast } from "../contexts/toast";
 import { motion } from "motion/react";
 import { useVault } from "../contexts/vault";
+import EntryForm from "../components/EntryForm";
 
 // Assign the overlay shortcut
 await isRegistered("CommandOrControl+K").then(async (r) => {

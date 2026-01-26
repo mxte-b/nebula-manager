@@ -1,10 +1,10 @@
 import { JSX, useMemo, useState } from "react";
-import SetupWelcomeStep from "../components/SetupWelcomeStep";
-import SetupCreateStep from "../components/SetupCreateStep";
-import SetupImportStep from "../components/SetupImportStep";
+import SetupWelcomeStep from "../components/setup/SetupWelcomeStep";
+import SetupCreateStep from "../components/setup/SetupCreateStep";
+import SetupImportStep from "../components/setup/SetupImportStep";
 import { SetupPhase } from "../types/general";
 import { AnimatePresence, motion } from "motion/react";
-import SetupDoneStep from "../components/SetupDoneStep";
+import SetupDoneStep from "../components/setup/SetupDoneStep";
 import "../styles/SetupScreen.scss";
 import Stepper from "../components/Stepper";
 import Icons from "../components/Icons";

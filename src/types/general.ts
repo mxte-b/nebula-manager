@@ -261,10 +261,11 @@ export type FormField = {
 
 export type FormContextType = {
     form: Record<string, FormField>;
-    registerField: (name: string) => void;
+    registerField: (name: string, defaultValue?: unknown) => void;
     unregisterField: (name: string) => void;
     setValue: (field: string, value: unknown) => void;
     setError: (field: string, error: string | null) => void;
+    validateFields: () => boolean;
 };
 
 export type InputRule = {
@@ -274,4 +275,25 @@ export type InputRule = {
 
 export type InputActions = {
     setValue: (value: unknown) => void;
+}
+
+export type FormEntryData = {
+    label: string,
+    url: string,
+    name: string,
+    password: string
+}
+
+export type TextInputProps = {
+    name: string,
+    label: string,
+    
+    id?: string,
+    icon?: keyof typeof Icons
+    type?: "text" | "password" | "email" | "tel",
+    rules?: InputRule[],
+    required?: boolean,
+    placeholder?: string,
+    defaultValue?: unknown,
+    actions?: (actions: InputActions) => React.ReactNode
 }

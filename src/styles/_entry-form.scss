@@ -1,6 +1,6 @@
 @use 'mixins' as *;
 
-.entry-form-wrapper {
+.form-wrapper {
     @include flex;
 
     position: absolute;
@@ -13,7 +13,7 @@
     will-change: opacity, backdrop-filter;
 }
 
-.entry-form {
+.form.style-modal {
     @include flex(column, flex-start, stretch);
 
     gap: 1rem;

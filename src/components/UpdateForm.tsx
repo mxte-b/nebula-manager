@@ -1,8 +1,12 @@
-import { FormEvent, useEffect, useState } from "react";
 import { Entry, UpdateEntry } from "../types/general";
-import { AnimatePresence, motion } from "motion/react";
-import Icons from "./Icons";
+import passwordUtils from "../utils/passwordUtils";
 import CloseButton from "./CloseButton";
+import Form from "./form/Form";
+import FormGroup from "./form/FormGroup";
+import TextInput from "./form/TextInput";
+import HoverableIcon from "./HoverableIcon";
+import Icons from "./Icons";
+import Tooltip from "./Tooltip";
 
 const UpdateForm = ({
     entry,
@@ -16,132 +20,56 @@ const UpdateForm = ({
     onClose: () => void;
 }) => {
 
-    const [updated, setUpdated] = useState<UpdateEntry>({});
+    const { generatePassword } = passwordUtils();
 
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        if (!entry) return;
-
-        onSubmit(entry.id, updated);
-    };
-
-    useEffect(() => {
-        setUpdated({});
-    }, [entry]);
+    if (!entry) return null;
 
     return (
-        <AnimatePresence>
-            {visible && entry && (
-                <motion.div
-                    className="entry-form-wrapper"
-                    initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-                    animate={{ opacity: 1, backdropFilter: "blur(3px)" }}
-                    exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-                    onMouseDown={onClose}
-                >
-                    <motion.form
-                        className="entry-form"
-                        onSubmit={handleSubmit}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{
-                            duration: 0.2,
-                            ease: "easeInOut"
-                        }}
-                        onMouseDown={(e) => e.stopPropagation()}
-                    >
-                        <div className="form-header">
-                            <div className="title-icon"><Icons.Key /></div>
-                            <div className="form-title">Edit Entry</div>
-                            <CloseButton onClick={onClose} />
-                        </div>
+        <Form<UpdateEntry>
+            modal
+            visible={visible}
+            onClose={onClose}
+            onSubmit={(data) => {
+                onSubmit(entry.id, {
+                    ...data
+                });
+            }}
+        >
+            <div className="form-header">
+                <div className="title-icon"><Icons.Key /></div>
+                <div className="form-title">Edit Entry</div>
+                <CloseButton onClick={onClose} />
+            </div>
 
-                        <div className="form-group">
-                            <div className="group-label">Label</div>
-                            <div className="group-input">
-                                <Icons.Bookmark />
-                                <input
-                                    autoComplete="off"
-                                    type="text"
-                                    id="label"
-                                    defaultValue={entry.label}
-                                    onChange={(e) =>
-                                        setUpdated(prev => ({ ...prev, label: e.target.value }))
-                                    }
-                                />
-                            </div>
-                        </div>
+            <FormGroup>
+                <TextInput label="Label" icon="Bookmark" name="label" placeholder="Label" defaultValue={entry.label} />
+                <TextInput label="Website (optional)" icon="Globe" name="url" placeholder="Website" defaultValue={entry.url} />
+                <TextInput label="Username" icon="Person" name="name" placeholder="Username" defaultValue={entry.name} />
+                <TextInput label="Password" icon="Lock" name="password" placeholder="Password" 
+                    actions={(field) =>
+                        <>
+                            <Tooltip text="Generate">
+                                <HoverableIcon
+                                    onClick={() => {
+                                        field.setValue(generatePassword());
+                                    }}
+                                    hoverFg="#d3a747ff"
+                                    hoverBg="#d3a74718"
+                                >
+                                    <Icons.Stars />
+                                </HoverableIcon>
+                            </Tooltip>
+                        </>
+                }
+                />
+            </FormGroup>
 
-                        <div className="form-group">
-                            <div className="group-label">Website</div>
-                            <div className="group-input">
-                                <Icons.Globe />
-                                <input
-                                    autoComplete="off"
-                                    type="text"
-                                    id="website"
-                                    defaultValue={entry.url}
-                                    onChange={(e) =>
-                                        setUpdated(prev => ({ ...prev, url: e.target.value }))
-                                    }
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <div className="group-label">Username</div>
-                            <div className="group-input">
-                                <Icons.Person />
-                                <input
-                                    autoComplete="off"
-                                    type="text"
-                                    id="username"
-                                    defaultValue={entry.name}
-                                    onChange={(e) =>
-                                        setUpdated(prev => ({ ...prev, name: e.target.value }))
-                                    }
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <div className="group-label">Password</div>
-                            <div className="group-input">
-                                <Icons.Lock />
-                                <input
-                                    autoComplete="off"
-                                    type="text"
-                                    id="password"
-                                    onChange={(e) =>
-                                        setUpdated(prev => ({ ...prev, password: e.target.value }))
-                                    }
-                                />
-                            </div>
-                        </div>
-
-                        <div className="button-group">
-                            <button
-                                type="button"
-                                className="button-cancel"
-                                onClick={onClose}
-                            >
-                                Cancel
-                            </button>
-
-                            <button
-                                type="submit"
-                                className="button-save prominent"
-                            >
-                                Save
-                            </button>
-                        </div>
-
-                    </motion.form>
-                </motion.div>
-            )}
-        </AnimatePresence>
-    );
-};
+            <div className="button-group">
+                <button type="button" className="button-cancel" onClick={onClose}>Cancel</button>
+                <button type="submit" className="button-save prominent">Save</button>
+            </div>
+        </Form>
+    )
+}
 
 export default UpdateForm;
