@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { TextInputProps } from "../../types/general";
 import { useForm } from "../../contexts/form";
 import Icons from "../Icons";
+import { AnimatePresence, motion } from "motion/react";
 
 const TextInput = (
     {
@@ -22,6 +23,11 @@ const TextInput = (
 
     const field = useMemo(() => form[name], [form]);
     const Icon = icon && Icons[icon];
+
+    const setWithValidation = (value: string) => {
+        validate(value);
+        setValue(name, value);
+    }
 
     const validate = (value: string) => {
         if (value.length < 1 && required) {
@@ -54,7 +60,7 @@ const TextInput = (
 
     return (
         field &&
-        <div className={"form-input" + (required ? " required" : "")}>
+        <div className={"form-input" + (required ? " required" : "") + (field.touched && field.error ? " has-error" : "")}>
             <label htmlFor={id}>
                 { label }
                 { required && <span className="star">*</span>}
@@ -71,20 +77,28 @@ const TextInput = (
                     value={field.value as string}
                     onChange={(e) => {
                         const v = e.target.value;
-                        setValue(name, v);
-                        validate(v);
+                        setWithValidation(v);
                     }}
                 />
                 { 
-                    actions?.({ setValue: (v) => setValue(name, v) }) 
+                    actions?.({ setValue: (v) => setWithValidation(v as string) }) 
                 }
             </div>
-            {
-                field.touched && field.error && 
-                <div className="form-input-error">
-                    {field.error}
-                </div>
-            }
+            <AnimatePresence>
+                {
+                    field.touched && field.error && 
+                    <motion.div 
+                        initial={{opacity: 0, height: 0}}
+                        animate={{opacity: 1, height: "20px"}}
+                        exit={{opacity: 0, height: 0}}
+                        className="form-input-error-wrapper"
+                    >
+                        <div className="form-input-error">
+                            {field.error}
+                        </div>
+                    </motion.div>
+                }
+            </AnimatePresence>
         </div>  
     );
 };

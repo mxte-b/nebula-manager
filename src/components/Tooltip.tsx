@@ -88,11 +88,7 @@ const Tooltip = ({
         if (!tooltip || !wrapper) return;
         
         if (!sectionRef.current) {
-            sectionRef.current = wrapper.closest("section.content");
-            
-            if (!sectionRef.current) {
-                sectionRef.current = document.body;
-            }
+            sectionRef.current = wrapper.closest("section.content") ?? wrapper.closest(".tooltip-boundary") ?? document.body;
         }
         
         setTimeout(handleResize, 100);

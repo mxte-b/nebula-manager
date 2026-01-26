@@ -19,13 +19,18 @@
     &-input {
         @include flex(column, $align: flex-start);
 
-        gap: 0.5rem;
         width: 100%;
 
         label {
             font-size: 14px;
+            padding-bottom: 0.5rem;
             padding-left: 3px;
-            font-weight: bold;
+            font-weight: 600;
+        }
+
+        label > .star {
+            color: var(--fg-danger);
+            padding-left: 0.2rem;
         }
 
         input {
@@ -70,10 +75,25 @@
         box-shadow: 0 0 0 2px var(--border-2);
     }
 
+    &-input.has-error &-input-wrapper {
+        border-color: var(--border-error);
+    }
+
+    &-input.has-error &-input-wrapper:focus-within {
+        box-shadow: 0 0 0 2px var(--border-danger);
+    }
+
     &-input-wrapper > svg {
         width: 18px;
         height: 18px;
         color: var(--fg-inactive);
+    }
+
+    &-input-error {
+        color: var(--fg-danger);
+        font-size: 12px;
+        padding-top: 0.3rem;
+        padding-left: 3px;
     }
 }
 

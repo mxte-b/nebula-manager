@@ -27,9 +27,30 @@ const FormInner = <T extends Record<string, unknown>,>(props: FormProps<T>) => {
         props.onSubmit(data);
     }
 
+    if (props.modal) {
+        return <motion.form 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{
+                duration: 0.2,
+                ease: "easeInOut"
+            }}
+            className={"form style-modal tooltip-boundary"} 
+            autoComplete="off"
+            onMouseDown={e => e.stopPropagation()}
+            onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+            }}
+        >
+            { props.children }
+        </motion.form>
+    }
+
     return (
         <form 
-            className={"form" + (props.modal ? " style-modal": "")} 
+            className="form" 
             autoComplete="off"
             onMouseDown={e => e.stopPropagation()}
             onSubmit={(e) => {
