@@ -111,20 +111,52 @@
     width: 15rem;
     height: 100vh;
     padding: 0.5rem;
+    background: radial-gradient(circle at top left, #f172d517, transparent 35%);
     background-color: var(--bg-1);
 
-    > .title {
+    $link-height: 45px;
+
+    .title {
+        @include flex;
+
+        position: relative;
+        z-index: 2;
+        height: 80px;
         padding: 0.5rem;
+        color: white;
         font-family: 'Bruno Ace', cursive;
         font-size: 25px;
+        padding-left: 40px;
+        font-weight: 600;
+        letter-spacing: 1px;
         text-align: center;
+
+        img {
+            position: absolute;
+            top: 40px;
+            left: 54px;
+            z-index: -1;
+            width: 60px;
+            height: 60px;
+            opacity: 1;
+            will-change: transform;
+            transform: translate(-50%, -50%);
+        }
     }
 
-    > .link {
+    &-links {
+        @include flex(column, flex-start, stretch);
+
+        position: relative;
+        z-index: 2;
+        gap: 0.5rem;
+    }
+
+    &-link {
         @include flex($justify: flex-start);
 
         gap: 0.5rem;
-        height: 45px;
+        height: $link-height;
         padding: 0.5rem;
         border: 2px solid transparent;
         border-radius: 10px;
@@ -141,21 +173,24 @@
         }
 
         &:hover {
-            background-color: var(--bga);
-            color: var(--fg);
-            border-color: var(--border-1);
-            font-weight: bold;
+            color: var(--fg-secondary);
         }
 
         &.active {
-            background-color: var(--bg-accent);
             color: var(--fg-accent);
-            font-weight: bold;
         }
-        
-        &.active:hover {
-            border-color: var(--border-accent);
-        }
+    }
+
+    &-pill {
+        --idx: 0;
+
+        position: absolute;
+        top: calc(#{calc($link-height + 0.5rem)} * var(--idx));
+        z-index: -1;
+        width: 100%;
+        height: $link-height;
+        border-radius: 10px;
+        background-color: #9c558d1c;
     }
 }
 

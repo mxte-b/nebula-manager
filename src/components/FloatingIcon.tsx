@@ -11,6 +11,7 @@ export type SvgFloatingIconProps = SvgIconProps & {
     opacity?: number,
     color?: Color,
     blurPx?: number,
+    parallaxValue?: number,
 };
 
 export type SvgFloatingIcon = FunctionComponent<SvgFloatingIconProps>;
@@ -35,8 +36,8 @@ const wrapIcons = (icons: IconMap) => {
 
             return <motion.div 
                 className="floating-icon"
-                initial={{ y: -5, rotate: props.rotation }}
-                animate={{ y: 5, rotate: (props.rotation ?? 0) + Math.random() * 10 - 5 }}
+                initial={{ y: -5 * (props.parallaxValue ?? 0), rotate: props.rotation }}
+                animate={{ y: 5 * (props.parallaxValue ?? 0), rotate: (props.rotation ?? 0) + Math.random() * 10 - 5 }}
                 transition={{ repeat: Infinity, duration: 3, repeatType: "mirror", ease: "easeInOut", delay: Math.random() }}
                 style={{
                     top: props.y,

@@ -1,30 +1,42 @@
+import { CSSProperties } from "react";
 import { useRouter } from "../contexts/router";
+import { Page } from "../types/general";
 import Icons from "./Icons";
+import { motion } from "motion/react";
+
+const PAGES: {
+    id: Page, label: string, icon: keyof typeof Icons
+}[] = [
+    { id: "vault", label: "Dashboard", icon: "Home" },
+    { id: "export", label: "Export", icon: "Upload" },
+    { id: "settings", label: "Settings", icon: "Gear" },
+    { id: "about", label: "About", icon: "InfoCircle"  },
+];
 
 const SideBar = () => {
     const { currentPage, navigate } = useRouter();
 
+    const pageIdx = PAGES.findIndex(p => p.id == currentPage);
+
     return (
         <div className="side-bar">
             <div className="title">
-                NEBULA
+                <img src="/icon.png" alt="Nebula Manager Icon" />
+                EBULA
             </div>
-            <div className="separator" />
-            <div className={"link" + (currentPage == "vault" ? " active" : "")} onClick={() => navigate("vault")}>
-                <Icons.ShieldLock />
-                My Vault
-            </div>
-            <div className={"link" + (currentPage == "export" ? " active" : "")} onClick={() => navigate("export")}>
-                <Icons.Upload />
-                Export
-            </div>
-            <div className={"link" + (currentPage == "settings" ? " active" : "")} onClick={() => navigate("settings")}>
-                <Icons.Gear />
-                Settings
-            </div>
-            <div className={"link" + (currentPage == "about" ? " active" : "")} onClick={() => navigate("about")}>
-                <Icons.InfoCircle />
-                About
+
+            <div className="side-bar-links">
+                {
+                    PAGES.map(p => {
+                        const Icon = Icons[p.icon];
+
+                        return <div className={"side-bar-link" + (currentPage == p.id ? " active" : "")} onClick={() => navigate(p.id)}>
+                            <Icon />
+                            { p.label }
+                        </div>
+                    })
+                }
+                <motion.div layout className="side-bar-pill" style={{"--idx" : pageIdx} as CSSProperties}/>
             </div>
         </div>
     )
