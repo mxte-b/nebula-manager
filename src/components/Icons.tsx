@@ -33,8 +33,19 @@ import TrashFill from "../assets/trash-fill.svg?react"
 import Upload from "../assets/upload.svg?react"
 import X from "../assets/x.svg?react"
 import XCircleFill from "../assets/x-circle-fill.svg?react"
+import { FunctionComponent, SVGProps } from "react"
 
-const Icons = {
+export type SvgIconProps = SVGProps<SVGSVGElement> & {
+  title?: string;
+  titleId?: string;
+  desc?: string;
+  descId?: string;
+};
+
+export type SvgIcon = FunctionComponent<SvgIconProps>;
+export type IconMap = Record<string, SvgIcon>;
+
+const Icons: IconMap = {
     ArrowLeft,
     Bookmark,
     Check,

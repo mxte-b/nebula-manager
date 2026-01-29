@@ -63,7 +63,7 @@ const EntryForm = (
                 <TextInput icon="Lock" label="Password" name="password" placeholder="Password" required 
                     actions={(field) =>
                         <>
-                            <Tooltip text="Generateee">
+                            <Tooltip text="Generate">
                                 <HoverableIcon
                                     onClick={() => {
                                         field.setValue(generatePassword());

@@ -21,6 +21,16 @@
     }
 }
 
+.floating-icon {
+    position: absolute;
+    transform: translate(-50%, -50%);
+
+    & > svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
 .add-button {
     @include flex($justify: space-between);
 
