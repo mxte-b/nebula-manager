@@ -31,22 +31,24 @@ const wrapIcons = (icons: IconMap) => {
                 rotation,
                 opacity,
                 color,
+                blurPx,
+                parallaxValue,
                 ...svgProps
             } = props;
 
             return <motion.div 
                 className="floating-icon"
-                initial={{ y: -5 * (props.parallaxValue ?? 0), rotate: props.rotation }}
-                animate={{ y: 5 * (props.parallaxValue ?? 0), rotate: (props.rotation ?? 0) + Math.random() * 10 - 5 }}
+                initial={{ y: -5 * (parallaxValue ?? 0), rotate: rotation }}
+                animate={{ y: 5 * (parallaxValue ?? 0), rotate: (rotation ?? 0) + Math.random() * 10 - 5 }}
                 transition={{ repeat: Infinity, duration: 3, repeatType: "mirror", ease: "easeInOut", delay: Math.random() }}
                 style={{
-                    top: props.y,
-                    left: props.x,
-                    width: `${props.size}px`,
-                    opacity: props.opacity,
-                    height: `${props.size}px`,
-                    color: props.color,
-                    filter: `blur(${props.blurPx ?? 0}px)`
+                    top: y,
+                    left: x,
+                    width: `${size}px`,
+                    opacity: opacity,
+                    height: `${size}px`,
+                    color: color,
+                    filter: `blur(${blurPx ?? 0}px)`
                 }}
             >
                 <Icon {...svgProps} />

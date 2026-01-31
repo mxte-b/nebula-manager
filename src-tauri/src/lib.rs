@@ -1,7 +1,7 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
-use std::{sync::{Arc, Mutex}};
-use tauri::{Manager, RunEvent, State, WindowEvent};
+use std::{sync::{Arc, Mutex}, time::Duration};
+use tauri::{Emitter, Manager, RunEvent, State, WindowEvent};
 
 pub mod vault;
 use tauri_plugin_clipboard_manager::ClipboardExt;
@@ -10,7 +10,7 @@ pub use vault::Vault;
 
 use crate::vault::{
     entry::{EntryPublic, UpdateEntry},
-    vault::{EntryUseResult, VaultError, VaultErrorKind, VaultErrorSeverity, VaultResult, VaultStatus},
+    vault::{EntryUseResult, VaultError, VaultErrorKind, VaultErrorSeverity, VaultResult, VaultState, VaultStatus},
 };
 
 use sha2::{Sha256, Digest};
@@ -25,14 +25,34 @@ fn sha256_hash(text: &str) -> String {
 
 // Toggle search overlay
 #[tauri::command]
-fn toggle_overlay(app: tauri::AppHandle) {
+fn toggle_overlay(app: tauri::AppHandle, vault: State<Arc<Mutex<Vault>>>) {
+    let mut v = vault
+        .lock()
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Blocking, 
+            message: "Vault not accessible".into(),
+            code: "E_VAULT_OVERLAY"
+        }).unwrap();
+
+    if v.get_status().state != VaultState::Unlocked {
+        return;
+    }
+
     if let Some(window) = app.get_webview_window("overlay") {
         let is_visible = window.is_visible().unwrap_or(false);
 
         if is_visible {
-            window.hide().unwrap();
+            let _ = window.emit("overlay_before_hide", ());
+
+            tauri::async_runtime::spawn(async move {
+                tokio::time::sleep(Duration::from_millis(100)).await;
+
+                window.hide().unwrap();
+            });
         } else {
             window.show().unwrap();
+            let _ = window.emit("overlay_show", ());
             window.set_focus().unwrap();
         }
     }
@@ -53,7 +73,7 @@ fn vault_setup(vault: State<Arc<Mutex<Vault>>>, master_password: String) -> Vaul
 }
 
 #[tauri::command]
-fn vault_unlock(vault: State<Arc<Mutex<Vault>>>, password: String) -> VaultResult<()> {
+fn vault_unlock(app_handle: tauri::AppHandle, vault: State<Arc<Mutex<Vault>>>, password: String) -> VaultResult<()> {
     let mut v = vault
         .lock()
         .map_err(|_| VaultError {
@@ -62,7 +82,12 @@ fn vault_unlock(vault: State<Arc<Mutex<Vault>>>, password: String) -> VaultResul
             message: "Vault not accessible".into(),
             code: "E_VAULT_UNLOCK"
         })?;
-    Ok(v.unlock(&password)?)
+
+    let unlock_result = v.unlock(&password)?;
+
+    let _ = app_handle.emit("vault_status_changed", ());
+
+    Ok(unlock_result)
 }
 
 #[tauri::command]
@@ -336,6 +361,23 @@ pub fn run() {
                     WindowEvent::CloseRequested { api: _, .. } => {
                         if let Some(overlay) = window.app_handle().get_webview_window("overlay") {
                             let _ = overlay.close();
+                        }
+                    }
+                    _ => {}
+                }
+            }
+
+            if window.label() == "overlay" {
+                match event {
+                    WindowEvent::Focused(false) => {
+                        if let Some(overlay) = window.app_handle().get_webview_window("overlay") {
+                            let _ = window.emit("overlay_before_hide", ());
+
+                            tauri::async_runtime::spawn(async move {
+                                tokio::time::sleep(Duration::from_millis(100)).await;
+
+                                overlay.hide().unwrap();
+                            });
                         }
                     }
                     _ => {}

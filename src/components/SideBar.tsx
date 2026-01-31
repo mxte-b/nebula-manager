@@ -30,7 +30,7 @@ const SideBar = () => {
                     PAGES.map(p => {
                         const Icon = Icons[p.icon];
 
-                        return <div className={"side-bar-link" + (currentPage == p.id ? " active" : "")} onClick={() => navigate(p.id)}>
+                        return <div key={p.id} className={"side-bar-link" + (currentPage == p.id ? " active" : "")} onClick={() => navigate(p.id)}>
                             <Icon />
                             { p.label }
                         </div>

@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useRef, useState } fro
 import { Entry, EntryDTO, EntryUseResult, Err, Ok, toEntry, toEntryDTO, UpdateEntry, VaultCallbacks, VaultContextType, VaultError, VaultResult, VaultStatus } from "../types/general";
 import { useError } from "./error";
 import { invoke } from "@tauri-apps/api/core";
+import { listen, UnlistenFn } from "@tauri-apps/api/event";
 
 const VaultContext = createContext<VaultContextType | undefined>(undefined);
 
@@ -73,6 +74,7 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const refreshStatus = async () => {
+        console.log("REFRESHING STATUS")
         await getVaultStatus({
             ok: (s) => {
                 setStatus(s);
@@ -241,9 +243,25 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
+    const searchEntries = (query: string) => {
+        if (!entries || !query) return [];
+
+        return entries.filter(e => e.label.toLowerCase().startsWith(query.toLowerCase())).sort((a, b) => b.uses - a.uses);
+    }
+
     useEffect(() => {
         setLoading(true);
         refreshStatus().finally(() => setLoading(false));
+
+        let unlistenStatusChanged: UnlistenFn | undefined = undefined;
+
+        (async () => {
+            unlistenStatusChanged = await listen("vault_status_changed", refreshStatus);
+        })();
+
+        return () => {
+            unlistenStatusChanged?.();
+        }
     }, []);
 
     useEffect(() => {
@@ -267,7 +285,8 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
         toggleFavorite, 
         deleteEntry, 
         getEntryPassword,
-        copyEntryDetail 
+        copyEntryDetail,
+        searchEntries
     }}>
         {children}
     </VaultContext.Provider>

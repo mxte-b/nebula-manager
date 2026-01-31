@@ -35,6 +35,8 @@
         }
 
         input {
+            --input-height: 45px;
+
             width: 100%;
             height: var(--input-height);
             border: none;

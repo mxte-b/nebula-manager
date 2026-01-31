@@ -1,3 +1,5 @@
+@use "mixins" as *;
+
 body, :root {
     background-color: transparent;
     overflow: hidden;
@@ -22,33 +24,35 @@ body {
 
 .overlay {
     width: 600px;
-    height: 200px;
-    padding: 1rem;
-    border: 2px solid rgb(83 83 83);
-    border-radius: 1.5rem;
-    background-color: #0e0e0e;
-    box-shadow: 0 0 20px rgb(80 80 80);
+    height: 300px;
+    border: 1px solid #2c2c2c;
+    border-radius: 10px;
+    background-color: #121212;
+    box-shadow: 0 5px 20px #121212;
 }
 
 .search {
-    width: 100%;
+    @include flex($justify: flex-start);
 
-    > input {
-        width: 100%;
-        min-width: none;
-        height: 45px;
-        border: 2px solid rgb(59 59 59);
-        border-radius: 0.8rem;
+    gap: 1rem;
+    width: 100%;
+    padding: 0 1rem;
+    border-bottom: 1px solid var(--border-1);
+
+    svg {
+        width: 20px;
+        height: 20px;
+        color: var(--fg-inactive);
+    }
+
+    input {
+        border: none;
         background-color: inherit;
         color: var(--fg);
-        font-family: 'JetBrains Mono', monospace;
+        font-family: Inter, sans-serif;
         font-size: 16px;
         outline: none;
-        transition: background-color 0.2s ease, border-color 0.2s ease;
-        padding-inline: 1rem;
-
-        &:hover, &:focus-within {
-            background-color: #131313;
-        }
+        padding-block: 1rem;
+        flex-grow: 1;
     }
 }

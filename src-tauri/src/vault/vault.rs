@@ -68,7 +68,7 @@ pub type VaultResult<T> = Result<T, VaultError>;
 /* -------------------------------------------------------------------------- */
 /*                                 Vault data                                 */
 /* -------------------------------------------------------------------------- */
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, PartialEq)]
 pub enum VaultState {
     Uninitialized,
     Locked,

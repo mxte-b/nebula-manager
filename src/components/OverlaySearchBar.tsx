@@ -1,7 +1,20 @@
-const OverlaySearchBar = () => {
+import Icons from "./Icons";
+
+const OverlaySearchBar = ({ onSearch }: { onSearch: (query: string) => void}) => {
     return (
         <div className="search">
-            <input type="text" name="search-value" id="searchValue" autoFocus placeholder="Enter the name of the password..."/>
+            <Icons.MagnifyingGlass />
+            <input
+                autoComplete="off"
+                placeholder="Search for a password..."
+                type="text"
+                autoFocus
+                name="query"
+                id="query"
+                onChange={(e) => {
+                    onSearch(e.target.value);
+                }}
+            />
         </div>
     );
 }

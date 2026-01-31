@@ -18,6 +18,7 @@ import Key from "../assets/key.svg?react"
 import Lightbulb from "../assets/lightbulb.svg?react"
 import LightbulbFill from "../assets/lightbulb-fill.svg?react"
 import Lock from "../assets/lock.svg?react"
+import MagnifyingGlass from "../assets/magnifying-glass.svg?react"
 import InfoCircle from "../assets/info-circle.svg?react"
 import InfoCircleFill from "../assets/info-circle-fill.svg?react"
 import Person from "../assets/person.svg?react"
@@ -69,6 +70,7 @@ const Icons = {
     Lightbulb,
     LightbulbFill,
     Lock,
+    MagnifyingGlass,
     InfoCircle,
     InfoCircleFill,
     Person,

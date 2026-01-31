@@ -208,6 +208,8 @@ export type VaultContextType = {
         autoClearTime?: number,
         callbacks?: VaultCallbacks
     ) => Promise<VaultResult<null>>;
+
+    searchEntries: (query: string) => Entry[];
 }
 
 export const toEntry = (e: EntryDTO): Entry => ({
