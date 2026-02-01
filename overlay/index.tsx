@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
-import Overlay from "../src/components/Overlay";
+import Overlay from "../src/components/overlay/Overlay";
 import { VaultProvider } from "../src/contexts/vault";
 import { ModalProvider } from "../src/contexts/modal";
 import { ToastProvider } from "../src/contexts/toast";

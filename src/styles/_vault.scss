@@ -148,43 +148,6 @@
     }
 }
 
-.favicon {
-    position: relative;
-    width: 40px;
-    height: 40px;
-    border-radius: 5px;
-    flex-shrink: 0;
-    overflow: hidden;
-
-    > img, .placeholder {
-        position: absolute;
-        width: 40px;
-        height: 40px;
-        font-family: Inter, sans-serif;
-    }
-
-    > img {
-        z-index: 2;
-        padding: 3px;    
-        border-radius: 5px;
-        background-color: rgb(255 255 255);
-        object-fit: cover;
-    }
-
-    .placeholder {
-        @include flex;
-
-        z-index: 1;
-        background-color: var(--fg-inactive);
-        opacity: 1;
-        transition: opacity 0.2s ease;
-
-        &.hidden {
-            opacity: 0;
-        }
-    }
-}
-
 /* ----------------------------- Hoverable icon ----------------------------- */
 .icon-hoverable {
     @include flex;

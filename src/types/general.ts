@@ -299,3 +299,12 @@ export type TextInputProps = {
     defaultValue?: unknown,
     actions?: (actions: InputActions) => React.ReactNode
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                Overlay types                               */
+/* -------------------------------------------------------------------------- */
+export type SearchResults = {
+    query: string,
+    results: Entry[],
+    numResults: number,
+}
