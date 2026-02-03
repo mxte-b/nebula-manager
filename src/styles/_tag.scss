@@ -1,0 +1,23 @@
+@use "mixins" as *;
+
+.tag {
+    @include flex;
+
+    --tag-color: #adadad;
+
+    gap: 0.15rem;
+    padding: 0.15rem 0.3rem;
+    border: 1px solid var(--tag-color);
+    border-radius: 50px;
+    background-color: color-mix(in srgb, var(--tag-color) 10%, transparent);
+    color: var(--tag-color);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+
+    // text-transform: uppercase;
+
+    &-icon {
+        width: 12px;
+        height: 12px;
+    }
+}

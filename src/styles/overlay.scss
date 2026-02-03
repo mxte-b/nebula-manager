@@ -1,4 +1,5 @@
 @use "mixins" as *;
+@use "tag";
 
 body, :root {
     background-color: transparent;
@@ -23,6 +24,8 @@ body {
 }
 
 .overlay {
+    @include flex(column, flex-start, stretch);
+
     width: 600px;
     height: 300px;
     border: 1px solid #2c2c2c;
@@ -31,22 +34,31 @@ body {
     box-shadow: 0 5px 20px #121212;
 
     &-list {
+        @include flex(column, flex-start, stretch);
+
         gap: 0.5rem;
         padding: 0.5rem;
-
-        @include flex(column, flex-start, stretch);
+        flex-grow: 1;
     }
 
     &-list-category {
         @include flex(column, flex-start, stretch);
 
-        gap: 0.25rem;
+        gap: 0.5rem;
+        flex-grow: 1;
 
         &-title {
+            height: 12px;
             color: var(--fg-inactive);
             font-family: "JetBrains Mono", monospace;
             font-size: 12px;
             text-transform: uppercase;
+
+            @include flex($justify: flex-start);
+
+            & > .separator {
+                padding-left: 5px;
+            }
         }
     }
 
@@ -54,14 +66,52 @@ body {
         @include flex(column, flex-start, stretch);
 
         gap: 0.5rem;
+        flex-grow: 1;
     }
 
     &-list-item {
         @include flex($justify: flex-start);
 
         gap: 0.5rem;
-        height: 35px;
-        overflow: hidden;
+        height: 36px;
+        color: var(--fg-secondary);
+
+        &-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        &-icon > svg {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            z-index: 3;
+            width: 15px;
+            height: 15px;
+            border-radius: 2px;
+            background-color: var(--bg);
+            color: white;
+        }
+
+        &-label {
+            min-width: 100px;
+        }
+        
+        &-label > .highlight {
+            color: var(--fg);
+            font-weight: 600
+        }
+
+        &-name {
+            color: var(--fg-inactive);
+        }
+
+        &-tags {
+            @include flex(row, flex-end, center);
+
+            gap: 0.3rem;
+            flex-grow: 1;
+        }
     }
 }
 
@@ -70,6 +120,7 @@ body {
 
     gap: 1rem;
     width: 100%;
+    height: 50px;
     padding: 0 1rem;
     border-bottom: 1px solid var(--border-1);
 

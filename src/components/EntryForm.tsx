@@ -8,6 +8,7 @@ import CloseButton from "./CloseButton";
 import Tooltip from "./Tooltip";
 import HoverableIcon from "./HoverableIcon";
 import passwordUtils from "../utils/passwordUtils";
+import normalizeUrl from "../types/normalize-url";
 
 type FormEntryData = {
     label: string,
@@ -46,7 +47,8 @@ const EntryForm = (
                     lastUsed: null,
                     uses: 0,
                     favorite: false,
-                    ...data
+                    ...data,
+                    url: normalizeUrl(data.url),
                 });
             }}
         >

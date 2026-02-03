@@ -22,7 +22,7 @@ const FormInner = <T extends Record<string, unknown>,>(props: FormProps<T>) => {
         if (!isValid) return;
 
         // Record -> key-value pair
-        const data = Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v.value])) as T;
+        const data = Object.fromEntries(Object.entries(form).filter(e => e[1].touched).map(([k, v]) => [k, v.value])) as T;
 
         props.onSubmit(data);
     }

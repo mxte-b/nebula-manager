@@ -1,4 +1,5 @@
 import ArrowLeft from "../assets/arrow-left.svg?react"
+import ArrowUpRight from "../assets/arrow-up-right.svg?react"
 import Bookmark from "../assets/bookmark.svg?react"
 import Check from "../assets/check-lg.svg?react"
 import CheckCircleFill from "../assets/check-circle-fill.svg?react"
@@ -11,6 +12,7 @@ import EyeSlash from "../assets/eye-slash.svg?react"
 import EyeSlashFill from "../assets/eye-slash-fill.svg?react"
 import FilePlus from "../assets/file-plus.svg?react"
 import FileUpload from "../assets/file-upload.svg?react"
+import Fire from "../assets/fire.svg?react"
 import Gear from "../assets/gear.svg?react"
 import Globe from "../assets/globe.svg?react"
 import Home from "../assets/home.svg?react"
@@ -51,6 +53,7 @@ export type IconMap = Record<string, SvgIcon>;
 
 const Icons = {
     ArrowLeft,
+    ArrowUpRight,
     Bookmark,
     Check,
     CheckCircleFill,
@@ -63,6 +66,7 @@ const Icons = {
     EyeSlashFill,
     FilePlus,
     FileUpload,
+    Fire,
     Gear,
     Globe,
     Home,

@@ -11,6 +11,7 @@
     "global-shortcut:allow-unregister",
     "core:webview:allow-internal-toggle-devtools",
     "clipboard-manager:allow-clear",
-    "clipboard-manager:allow-write-text"
+    "clipboard-manager:allow-write-text",
+    "opener:allow-default-urls"
   ]
 }

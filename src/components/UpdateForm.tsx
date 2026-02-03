@@ -1,4 +1,5 @@
 import { Entry, UpdateEntry } from "../types/general";
+import normalizeUrl from "../types/normalize-url";
 import passwordUtils from "../utils/passwordUtils";
 import CloseButton from "./CloseButton";
 import Form from "./form/Form";
@@ -31,7 +32,8 @@ const UpdateForm = ({
             onClose={onClose}
             onSubmit={(data) => {
                 onSubmit(entry.id, {
-                    ...data
+                    ...data,
+                    ...(data.url && { url: normalizeUrl(data.url) }),
                 });
             }}
         >
