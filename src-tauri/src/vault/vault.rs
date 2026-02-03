@@ -22,8 +22,10 @@ fn bytes_to_b64<T: AsRef<[u8]>>(x: T) -> String {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                 Vault error                                */
+/*                                 Vault types                                */
 /* -------------------------------------------------------------------------- */
+
+/* --------------------------------- Errors --------------------------------- */
 #[derive(Serialize, Clone, Debug)]
 pub enum VaultErrorKind {
     IO,
@@ -65,9 +67,26 @@ impl fmt::Display for VaultError {
 
 pub type VaultResult<T> = Result<T, VaultError>;
 
-/* -------------------------------------------------------------------------- */
-/*                                 Vault data                                 */
-/* -------------------------------------------------------------------------- */
+
+#[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct EntryUseResult {
+    #[serde(with = "time::serde::rfc3339")]
+    pub last_use: OffsetDateTime,
+    pub uses: u32,
+}
+
+#[derive(Serialize, Clone)]
+#[serde(tag = "type", content = "payload")]
+pub enum VaultChangeEvent {
+    Create { source: String, entry: EntryPublic },
+    Update { source: String, id: Uuid, new: EntryPublic },
+    EntryUse { source: String, id: Uuid, result: EntryUseResult }, 
+    Delete { source: String, id: Uuid },
+    Status,
+}
+
+/* ----------------------------- State & status ----------------------------- */
 #[derive(Serialize, Clone, PartialEq)]
 pub enum VaultState {
     Uninitialized,
@@ -82,6 +101,7 @@ pub struct VaultStatus {
     pub last_error: Option<VaultError>,
 }
 
+/* ------------------------------- Crypto & IO ------------------------------ */
 #[derive(Serialize, Deserialize, Clone, Default)]
 pub struct VaultCrypto {
     pub salt: String,
@@ -102,14 +122,9 @@ pub struct SaveFileLayout {
     pub crypto: VaultCrypto,
 }
 
-#[derive(Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct EntryUseResult {
-    #[serde(with = "time::serde::rfc3339")]
-    pub last_use: OffsetDateTime,
-    pub uses: u32,
-}
-
+/* -------------------------------------------------------------------------- */
+/*                            Vault implementation                            */
+/* -------------------------------------------------------------------------- */
 pub struct Vault {
     path: PathBuf,
     version: String,

@@ -10,7 +10,7 @@ pub use vault::Vault;
 
 use crate::vault::{
     entry::{EntryPublic, UpdateEntry},
-    vault::{EntryUseResult, VaultError, VaultErrorKind, VaultErrorSeverity, VaultResult, VaultState, VaultStatus},
+    vault::{EntryUseResult, VaultChangeEvent, VaultError, VaultErrorKind, VaultErrorSeverity, VaultResult, VaultState, VaultStatus},
 };
 
 use sha2::{Sha256, Digest};
@@ -85,13 +85,18 @@ fn vault_unlock(app_handle: tauri::AppHandle, vault: State<Arc<Mutex<Vault>>>, p
 
     let unlock_result = v.unlock(&password)?;
 
-    let _ = app_handle.emit("vault_status_changed", ());
+    let _ = app_handle.emit("vault_changed", VaultChangeEvent::Status);
 
     Ok(unlock_result)
 }
 
 #[tauri::command]
-fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> VaultResult<()> {
+fn vault_create_entry(
+    app_handle: tauri::AppHandle, 
+    webview_window: tauri::WebviewWindow, 
+    vault: State<Arc<Mutex<Vault>>>, 
+    entry: vault::Entry
+) -> VaultResult<()> {
     let mut v = vault
         .lock()
         .map_err(|_| VaultError {
@@ -100,7 +105,15 @@ fn vault_create_entry(vault: State<Arc<Mutex<Vault>>>, entry: vault::Entry) -> V
             message: "Vault not accessible".into(),
             code: "E_VAULT_ENTRY_CREATE"
         })?;
+
     v.new_entry(&entry);
+
+    // Notify other windows of change
+    let _ = app_handle.emit("vault_changed", VaultChangeEvent::Create { 
+        source: webview_window.label().into(), 
+        entry: EntryPublic::from(&entry) 
+    });
+
     v.save()
 }
 
@@ -145,6 +158,8 @@ fn vault_get_entry_password(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultR
 
 #[tauri::command]
 fn vault_update_entry(
+    app_handle: tauri::AppHandle, 
+    webview_window: tauri::WebviewWindow, 
     vault: State<Arc<Mutex<Vault>>>,
     id: Uuid,
     new: UpdateEntry,
@@ -157,11 +172,26 @@ fn vault_update_entry(
             message: "Vault not accessible".into(),
             code: "E_VAULT_ENTRY_UPDATE"
         })?;
-    guard.update_entry(&id, &new)
+
+    let result = guard.update_entry(&id, &new)?;
+    
+    // Notify other windows of change
+    let _ = app_handle.emit("vault_changed", VaultChangeEvent::Update { 
+        source: webview_window.label().into(), 
+        id: id,
+        new: result.clone()
+    });
+
+    Ok(result)
 }
 
 #[tauri::command]
-fn vault_toggle_favorite(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResult<EntryPublic> {
+fn vault_toggle_favorite(
+    app_handle: tauri::AppHandle, 
+    webview_window: tauri::WebviewWindow,
+    vault: State<Arc<Mutex<Vault>>>, 
+    id: Uuid
+) -> VaultResult<EntryPublic> {
     let mut guard = vault
         .lock()
         .map_err(|_| VaultError {
@@ -170,11 +200,26 @@ fn vault_toggle_favorite(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResu
             message: "Vault not accessible".into(),
             code: "E_VAULT_ENTRY_FAVORITE"
         })?;
-    guard.toggle_favorite(&id)
+
+    let result = guard.toggle_favorite(&id)?;
+
+    // Notify other windows of change
+    let _ = app_handle.emit("vault_changed", VaultChangeEvent::Update { 
+        source: webview_window.label().into(), 
+        id: id,
+        new: result.clone()
+    });
+
+    Ok(result)
 }
 
 #[tauri::command]
-fn vault_delete_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResult<()> {
+fn vault_delete_entry(
+    app_handle: tauri::AppHandle, 
+    webview_window: tauri::WebviewWindow,
+    vault: State<Arc<Mutex<Vault>>>, 
+    id: Uuid
+) -> VaultResult<()> {
     let mut guard = vault
         .lock()
         .map_err(|_| VaultError {
@@ -183,12 +228,22 @@ fn vault_delete_entry(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResult<
             message: "Vault not accessible".into(),
             code: "E_VAULT_ENTRY_DELETE"
         })?;
-    guard.delete_entry(&id)
+
+    guard.delete_entry(&id)?;
+
+    // Notify other windows of change
+    let _ = app_handle.emit("vault_changed", VaultChangeEvent::Delete { 
+        source: webview_window.label().into(), 
+        id: id
+    });    
+
+    Ok(())
 }
 
 #[tauri::command]
 fn vault_copy_entry_password(
     app_handle: tauri::AppHandle, 
+    webview_window: tauri::WebviewWindow,
     vault: State<Arc<Mutex<Vault>>>, 
     last_hash_state: State<Arc<Mutex<Option<String>>>>,
     id: Uuid
@@ -223,12 +278,22 @@ fn vault_copy_entry_password(
         code: "E_VAULT_COPY_PASS_CLIP"
     })?;
 
-    v.use_entry(&id)
+    let result = v.use_entry(&id)?;
+
+    // Notify other windows of change
+    let _ = app_handle.emit("vault_changed", VaultChangeEvent::EntryUse { 
+        source: webview_window.label().into(), 
+        id: id,
+        result: result.clone()
+    }); 
+
+    Ok(result)
 }
 
 #[tauri::command]
 fn vault_copy_entry_name(
     app_handle: tauri::AppHandle, 
+    webview_window: tauri::WebviewWindow,
     vault: State<Arc<Mutex<Vault>>>,
     last_hash_state: State<Arc<Mutex<Option<String>>>>,
     id: Uuid
@@ -263,7 +328,16 @@ fn vault_copy_entry_name(
         code: "E_VAULT_COPY_NAME_CLIP"
     })?;
 
-    v.use_entry(&id)
+    let result = v.use_entry(&id)?;
+
+    // Notify other windows of change
+    let _ = app_handle.emit("vault_changed", VaultChangeEvent::EntryUse { 
+        source: webview_window.label().into(), 
+        id: id,
+        result: result.clone()
+    }); 
+
+    Ok(result)
 }
 
 #[tauri::command]
@@ -367,22 +441,22 @@ pub fn run() {
                 }
             }
 
-            if window.label() == "overlay" {
-                match event {
-                    WindowEvent::Focused(false) => {
-                        if let Some(overlay) = window.app_handle().get_webview_window("overlay") {
-                            let _ = window.emit("overlay_before_hide", ());
+            // if window.label() == "overlay" {
+            //     match event {
+            //         WindowEvent::Focused(false) => {
+            //             if let Some(overlay) = window.app_handle().get_webview_window("overlay") {
+            //                 let _ = window.emit("overlay_before_hide", ());
 
-                            tauri::async_runtime::spawn(async move {
-                                tokio::time::sleep(Duration::from_millis(100)).await;
+            //                 tauri::async_runtime::spawn(async move {
+            //                     tokio::time::sleep(Duration::from_millis(100)).await;
 
-                                overlay.hide().unwrap();
-                            });
-                        }
-                    }
-                    _ => {}
-                }
-            }
+            //                     overlay.hide().unwrap();
+            //                 });
+            //             }
+            //         }
+            //         _ => {}
+            //     }
+            // }
         })
         .build(tauri::generate_context!())
         .expect("failed to build app");

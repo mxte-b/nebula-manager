@@ -29,6 +29,40 @@ body {
     border-radius: 10px;
     background-color: #121212;
     box-shadow: 0 5px 20px #121212;
+
+    &-list {
+        gap: 0.5rem;
+        padding: 0.5rem;
+
+        @include flex(column, flex-start, stretch);
+    }
+
+    &-list-category {
+        @include flex(column, flex-start, stretch);
+
+        gap: 0.25rem;
+
+        &-title {
+            color: var(--fg-inactive);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+    }
+
+    &-list-items {
+        @include flex(column, flex-start, stretch);
+
+        gap: 0.5rem;
+    }
+
+    &-list-item {
+        @include flex($justify: flex-start);
+
+        gap: 0.5rem;
+        height: 35px;
+        overflow: hidden;
+    }
 }
 
 .search {

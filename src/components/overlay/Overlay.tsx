@@ -66,7 +66,7 @@ const Overlay = () => {
                     {
                         searchResults.results.map(r => 
                             <div className="overlay-list-item" key={`search-${r.id}`} tabIndex={0}>
-                                <Favicon label={r.label} url={r.url} />
+                                <Favicon label={r.label} url={r.url} size={35} />
                                 <div className="overlay-list-item-label">
                                     <b>
                                         { r.label.substring(0, searchResults.query.length) }

@@ -231,6 +231,13 @@ export type EntryUseResult = {
     uses: number,
 }
 
+export type VaultChangeEvent =
+  | { type: "Status" }
+  | { type: "Create"; payload: { source: string; entry: EntryDTO } }
+  | { type: "Update"; payload: { source: string; id: string, new: EntryDTO } }
+  | { type: "EntryUse"; payload: { source: string; id: string, result: EntryUseResult } }
+  | { type: "Delete"; payload: { source: string; id: string } };
+
 /* -------------------------------------------------------------------------- */
 /*                               Password types                               */
 /* -------------------------------------------------------------------------- */

@@ -1,8 +1,9 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
-import { Entry, EntryDTO, EntryUseResult, Err, Ok, toEntry, toEntryDTO, UpdateEntry, VaultCallbacks, VaultContextType, VaultError, VaultResult, VaultStatus } from "../types/general";
+import { Entry, EntryDTO, EntryUseResult, Err, Ok, toEntry, toEntryDTO, UpdateEntry, VaultCallbacks, VaultChangeEvent, VaultContextType, VaultError, VaultResult, VaultStatus } from "../types/general";
 import { useError } from "./error";
 import { invoke } from "@tauri-apps/api/core";
-import { listen, UnlistenFn } from "@tauri-apps/api/event";
+import { Event, listen, UnlistenFn } from "@tauri-apps/api/event";
+import { getCurrentWebview } from "@tauri-apps/api/webview";
 
 const VaultContext = createContext<VaultContextType | undefined>(undefined);
 
@@ -74,7 +75,6 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const refreshStatus = async () => {
-        console.log("REFRESHING STATUS")
         await getVaultStatus({
             ok: (s) => {
                 setStatus(s);
@@ -249,18 +249,54 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
         return entries.filter(e => e.label.toLowerCase().startsWith(query.toLowerCase())).sort((a, b) => b.uses - a.uses);
     }
 
+    const handleVaultChanged = (event: Event<VaultChangeEvent>) => {
+        const vaultEvent = event.payload;
+
+        if (vaultEvent.type === "Status") {
+            refreshStatus();
+            return;
+        }
+
+        if (getCurrentWebview().label === vaultEvent.payload.source) return;
+
+        switch (vaultEvent.type) {
+            case "Create":
+                const entry = toEntry(vaultEvent.payload.entry);
+                setEntries(prev => prev ? [...prev, entry] : [entry]);
+                break;
+            case "Update":
+                const updated = toEntry(vaultEvent.payload.new);
+                setEntries(p => p?.map(e => e.id === vaultEvent.payload.id ? updated : e) || null);
+                break;
+            case "EntryUse":
+                const result = vaultEvent.payload.result;
+                setEntries(
+                    p => p?.map(e => e.id === vaultEvent.payload.id 
+                        ? {...e, lastUsed: new Date(result.lastUse), uses: result.uses} as Entry 
+                        : e
+                    ) || null
+                );
+                break;
+            case "Delete":
+                setEntries(p => p?.filter(e => e.id != vaultEvent.payload.id) || null);
+                break;
+            default:
+                break;
+        }
+    }
+
     useEffect(() => {
         setLoading(true);
         refreshStatus().finally(() => setLoading(false));
 
-        let unlistenStatusChanged: UnlistenFn | undefined = undefined;
+        let unlistenVaultChanged: UnlistenFn | undefined = undefined;
 
         (async () => {
-            unlistenStatusChanged = await listen("vault_status_changed", refreshStatus);
+            unlistenVaultChanged = await listen<VaultChangeEvent>("vault_changed", handleVaultChanged);
         })();
 
         return () => {
-            unlistenStatusChanged?.();
+            unlistenVaultChanged?.();
         }
     }, []);
 

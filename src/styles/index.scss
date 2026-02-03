@@ -117,17 +117,19 @@ button {
 }
 
 .favicon {
+    --size: 40px;
+    
     position: relative;
-    width: 40px;
-    height: 40px;
+    width: var(--size);
+    height: var(--size);
     border-radius: 5px;
     flex-shrink: 0;
     overflow: hidden;
 
     > img, .placeholder {
         position: absolute;
-        width: 40px;
-        height: 40px;
+        width: var(--size);
+        height: var(--size);
         font-family: Inter, sans-serif;
     }
 
