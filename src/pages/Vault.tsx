@@ -50,7 +50,6 @@ const Vault = (
                     </div>
                 </div>
                 <h2>Security overview</h2>
-                <div>0 toasts</div>
                 <h2>All passwords - {entries?.length} entries</h2>
 
                 <div className="table">

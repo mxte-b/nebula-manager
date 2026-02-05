@@ -17,7 +17,6 @@ type PasswordData = {
 
 const UnlockScreen = ({ onUnlock }: { onUnlock: () => void }) => {
     const [passwordShown, setPasswordShown] = useState<boolean>(false);
-    const [isHovered, setIsHovered] = useState<boolean>(false);
 
     const { unlockVault } = useVault();
     const { addError} = useError();
@@ -106,7 +105,7 @@ const UnlockScreen = ({ onUnlock }: { onUnlock: () => void }) => {
                             }
                         />
                     </FormGroup>
-                    <button onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} type="submit" className="button-continue">Unlock</button>
+                    <button type="submit" className="button-continue">Unlock</button>
                 </Form>
             </div>
         </motion.div>

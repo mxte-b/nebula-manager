@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { Fragment, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import OverlaySearchBar from "./OverlaySearchBar";
 import { AnimatePresence, motion } from "motion/react";
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
@@ -7,71 +7,132 @@ import "../../styles/Overlay.scss";
 import "../../styles/NumberTicker.scss";
 import { Entry, SearchResults } from "../../types/general";
 import { useVault } from "../../contexts/vault";
-import Favicon from "../Favicon";
 import useTauriFocusFix from "../../hooks/useTauriFocusFix";
-import TagPill from "../TagPill";
-import { Color } from "@tauri-apps/api/webviewWindow";
-import Icons from "../Icons";
 import NumberTicker from "../NumberTicker";
-import { openUrl } from "@tauri-apps/plugin-opener";
-
-type TagData = {
-    name: string;
-    color: Color;
-    icon: keyof typeof Icons;
-};
+import { useError } from "../../contexts/error";
+import OverlayListItem from "./OverlayListItem";
 
 const Overlay = () => {
 
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
+    const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
 
-    const { searchEntries } = useVault();
+    const { searchEntries, entries, copyEntryDetail } = useVault();
+    const { addError } = useError();
     
     useTauriFocusFix();
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key == "Escape") {
-            invoke("toggle_overlay");
+    const quickAccessEntries = useMemo(() => {
+        if (!entries) return [];
+
+        const seen = new Set<string>();
+        const result: Entry[] = [];
+
+        for (const e of entries.filter(e => e.favorite).sort((a, b) => b.uses - a.uses)) {
+            if (result.length >= 3) break;
+
+            seen.add(e.id);
+            result.push(e);
         }
+
+        for (const e of [...entries].sort((a, b) => (b.lastUsed?.getTime() || 0) - (a.lastUsed?.getTime() || 0))) {
+            if (result.length >= 5) break;
+            if (seen.has(e.id)) continue;
+
+            seen.add(e.id);
+            result.push(e);
+        }
+
+        return result;
+    }, [entries]);
+
+    const visibleEntries = useMemo(() => 
+        searchResults !== null 
+            ? searchResults.results.map(e => ({ key: "search", id: e.id })) 
+            : quickAccessEntries.map(e => ({ key: "quick", id: e.id}))
+    , [searchResults, quickAccessEntries]);
+
+    const activeId = useMemo(() => selectedIdx !== null ? visibleEntries[selectedIdx]: null, [selectedIdx, visibleEntries]);
+
+    const selectEntry = (id: string) => {
+        copyEntryDetail(id, "password", 30000, {
+            ok: () => invoke("toggle_overlay"),
+            err: addError
+        });
     }
 
-    const getEntryTags = (entry: Entry) => {
-        const tags: TagData[] = [];
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+            invoke("toggle_overlay");
+            return;
+        }
 
-        if (entry.favorite) tags.push({ name: "Favorite", color: "#d3b716", icon: "StarFill" });
-        if (entry.uses > 10) tags.push({ name: "Frequent", color: "#d16f13", icon: "Fire" });
+        if (!visibleEntries || visibleEntries.length === 0) return;
 
-        return tags;
-    }
+        switch (e.key) {
+            case "ArrowDown":
+                e.preventDefault();
+                setSelectedIdx(i => ((i ?? -1) + 1) % visibleEntries.length);
+                break;
+
+            case "ArrowUp":
+                e.preventDefault();
+                setSelectedIdx(i => (((i === null) || (i === 0) ? visibleEntries.length : i) - 1) % visibleEntries.length);
+                break;
+
+            case "Enter":
+                e.preventDefault();
+                if (activeId) {
+                    selectEntry(activeId.id);
+                }
+                break;
+        }
+    }, 
+    [activeId, visibleEntries]);
 
     const getActiveElement = () => {
         if (!searchResults) {
             return (
-                <Fragment key={"default-view"}>
-                    <div className="overlay-list-category">
-                        <div className="overlay-list-category-title">
-                            FAVORITES
-                        </div>
-                        <div className="overlay-list-items">
-                            
-                        </div>
+                <motion.div key={"quick-access"} className="overlay-list-category">
+                    <div className="overlay-list-category-title">
+                        QUICK ACCESS
                     </div>
-                    <div className="overlay-list-category">
-                        <div className="overlay-list-category-title">
-                            RECENTLY USED
-                        </div>
-                        <div className="overlay-list-items">
-                            
-                        </div>
-                    </div>
-                </Fragment>
+                    <AnimatePresence>
+                        {
+                            quickAccessEntries.length > 0 && 
+                            <motion.div className="overlay-list-items">
+                            {
+                                quickAccessEntries.map(r => (
+                                    <OverlayListItem
+                                        key={`quick-${r.id}`}
+                                        category="quick"
+                                        entry={r}
+                                        activeId={activeId}
+                                        onClick={() => selectEntry(r.id)}
+                                    />
+                                ))
+                            }
+                            </motion.div>
+                        }
+
+                        {
+                            quickAccessEntries.length == 0 && 
+                            <motion.div 
+                                key={"need-data"} 
+                                className="overlay-list-need-data"
+                            >
+                                There aren't any quick suggestions we can show you right now.
+                            </motion.div>
+                        }
+                    </AnimatePresence>
+                </motion.div>
             )
         }
         else if (searchResults.numResults == 0) {
             return (
                 <div className="overlay-list-category" key={"no-results"}>
-                    <div className="overlay-list-no-results">
+                    <div className="overlay-list-category-title">
                         No Results
                     </div>
                 </div>
@@ -88,34 +149,26 @@ const Overlay = () => {
                     }
                 </div>
                 <div className="overlay-list-items">
-                    <AnimatePresence> 
                     {
                         searchResults.results.map(r => 
-                            <div className="overlay-list-item" key={`search-${r.id}`} tabIndex={0}>
-                                <div className="overlay-list-item-icon">
-                                    <Icons.ArrowUpRight />
-                                    <Favicon label={r.label} url={r.url} size={35} onClick={() => openUrl(r.url)}/>
-                                </div>
-                                <div className="overlay-list-item-label">
-                                    <span className="highlight">
-                                        { r.label.substring(0, searchResults.query.length) }
-                                    </span>
+                            <OverlayListItem
+                                key={`search-${r.id}`} 
+                                category="search"
+                                entry={r} 
+                                activeId={activeId}
+                                labelOverride={
+                                    <>
+                                        <span className="highlight">
+                                            { r.label.substring(0, searchResults.query.length) }
+                                        </span>
 
-                                    { r.label.substring(searchResults.query.length) }
-                                </div>
-                                <div className="overlay-list-item-name">
-                                    { r.name }
-                                </div>
-
-                                <div className="overlay-list-item-tags">
-                                    {
-                                        getEntryTags(r).map(t => <TagPill tag={t.name} color={t.color} icon={t.icon} />)
-                                    }
-                                </div>
-                            </div>
+                                        <span>{ r.label.substring(searchResults.query.length) }</span>
+                                    </>
+                                }
+                                onClick={() => selectEntry(r.id)}
+                            />
                         )
                     }
-                    </AnimatePresence>
                 </div>
             </div>
         )
@@ -131,8 +184,12 @@ const Overlay = () => {
             unlistenHide = await listen("overlay_before_hide", () => {
                 setIsVisible(false);
                 setSearchResults(null);
+                setSelectedIdx(null);
             });
-            unlistenShow = await listen("overlay_show", () => setIsVisible(true));
+            unlistenShow = await listen("overlay_show", () => {
+                setSelectedIdx(null);
+                setIsVisible(true);
+            });
         })();
 
         return () => {
@@ -140,7 +197,11 @@ const Overlay = () => {
             unlistenHide?.();
             unlistenShow?.();
         }
-    });
+    }, [handleKeyDown]);
+
+    useEffect(() => {
+        setSelectedIdx(visibleEntries.length > 0 ? 0 : null);
+    }, [visibleEntries]);
 
     return (
         <AnimatePresence>    
@@ -168,7 +229,7 @@ const Overlay = () => {
                         });
                     }} />
 
-                    <div className="overlay-list">
+                    <div className={"overlay-list" + (searchResults && searchResults.numResults > 5 ? " overflow" : "")}>
                         <AnimatePresence mode="wait">
                             { getActiveElement() }
                         </AnimatePresence>

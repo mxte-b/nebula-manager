@@ -48,7 +48,7 @@ const EntryForm = (
                     uses: 0,
                     favorite: false,
                     ...data,
-                    url: normalizeUrl(data.url),
+                    url: data.url.length > 0 ? normalizeUrl(data.url) : "",
                 });
             }}
         >

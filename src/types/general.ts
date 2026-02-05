@@ -1,5 +1,6 @@
 import { JSX } from "react";
 import Icons from "../components/Icons";
+import { Color } from "@tauri-apps/api/webviewWindow";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Setup                                   */
@@ -315,3 +316,9 @@ export type SearchResults = {
     results: Entry[],
     numResults: number,
 }
+
+export type TagData = {
+    name: string;
+    color: Color;
+    icon: keyof typeof Icons;
+};
