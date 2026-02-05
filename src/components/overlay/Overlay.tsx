@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import OverlaySearchBar from "./OverlaySearchBar";
 import { AnimatePresence, motion } from "motion/react";
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
@@ -11,12 +11,15 @@ import useTauriFocusFix from "../../hooks/useTauriFocusFix";
 import NumberTicker from "../NumberTicker";
 import { useError } from "../../contexts/error";
 import OverlayListItem from "./OverlayListItem";
+import Icons from "../Icons";
 
 const Overlay = () => {
 
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
     const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+
+    const isInteractableRef = useRef<boolean>(false);
 
     const { searchEntries, entries, copyEntryDetail } = useVault();
     const { addError } = useError();
@@ -76,6 +79,11 @@ const Overlay = () => {
                 setSelectedIdx(i => ((i ?? -1) + 1) % visibleEntries.length);
                 break;
 
+            case "Tab":
+                e.preventDefault();
+                setSelectedIdx(i => ((i ?? -1) + 1) % visibleEntries.length);
+                break;
+
             case "ArrowUp":
                 e.preventDefault();
                 setSelectedIdx(i => (((i === null) || (i === 0) ? visibleEntries.length : i) - 1) % visibleEntries.length);
@@ -93,7 +101,8 @@ const Overlay = () => {
 
     const getActiveElement = () => {
         if (!searchResults) {
-            return (
+
+            if (quickAccessEntries.length > 0) return (
                 <motion.div key={"quick-access"} className="overlay-list-category">
                     <div className="overlay-list-category-title">
                         QUICK ACCESS
@@ -115,27 +124,31 @@ const Overlay = () => {
                             }
                             </motion.div>
                         }
-
-                        {
-                            quickAccessEntries.length == 0 && 
-                            <motion.div 
-                                key={"need-data"} 
-                                className="overlay-list-need-data"
-                            >
-                                There aren't any quick suggestions we can show you right now.
-                            </motion.div>
-                        }
                     </AnimatePresence>
+                </motion.div>
+            )
+            else return (
+                <motion.div 
+                    key={"need-data"} 
+                    className="overlay-no-results"
+                >
+                    <Icons.MagnifyingGlass />
+                    <div className="title">No quick suggestions yet</div>
+                    <div className="subtitle">
+                        Your most-used passwords will appear here.
+                    </div>
                 </motion.div>
             )
         }
         else if (searchResults.numResults == 0) {
             return (
-                <div className="overlay-list-category" key={"no-results"}>
-                    <div className="overlay-list-category-title">
-                        No Results
+                <motion.div className="overlay-no-results" key={"no-results"}>
+                    <Icons.MagnifyingGlass />
+                    <div className="title">Nothing found</div>
+                    <div className="subtitle">
+                        We couldn't find any entries matching that search.
                     </div>
-                </div>
+                </motion.div>
             )
         }
         else return (
@@ -185,10 +198,15 @@ const Overlay = () => {
                 setIsVisible(false);
                 setSearchResults(null);
                 setSelectedIdx(null);
+
+                isInteractableRef.current = false;
             });
             unlistenShow = await listen("overlay_show", () => {
+                setSearchResults(null);
                 setSelectedIdx(null);
                 setIsVisible(true);
+
+                isInteractableRef.current = true;
             });
         })();
 
@@ -215,7 +233,9 @@ const Overlay = () => {
                     transition={{ duration: 0.1 }}
                 >
                     <OverlaySearchBar onSearch={(query: string) => {
-                        if (!query) {
+                        if (!isInteractableRef.current) return;
+
+                        if (!query || query.length < 1) {
                             setSearchResults(null);
                             return;
                         }

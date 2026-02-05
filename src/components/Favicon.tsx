@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { CSSProperties, useEffect, useState } from "react";
 
-const Favicon = ({ label, url, size = 40, onClick }: { label: string, url?: string, size?: number, onClick?: ()  => void}) => {
+const Favicon = ({ label, url, size = 40, onClick }: { label: string, url?: string, size?: number, onClick?: () => void}) => {
     const faviconUrl = `https://www.google.com/s2/favicons?domain=${url}&sz=64`;
     const firstLetter = label.charAt(0).toUpperCase();
 
@@ -19,7 +19,10 @@ const Favicon = ({ label, url, size = 40, onClick }: { label: string, url?: stri
     }, [faviconUrl]); 
 
     return (
-        <div className="favicon" style={{ "--size": `${size}px`} as CSSProperties} onClick={onClick}>
+        <div className="favicon" style={{ "--size": `${size}px`} as CSSProperties} onClick={(e) => {
+            e.stopPropagation();
+            onClick?.();
+        }}>
             <div className={"placeholder" + (imageAvailable ? " hidden" : "")}>
                 {firstLetter}
             </div>
