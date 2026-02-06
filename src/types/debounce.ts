@@ -2,7 +2,6 @@ const debounce = <T extends (...args: any[]) => void>(fn: T, debounce: number) =
     let timeoutId: NodeJS.Timeout | undefined = undefined;
 
     const debounced = (...args: Parameters<T>) => {
-        console.log(timeoutId)
         if (timeoutId) clearTimeout(timeoutId);
         timeoutId = setTimeout(() => fn(...args), debounce);
     }

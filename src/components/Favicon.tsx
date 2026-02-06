@@ -8,7 +8,11 @@ const Favicon = ({ label, url, size = 40, onClick }: { label: string, url?: stri
     const [imageAvailable, setImageAvailable] = useState<boolean>(false);
 
     useEffect(() => {
-        if (!url || url.length == 0) return;
+        if (!url || url.length == 0) {
+            setImageAvailable(false);
+            return;
+        }
+        
         const image = new Image();
 
         image.src = faviconUrl;

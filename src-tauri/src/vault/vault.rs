@@ -36,6 +36,7 @@ pub enum VaultErrorKind {
     Crypto,
     NotFound,
     Internal,
+    Validation,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -470,6 +471,10 @@ impl Vault {
         }
 
         Ok(())
+    }
+
+    pub fn is_unlocked(&self) -> bool {
+        self.state == VaultState::Unlocked
     }
 
     /* -------------------------------------------------------------------------- */

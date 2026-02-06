@@ -1,6 +1,7 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
 use std::{sync::{Arc, Mutex}, time::Duration};
+use regex::Regex;
 use tauri::{Emitter, Manager, RunEvent, State, WindowEvent};
 
 pub mod vault;
@@ -10,7 +11,7 @@ pub use vault::Vault;
 
 use crate::vault::{
     entry::{EntryPublic, UpdateEntry},
-    vault::{EntryUseResult, VaultChangeEvent, VaultError, VaultErrorKind, VaultErrorSeverity, VaultResult, VaultState, VaultStatus},
+    vault::{EntryUseResult, VaultChangeEvent, VaultError, VaultErrorKind, VaultErrorSeverity, VaultResult, VaultStatus},
 };
 
 use sha2::{Sha256, Digest};
@@ -23,20 +24,98 @@ fn sha256_hash(text: &str) -> String {
     encode(result)
 }
 
-// Toggle search overlay
-#[tauri::command]
-fn toggle_overlay(app: tauri::AppHandle, vault: State<Arc<Mutex<Vault>>>) {
+
+// Helper function to access vault
+#[derive(PartialEq)]
+enum WithVaultOptions {
+    RequireUnlocked
+}
+
+fn with_vault<T, F>(vault: &State<Arc<Mutex<Vault>>>, code: &'static str, option: Option<WithVaultOptions>, f: F) -> VaultResult<T> 
+where 
+    F: FnOnce(&mut Vault) -> VaultResult<T>
+{
     let mut v = vault
         .lock()
         .map_err(|_| VaultError {
             kind: VaultErrorKind::Access, 
             severity: VaultErrorSeverity::Blocking, 
             message: "Vault not accessible".into(),
-            code: "E_VAULT_OVERLAY"
-        }).unwrap();
+            code: code
+        })?;
 
-    if v.get_status().state != VaultState::Unlocked {
-        return;
+    if option == Some(WithVaultOptions::RequireUnlocked) && !v.is_unlocked() {
+        return Err(VaultError {
+            kind: VaultErrorKind::Auth, 
+            severity: VaultErrorSeverity::Blocking, 
+            message: "Vault must be unlocked for this operation".into(),
+            code: code
+        })
+    }
+
+    f(&mut v)
+}
+
+// Validation helper function
+
+enum ValidationRule {
+    Required,
+    RegEx(String),
+}
+
+struct ValidationField<'lt, T> {
+    name: &'static str,
+    value: &'lt T,
+    rules: Vec<ValidationRule>
+}
+
+fn validate<T: AsRef<str>>(fields: Vec<ValidationField<T>>) -> VaultResult<()> {
+    for field in fields {
+        let value = field.value.as_ref();
+
+        for rule in &field.rules {
+            match rule {
+                ValidationRule::Required => {
+                    if value.trim().is_empty() {
+                        return Err(VaultError {
+                            kind: VaultErrorKind::Validation,
+                            severity: VaultErrorSeverity::Blocking,
+                            message: format!("{} is required", field.name),
+                            code: "E_VALIDATION_REQUIRED",
+                        })
+                    }
+                }
+                ValidationRule::RegEx(pattern) => {
+                    let regex = Regex::new(pattern).map_err(|_| VaultError {
+                            kind: VaultErrorKind::Internal,
+                            severity: VaultErrorSeverity::Blocking,
+                            message: format!("Invalid regex pattern encountered: {}", pattern),
+                            code: "E_VALIDATION_INVALID_PATTERN",
+                    })?;
+
+                    if !regex.is_match(value) {
+                        return Err(VaultError {
+                            kind: VaultErrorKind::Validation,
+                            severity: VaultErrorSeverity::Blocking,
+                            message: format!("{} is invalid", field.name),
+                            code: "E_VALIDATION_REGEX",
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+
+// Toggle search overlay
+#[tauri::command]
+fn toggle_overlay(app: tauri::AppHandle, vault: State<Arc<Mutex<Vault>>>) -> VaultResult<()> {
+    let unlocked = with_vault(&vault, "E_VAULT_OVERLAY", None, |v| Ok(v.is_unlocked()))?;
+
+    if !unlocked {
+        return Ok(());
     }
 
     if let Some(window) = app.get_webview_window("overlay") {
@@ -56,37 +135,20 @@ fn toggle_overlay(app: tauri::AppHandle, vault: State<Arc<Mutex<Vault>>>) {
             window.set_focus().unwrap();
         }
     }
+
+    Ok(())
 }
 
 // Vault commands
 #[tauri::command]
 fn vault_setup(vault: State<Arc<Mutex<Vault>>>, master_password: String) -> VaultResult<()> {
-    let mut v = vault
-        .lock()
-        .map_err(|_| VaultError {
-            kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Blocking, 
-            message: "Vault not accessible".into(),
-            code: "E_VAULT_SETUP"
-        })?;
-    Ok(v.set_master_pw(&master_password)?)
+    with_vault(&vault, "E_VAULT_SETUP", None, |v| v.set_master_pw(&master_password))
 }
 
 #[tauri::command]
 fn vault_unlock(app_handle: tauri::AppHandle, vault: State<Arc<Mutex<Vault>>>, password: String) -> VaultResult<()> {
-    let mut v = vault
-        .lock()
-        .map_err(|_| VaultError {
-            kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Blocking, 
-            message: "Vault not accessible".into(),
-            code: "E_VAULT_UNLOCK"
-        })?;
-
-    let unlock_result = v.unlock(&password)?;
-
+    let unlock_result = with_vault(&vault, "E_VAULT_UNLOCK", None, |v| v.unlock(&password))?;
     let _ = app_handle.emit("vault_changed", VaultChangeEvent::Status);
-
     Ok(unlock_result)
 }
 
@@ -97,16 +159,31 @@ fn vault_create_entry(
     vault: State<Arc<Mutex<Vault>>>, 
     entry: vault::Entry
 ) -> VaultResult<()> {
-    let mut v = vault
-        .lock()
-        .map_err(|_| VaultError {
-            kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Blocking, 
-            message: "Vault not accessible".into(),
-            code: "E_VAULT_ENTRY_CREATE"
-        })?;
 
-    v.new_entry(&entry);
+    let fields = vec![
+        ValidationField {
+            value: &entry.label,
+            rules: vec![ValidationRule::Required],
+            name: "Label",
+        },
+        ValidationField {
+            value: &entry.name,
+            rules: vec![ValidationRule::Required],
+            name: "Username",
+        },
+        ValidationField {
+            value: &entry.password,
+            rules: vec![ValidationRule::Required],
+            name: "Password",
+        },
+    ];
+
+    validate(fields)?;
+
+    with_vault(&vault, "E_VAULT_ENTRY_CREATE", Some(WithVaultOptions::RequireUnlocked), |v| {
+        v.new_entry(&entry);
+        v.save()
+    })?;
 
     // Notify other windows of change
     let _ = app_handle.emit("vault_changed", VaultChangeEvent::Create { 
@@ -114,46 +191,22 @@ fn vault_create_entry(
         entry: EntryPublic::from(&entry) 
     });
 
-    v.save()
+    Ok(())
 }
 
 #[tauri::command]
 fn vault_get_status(vault: State<Arc<Mutex<Vault>>>) -> VaultResult<VaultStatus> {
-    let mut v = vault
-        .lock()
-        .map_err(|_| VaultError {
-            kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Blocking, 
-            message: "Vault not accessible".into(),
-            code: "E_VAULT_GET_STATUS"
-        })?;
-    Ok(v.get_status())
+    with_vault(&vault, "E_VAULT_GET_STATUS", None, |v| Ok(v.get_status()))
 }
 
 #[tauri::command]
 fn vault_get_entries(vault: State<Arc<Mutex<Vault>>>) -> VaultResult<Vec<EntryPublic>> {
-    let v = vault
-        .lock()
-        .map_err(|_| VaultError {
-            kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Blocking, 
-            message: "Vault not accessible".into(),
-            code: "E_VAULT_ENTRY_GET"
-        })?;
-    Ok(v.get_entries())
+    with_vault(&vault, "E_VAULT_GET_ENTRIES", Some(WithVaultOptions::RequireUnlocked), |v| Ok(v.get_entries()))
 }
 
 #[tauri::command]
 fn vault_get_entry_password(vault: State<Arc<Mutex<Vault>>>, id: Uuid) -> VaultResult<String> {
-    let mut v = vault
-        .lock()
-        .map_err(|_| VaultError {
-            kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Blocking, 
-            message: "Vault not accessible".into(),
-            code: "E_VAULT_GET_PASS"
-        })?;
-    v.get_entry_password(&id)
+    with_vault(&vault, "E_VAULT_GET_PASS", Some(WithVaultOptions::RequireUnlocked), |v| v.get_entry_password(&id))
 }
 
 #[tauri::command]
@@ -164,16 +217,7 @@ fn vault_update_entry(
     id: Uuid,
     new: UpdateEntry,
 ) -> VaultResult<EntryPublic> {
-    let mut guard = vault
-        .lock()
-        .map_err(|_| VaultError {
-            kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Blocking, 
-            message: "Vault not accessible".into(),
-            code: "E_VAULT_ENTRY_UPDATE"
-        })?;
-
-    let result = guard.update_entry(&id, &new)?;
+    let result = with_vault(&vault, "E_VAULT_ENTRY_UPDATE", Some(WithVaultOptions::RequireUnlocked), |v| v.update_entry(&id, &new))?;
     
     // Notify other windows of change
     let _ = app_handle.emit("vault_changed", VaultChangeEvent::Update { 
@@ -192,16 +236,7 @@ fn vault_toggle_favorite(
     vault: State<Arc<Mutex<Vault>>>, 
     id: Uuid
 ) -> VaultResult<EntryPublic> {
-    let mut guard = vault
-        .lock()
-        .map_err(|_| VaultError {
-            kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Blocking, 
-            message: "Vault not accessible".into(),
-            code: "E_VAULT_ENTRY_FAVORITE"
-        })?;
-
-    let result = guard.toggle_favorite(&id)?;
+    let result = with_vault(&vault, "E_VAULT_ENTRY_FAVORITE", Some(WithVaultOptions::RequireUnlocked), |v| v.toggle_favorite(&id))?;
 
     // Notify other windows of change
     let _ = app_handle.emit("vault_changed", VaultChangeEvent::Update { 
@@ -220,16 +255,7 @@ fn vault_delete_entry(
     vault: State<Arc<Mutex<Vault>>>, 
     id: Uuid
 ) -> VaultResult<()> {
-    let mut guard = vault
-        .lock()
-        .map_err(|_| VaultError {
-            kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Blocking, 
-            message: "Vault not accessible".into(),
-            code: "E_VAULT_ENTRY_DELETE"
-        })?;
-
-    guard.delete_entry(&id)?;
+    with_vault(&vault, "E_VAULT_ENTRY_DELETE", Some(WithVaultOptions::RequireUnlocked), |v| v.delete_entry(&id))?;
 
     // Notify other windows of change
     let _ = app_handle.emit("vault_changed", VaultChangeEvent::Delete { 
@@ -248,16 +274,13 @@ fn vault_copy_entry_password(
     last_hash_state: State<Arc<Mutex<Option<String>>>>,
     id: Uuid
 ) -> VaultResult<EntryUseResult> {
-    let mut v = vault
-        .lock()
-        .map_err(|_| VaultError {
-            kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Blocking, 
-            message: "Vault not accessible".into(),
-            code: "E_VAULT_COPY_PASS"
-        })?;
-
-    let text = v.get_entry_password(&id)?;
+    let (text, use_result) = with_vault(&vault, "E_VAULT_COPY_PASS", Some(WithVaultOptions::RequireUnlocked), |v| {
+        Ok((
+            v.get_entry_password(&id)?,
+            v.use_entry(&id)?
+        ))
+    })?;
+    
     let hash = sha256_hash(&text);
 
     {
@@ -278,16 +301,14 @@ fn vault_copy_entry_password(
         code: "E_VAULT_COPY_PASS_CLIP"
     })?;
 
-    let result = v.use_entry(&id)?;
-
     // Notify other windows of change
     let _ = app_handle.emit("vault_changed", VaultChangeEvent::EntryUse { 
         source: webview_window.label().into(), 
         id: id,
-        result: result.clone()
+        result: use_result.clone()
     }); 
 
-    Ok(result)
+    Ok(use_result)
 }
 
 #[tauri::command]
@@ -298,16 +319,13 @@ fn vault_copy_entry_name(
     last_hash_state: State<Arc<Mutex<Option<String>>>>,
     id: Uuid
 ) -> VaultResult<EntryUseResult> {
-    let mut v = vault
-        .lock()
-        .map_err(|_| VaultError {
-            kind: VaultErrorKind::Access, 
-            severity: VaultErrorSeverity::Blocking, 
-            message: "Vault not accessible".into(),
-            code: "E_VAULT_COPY_NAME"
-        })?;
+    let (text, use_result) = with_vault(&vault, "E_VAULT_COPY_PASS", Some(WithVaultOptions::RequireUnlocked), |v| {
+        Ok((
+            v.get_entry_name(&id)?,
+            v.use_entry(&id)?
+        ))
+    })?;
 
-    let text = v.get_entry_name(&id)?;
     let hash = sha256_hash(&text);
 
     {
@@ -328,16 +346,14 @@ fn vault_copy_entry_name(
         code: "E_VAULT_COPY_NAME_CLIP"
     })?;
 
-    let result = v.use_entry(&id)?;
-
     // Notify other windows of change
     let _ = app_handle.emit("vault_changed", VaultChangeEvent::EntryUse { 
         source: webview_window.label().into(), 
         id: id,
-        result: result.clone()
+        result: use_result.clone()
     }); 
 
-    Ok(result)
+    Ok(use_result)
 }
 
 #[tauri::command]
@@ -442,22 +458,22 @@ pub fn run() {
                 }
             }
 
-            // if window.label() == "overlay" {
-            //     match event {
-            //         WindowEvent::Focused(false) => {
-            //             if let Some(overlay) = window.app_handle().get_webview_window("overlay") {
-            //                 let _ = window.emit("overlay_before_hide", ());
+            if window.label() == "overlay" {
+                match event {
+                    WindowEvent::Focused(false) => {
+                        if let Some(overlay) = window.app_handle().get_webview_window("overlay") {
+                            let _ = window.emit("overlay_before_hide", ());
 
-            //                 tauri::async_runtime::spawn(async move {
-            //                     tokio::time::sleep(Duration::from_millis(100)).await;
+                            tauri::async_runtime::spawn(async move {
+                                tokio::time::sleep(Duration::from_millis(100)).await;
 
-            //                     overlay.hide().unwrap();
-            //                 });
-            //             }
-            //         }
-            //         _ => {}
-            //     }
-            // }
+                                overlay.hide().unwrap();
+                            });
+                        }
+                    }
+                    _ => {}
+                }
+            }
         })
         .build(tauri::generate_context!())
         .expect("failed to build app");

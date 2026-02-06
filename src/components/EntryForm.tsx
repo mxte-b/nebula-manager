@@ -12,7 +12,7 @@ import normalizeUrl from "../types/normalize-url";
 
 type FormEntryData = {
     label: string,
-    url: string,
+    url: string | undefined,
     name: string,
     password: string
 }
@@ -48,7 +48,7 @@ const EntryForm = (
                     uses: 0,
                     favorite: false,
                     ...data,
-                    url: data.url.length > 0 ? normalizeUrl(data.url) : "",
+                    url: data.url && data.url.length > 0 ? normalizeUrl(data.url) : "",
                 });
             }}
         >
@@ -59,7 +59,7 @@ const EntryForm = (
             </div>
 
             <FormGroup>
-                <TextInput icon="Bookmark" label="Label" name="label" placeholder="Label" required />
+                <TextInput icon="Bookmark" label="Label" name="label" placeholder="Label" required/>
                 <TextInput icon="Globe" label="Website (optional)" name="url" placeholder="Website" />
                 <TextInput icon="Person" label="Username" name="name" placeholder="Username" required />
                 <TextInput icon="Lock" label="Password" name="password" placeholder="Password" required 

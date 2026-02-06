@@ -101,7 +101,7 @@ export type Step = {
 /* -------------------------------------------------------------------------- */
 /*                           Vault types and helpers                          */
 /* -------------------------------------------------------------------------- */
-export type VaultErrorKind = "IO" | "Parse" | "Version" | "Access" | "Auth" | "Crypto" | "NotFound" | "Internal";
+export type VaultErrorKind = "IO" | "Parse" | "Version" | "Access" | "Auth" | "Crypto" | "NotFound" | "Internal" | "Validation";
 
 export type VaultErrorSeverity = "Soft" | "Blocking" | "Fatal";
 
