@@ -57,7 +57,7 @@ where
 }
 
 // Validation helper function
-
+#[allow(dead_code)]
 enum ValidationRule {
     Required,
     RegEx(String),
@@ -111,10 +111,17 @@ fn validate<T: AsRef<str>>(fields: Vec<ValidationField<T>>) -> VaultResult<()> {
 
 // Toggle search overlay
 #[tauri::command]
-fn toggle_overlay(app: tauri::AppHandle, vault: State<Arc<Mutex<Vault>>>) -> VaultResult<()> {
-    let unlocked = with_vault(&vault, "E_VAULT_OVERLAY", None, |v| Ok(v.is_unlocked()))?;
+fn toggle_overlay(app: tauri::AppHandle, overlay_unlocked: State<Arc<Mutex<bool>>>) -> VaultResult<()> {
+    let unlocked = overlay_unlocked
+        .lock()
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Blocking, 
+            message: "Overlay lock is not accessible".into(),
+            code: "E_TOGGLE_OVERLAY"
+        })?;
 
-    if !unlocked {
+    if !*unlocked {
         return Ok(());
     }
 
@@ -139,16 +146,36 @@ fn toggle_overlay(app: tauri::AppHandle, vault: State<Arc<Mutex<Vault>>>) -> Vau
     Ok(())
 }
 
+#[tauri::command]
+fn unlock_overlay(app_handle: tauri::AppHandle, overlay_unlocked: State<Arc<Mutex<bool>>>) -> VaultResult<()> {
+    let mut unlocked = overlay_unlocked
+        .lock()
+        .map_err(|_| VaultError {
+            kind: VaultErrorKind::Access, 
+            severity: VaultErrorSeverity::Blocking, 
+            message: "Overlay lock is not accessible".into(),
+            code: "E_TOGGLE_OVERLAY"
+        })?;
+
+    *unlocked = true;
+
+    let _ = app_handle.emit_to("overlay", "vault_ready", ());
+
+    Ok(())
+}
+
 // Vault commands
 #[tauri::command]
 fn vault_setup(vault: State<Arc<Mutex<Vault>>>, master_password: String) -> VaultResult<()> {
-    with_vault(&vault, "E_VAULT_SETUP", None, |v| v.set_master_pw(&master_password))
+    let setup_result = with_vault(&vault, "E_VAULT_SETUP", None, |v| v.set_master_pw(&master_password))?;
+    Ok(setup_result)
 }
 
 #[tauri::command]
-fn vault_unlock(app_handle: tauri::AppHandle, vault: State<Arc<Mutex<Vault>>>, password: String) -> VaultResult<()> {
+fn vault_unlock(app_handle: tauri::AppHandle, vault: State<Arc<Mutex<Vault>>>, overlay_unlocked: State<Arc<Mutex<bool>>>, password: String) -> VaultResult<()> {
     let unlock_result = with_vault(&vault, "E_VAULT_UNLOCK", None, |v| v.unlock(&password))?;
-    let _ = app_handle.emit("vault_changed", VaultChangeEvent::Status);
+    let _ = app_handle.emit_to("main", "vault_changed", VaultChangeEvent::Status);
+    unlock_overlay(app_handle, overlay_unlocked)?;
     Ok(unlock_result)
 }
 
@@ -399,10 +426,12 @@ fn vault_clear_clipboard_safe(app_handle: tauri::AppHandle, last_hash_state: Sta
 pub fn run() {
     let vault = Arc::new(Mutex::new(Vault::new()));
     let last_clipboard_hash = Arc::new(Mutex::new(None::<String>));
+    let overlay_unlocked = Arc::new(Mutex::new(false));
 
     let app = tauri::Builder::default()
         .manage(vault.clone())
         .manage(last_clipboard_hash.clone())
+        .manage(overlay_unlocked.clone())
         .setup(move |app| {
             // Get app data folder and create (if it's missing)
             let app_data_dir = app
@@ -433,6 +462,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             toggle_overlay,
+            unlock_overlay,
             vault_setup,
             vault_unlock,
             vault_create_entry,

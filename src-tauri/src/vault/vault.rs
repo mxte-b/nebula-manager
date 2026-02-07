@@ -11,7 +11,7 @@ use time::OffsetDateTime;
 use uuid::Uuid;
 use zeroize::Zeroize;
 
-const VERSION: &str = "0.8.0";
+const VERSION: &str = "0.9.0";
 
 fn b64_to_bytes(x: &str) -> Result<Vec<u8>, String> {
     STANDARD.decode(x).map_err(|e| e.to_string())
@@ -323,7 +323,7 @@ impl Vault {
 
     pub fn unlock(&mut self, password: &str) -> VaultResult<()> {
         if !matches!(self.state, VaultState::Locked) {
-            return Err(VaultError {
+            return Err(VaultError { 
                 kind: VaultErrorKind::Access,
                 severity: VaultErrorSeverity::Fatal,
                 message: "Vault not locked, cannot unlock.".into(),
@@ -540,6 +540,10 @@ impl Vault {
 
             if let Some(pass) = &updated.password {
                 entry.password = pass.clone();
+            }
+
+            if let Some(strength) = &updated.password_strength {
+                entry.password_strength = strength.clone();
             }
 
             if let Some(url) = &updated.url {

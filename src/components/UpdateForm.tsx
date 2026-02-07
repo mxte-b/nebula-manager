@@ -21,7 +21,7 @@ const UpdateForm = ({
     onClose: () => void;
 }) => {
 
-    const { generatePassword } = passwordUtils();
+    const { generatePassword, evaluatePassword } = passwordUtils();
 
     if (!entry) return null;
 
@@ -34,6 +34,7 @@ const UpdateForm = ({
                 onSubmit(entry.id, {
                     ...data,
                     ...(data.url && { url: normalizeUrl(data.url) }),
+                    ...(data.password && { passwordStrength: evaluatePassword(data.password).strength })
                 });
             }}
         >

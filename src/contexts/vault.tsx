@@ -287,7 +287,10 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         setLoading(true);
-        refreshStatus().finally(() => setLoading(false));
+
+        setTimeout(() => {
+            refreshStatus().finally(() => setLoading(false));
+        }, 1000)
 
         let unlistenVaultChanged: UnlistenFn | undefined = undefined;
 

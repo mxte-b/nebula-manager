@@ -4,15 +4,18 @@ import { VaultProvider } from "../src/contexts/vault";
 import { ModalProvider } from "../src/contexts/modal";
 import { ToastProvider } from "../src/contexts/toast";
 import { ErrorProvider } from "../src/contexts/error";
+import OverlayRenderController from "../src/components/overlay/OverlayRenderController";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    <ModalProvider>
-        <ToastProvider>
-            <ErrorProvider>
-                <VaultProvider>
-                    <Overlay />
-                </VaultProvider>
-            </ErrorProvider>
-        </ToastProvider>
-    </ModalProvider>
+    <OverlayRenderController>
+        <ModalProvider>
+            <ToastProvider>
+                <ErrorProvider>
+                    <VaultProvider>
+                        <Overlay />
+                    </VaultProvider>
+                </ErrorProvider>
+            </ToastProvider>
+        </ModalProvider>
+    </OverlayRenderController>
 );

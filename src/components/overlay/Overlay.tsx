@@ -190,6 +190,10 @@ const Overlay = () => {
     useEffect(() => {
         window.addEventListener("keydown", handleKeyDown);
 
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [handleKeyDown]);
+
+    useEffect(() => {
         let unlistenHide: UnlistenFn | undefined = undefined;
         let unlistenShow: UnlistenFn | undefined = undefined;
 
@@ -211,11 +215,11 @@ const Overlay = () => {
         })();
 
         return () => {
-            window.removeEventListener("keydown", handleKeyDown);
             unlistenHide?.();
             unlistenShow?.();
         }
-    }, [handleKeyDown]);
+    }, []);
+    
 
     useEffect(() => {
         setSelectedIdx(visibleEntries.length > 0 ? 0 : null);

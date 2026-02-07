@@ -30,7 +30,7 @@ const EntryForm = (
         onClose: () => void
     }) => {
 
-        const { generatePassword } = passwordUtils();
+        const { generatePassword, evaluatePassword } = passwordUtils();
     
     return (
         <Form<FormEntryData> 
@@ -49,6 +49,7 @@ const EntryForm = (
                     favorite: false,
                     ...data,
                     url: data.url && data.url.length > 0 ? normalizeUrl(data.url) : "",
+                    passwordStrength: evaluatePassword(data.password).strength 
                 });
             }}
         >

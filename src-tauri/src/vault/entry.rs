@@ -3,6 +3,14 @@ use time::OffsetDateTime;
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Clone)]
+pub enum PasswordStrength {
+    Weak,
+    Okay,
+    Strong,
+    Excellent
+}
+
+#[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Entry {
     pub id: Uuid,
@@ -17,6 +25,7 @@ pub struct Entry {
     pub url: String,
     pub name: String,
     pub password: String,
+    pub password_strength: PasswordStrength,
     pub favorite: bool,
 }
 
@@ -34,6 +43,7 @@ pub struct EntryPublic {
     pub label: String,
     pub url: String,
     pub name: String,
+    pub password_strength: PasswordStrength,
     pub favorite: bool,
 }
 
@@ -43,6 +53,7 @@ pub struct UpdateEntry {
     pub url: Option<String>,
     pub name: Option<String>,
     pub password: Option<String>,
+    pub password_strength: Option<PasswordStrength>
 }
 
 impl From<&Entry> for EntryPublic {
@@ -57,6 +68,7 @@ impl From<&Entry> for EntryPublic {
             url: entry.url.clone(),
             name: entry.name.clone(),
             favorite: entry.favorite,
+            password_strength: entry.password_strength.clone()
         }
     }
 }

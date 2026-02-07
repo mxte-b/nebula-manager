@@ -98,6 +98,18 @@ export type Step = {
     label: string
 }
 
+
+/* -------------------------------------------------------------------------- */
+/*                               Password types                               */
+/* -------------------------------------------------------------------------- */
+export type PasswordStrength = "Weak" | "Okay" | "Strong" | "Excellent";
+
+export type PasswordEvaluation = {
+    strength: PasswordStrength,
+    suggestions: string[]
+}
+
+
 /* -------------------------------------------------------------------------- */
 /*                           Vault types and helpers                          */
 /* -------------------------------------------------------------------------- */
@@ -131,7 +143,8 @@ export type Entry = {
     label: string,
     url: string,
     name: string,
-    favorite: boolean
+    favorite: boolean,
+    passwordStrength: PasswordStrength
 }
 
 export type EntryDTO = {
@@ -143,14 +156,16 @@ export type EntryDTO = {
     label: string,
     url: string,
     name: string,
-    favorite: boolean
+    favorite: boolean,
+    passwordStrength: PasswordStrength
 }
 
 export type UpdateEntry = {
     label?: string,
     url?: string,
     name?: string,
-    password?: string
+    password?: string,
+    passwordStrength?: PasswordStrength,
 }
 
 export type VaultCallbacks<T = void> = {
@@ -238,16 +253,6 @@ export type VaultChangeEvent =
   | { type: "Update"; payload: { source: string; id: string, new: EntryDTO } }
   | { type: "EntryUse"; payload: { source: string; id: string, result: EntryUseResult } }
   | { type: "Delete"; payload: { source: string; id: string } };
-
-/* -------------------------------------------------------------------------- */
-/*                               Password types                               */
-/* -------------------------------------------------------------------------- */
-export type PasswordStrength = "Weak" | "Okay" | "Strong" | "Very strong";
-
-export type PasswordEvaluation = {
-    strength: PasswordStrength,
-    suggestions: string[]
-}
 
 /* -------------------------------------------------------------------------- */
 /*                          Result type and helpers                           */

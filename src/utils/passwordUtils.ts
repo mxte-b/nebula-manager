@@ -25,7 +25,7 @@ const passwordUtils = () => {
         if (score < 0.4) return "Weak";
         else if (score < 0.6) return "Okay";
         else if (score < 0.8) return "Strong";
-        else return "Very strong";
+        else return "Excellent";
     }
 
     const getSymbolCount = (password: string): number => {

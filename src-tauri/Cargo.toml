@@ -1,6 +1,6 @@
 [package]
 name = "nebula-manager"
-version = "0.8.0"
+version = "0.9.0"
 description = "A private, hassle-free password manager"
 authors = ["you"]
 edition = "2021"

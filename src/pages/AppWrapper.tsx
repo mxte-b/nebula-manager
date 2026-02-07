@@ -6,6 +6,7 @@ import SetupScreen from "./SetupScreen";
 import UnlockScreen from "./UnlockScreen";
 import { useError } from "../contexts/error";
 import { useVault } from "../contexts/vault";
+import { invoke } from "@tauri-apps/api/core";
 
 const AppWrapper = () => {
     const { status, loading, refreshStatus } = useVault();
@@ -18,7 +19,10 @@ const AppWrapper = () => {
 
         switch (status.state) {
             case "Uninitialized":
-                return <SetupScreen key="setup" onSetupCompleted={refreshStatus} />
+                return <SetupScreen key="setup" onSetupCompleted={async () => {
+                    refreshStatus();
+                    await invoke("unlock_overlay");
+                }} />
             case "Locked":
                 return <UnlockScreen key="unlock" onUnlock={refreshStatus} />
             case "Unlocked": 
