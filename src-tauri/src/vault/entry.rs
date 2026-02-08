@@ -48,6 +48,7 @@ pub struct EntryPublic {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct UpdateEntry {
     pub label: Option<String>,
     pub url: Option<String>,

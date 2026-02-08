@@ -6,7 +6,7 @@ const CharacterColumn = ({ character }: { character: string }) => {
             layout 
             className="ticker-column char-column"
             initial={{ opacity: 0, width: 0,}}
-            animate={{ opacity: 1, width: "var(--ticker-colsize)" }}
+            animate={{ opacity: 1, width: "var(--ticker-colwidth)" }}
             exit={{ opacity:0, width: 0 }}
         >
             {

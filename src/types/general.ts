@@ -168,6 +168,19 @@ export type UpdateEntry = {
     passwordStrength?: PasswordStrength,
 }
 
+export type VaultStatistics = {
+    numEntries: number,
+    averages: {
+        entryUses: number
+    },
+    security: {
+        oldPasswords: number,
+        health: number,
+        strengths: Record<PasswordStrength, number>
+        distribution: Record<PasswordStrength, number>
+    }
+}
+
 export type VaultCallbacks<T = void> = {
     ok?: (result: T) => void;
     err?: (error: VaultError) => void;
@@ -192,6 +205,7 @@ export type VaultContextType = {
 
     // Entries
     entries: Entry[] | null,
+    statistics: VaultStatistics | null,
     createEntry: (
         entry: Entry,
         callbacks?: VaultCallbacks<Entry[]>

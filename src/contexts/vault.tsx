@@ -4,6 +4,7 @@ import { useError } from "./error";
 import { invoke } from "@tauri-apps/api/core";
 import { Event, listen, UnlistenFn } from "@tauri-apps/api/event";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
+import useVaultStatistics from "../hooks/useVaultStatistics";
 
 const VaultContext = createContext<VaultContextType | undefined>(undefined);
 
@@ -13,6 +14,7 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
     const [entries, setEntries] = useState<Entry[] | null>(null);
     const [status, setStatus] = useState<VaultStatus | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const { statistics } = useVaultStatistics(entries);
 
     const lastClearTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -319,6 +321,7 @@ export const VaultProvider = ({ children }: { children: ReactNode }) => {
         setupVault,
         unlockVault, 
         entries, 
+        statistics,
         createEntry, 
         updateEntry, 
         toggleFavorite, 

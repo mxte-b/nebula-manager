@@ -79,6 +79,7 @@ body {
         flex-grow: 1;
 
         &-title {
+            gap: 5px;
             height: 35px;
             padding: 10px;
             color: var(--fg-inactive);
@@ -87,10 +88,6 @@ body {
             text-transform: uppercase;
 
             @include flex($justify: flex-start);
-
-            & > .separator {
-                padding-left: 5px;
-            }
         }
     }
 

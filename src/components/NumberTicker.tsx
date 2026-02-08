@@ -5,7 +5,9 @@ import CharacterColumn from "./CharacterColumn";
 
 type NumberTickerOptionals = {
     size?: number,
-    postfix?: string
+    postfix?: string,
+    className?: string,
+    style?: ""
 }
 
 type NumberTickerProps = 
@@ -29,9 +31,10 @@ const NumberTicker = (props: NumberTickerProps) => {
     return (
         <motion.div 
             layout 
-            className="ticker"
+            className={"ticker" + (props.className ? ` ${props.className}` : "")}
             style={{
-                "--ticker-colsize": `${props.size ?? 24}px`
+                "--ticker-colheight": `${props.size ?? 24}px`,
+                "--ticker-colwidth": `${((props.size ?? 24) * 0.6).toFixed(2)}px`
             } as CSSProperties}
         >
             {/* IMPORTANT: Elements appear in reverse order! */}
@@ -41,10 +44,10 @@ const NumberTicker = (props: NumberTickerProps) => {
                 }
                 {
                     props.mode == "auto" ? 
-                    getDigits(props.number).map((d, i) => <NumberTickerColumn key={i} digit={d}/>)
+                    getDigits(props.number).map((d, i) => <NumberTickerColumn key={i} digit={d} gap={props.size ?? 24}/>)
                     :
                     getDigits(props.number, props.columns).map((d, i) => 
-                        <NumberTickerColumn key={i} digit={d}/>
+                        <NumberTickerColumn key={i} digit={d} gap={props.size ?? 24}/>
                     )
                 }
                 {

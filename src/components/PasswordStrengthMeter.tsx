@@ -4,7 +4,7 @@ import { PasswordStrength } from "../types/general";
 import { AnimatePresence, motion } from "motion/react";
 import Icons from "./Icons";
 
-const strengthIndexMap: PasswordStrength[] = ["Weak", "Okay", "Strong", "Very strong"];
+const strengthIndexMap: PasswordStrength[] = ["Weak", "Okay", "Strong", "Excellent"];
 
 const PasswordStrengthMeter = ({ password }: { password: string }) => {
     

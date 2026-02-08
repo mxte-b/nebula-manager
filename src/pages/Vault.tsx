@@ -10,6 +10,7 @@ import ReadableTime from "../components/ReadableTime";
 import { AnimatePresence, motion } from "motion/react";
 import { useVault } from "../contexts/vault";
 import FilteredEntryList from "../components/FilteredEntryList";
+import SecurityOverview from "../components/SecurityOverview";
 
 const Vault = (
     { 
@@ -25,7 +26,7 @@ const Vault = (
 
     const { openModal, closeModal } = useModal();
 
-    const { entries } = useVault();
+    const { entries, statistics } = useVault();
 
     return (
         <>
@@ -36,20 +37,34 @@ const Vault = (
                 <div className="info-grid">
                     <div className="info-grid-item favorites">
                         <h2>Favorites</h2>
-                        <FilteredEntryList filterFunction={(e, c) => e?.filter(e => e.favorite).sort((a, b) => b.uses - a.uses).slice(0, c)} />
+                        {
+                            entries && entries.some(e => e.favorite)
+                            ? <FilteredEntryList filterFunction={(e, c) => e?.filter(e => e.favorite).sort((a, b) => b.uses - a.uses).slice(0, c)} />
+                            : <div className="item-missing">Your favorite passwords will appear here.</div>
+                        }
+                        
                         <div className="item-background">
                             <Icons.Star className="icon" />
                         </div>
                     </div>
                     <div className="info-grid-item recents">
                         <h2>Recently used</h2>
-                        <FilteredEntryList filterFunction={(e, c) => e?.sort((a, b) => (b.lastUsed?.getTime() || 0) - (a.lastUsed?.getTime() || 0)).slice(0, c)} />
+                        {
+                            entries && entries.some(e => e.lastUsed)
+                            ? <FilteredEntryList filterFunction={(e, c) => e?.filter(e => e.lastUsed).sort((a, b) => (b.lastUsed?.getTime() || 0) - (a.lastUsed?.getTime() || 0)).slice(0, c)} />
+                            : <div className="item-missing">Your recently used passwords will appear here.</div>
+                        }
+                        
                         <div className="item-background">
                             <Icons.Recent className="icon" />
                         </div>
                     </div>
                 </div>
-                <h2>Security overview</h2>
+                
+                {
+                    statistics && <SecurityOverview statistics={statistics} />
+                }
+
                 <h2>All passwords - {entries?.length} entries</h2>
 
                 <div className="table">
