@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Icons from "./Icons";
 import ToggleableIcon from "./ToggleableIcon";
 import gsap from "gsap";
@@ -7,15 +7,20 @@ import Tooltip from "./Tooltip";
 import HoverableIcon from "./HoverableIcon";
 import { useError } from "../contexts/error";
 import { useVault } from "../contexts/vault";
+import { PasswordStrength } from "../types/general";
 
 gsap.registerPlugin(SplitText);
+
+const STRENGTHS = ["Weak", "Good", "Strong", "Excellent"];
 
 const EntryPasswordField = (
     { 
         id,
+        strength,
         maxCharacters = 20
     }: { 
         id: string,
+        strength: PasswordStrength
         maxCharacters?: number
     }
 ) => {
@@ -29,6 +34,8 @@ const EntryPasswordField = (
     const passwordDomRef = useRef<HTMLDivElement>(null);
     const placeholderSplitRef = useRef<SplitText | null>(null);
     const passwordSplitRef = useRef<SplitText | null>(null);
+
+    const passwordStrengthIdx = useMemo(() => STRENGTHS.indexOf(strength), [strength]);
 
     const { getEntryPassword, copyEntryDetail } = useVault();
     const { addError } = useError();
@@ -187,6 +194,7 @@ const EntryPasswordField = (
 
     return (
         <div className="entry-password">
+            
             <div className="password-split" ref={passwordDomRef}>
                 <div className="placeholder">
                     {"•".repeat(maxCharacters)}
@@ -230,6 +238,14 @@ const EntryPasswordField = (
                         onToggle={handlePasswordShow}
                     />
                 </Tooltip>
+            </div>
+            <div className={"strength" + ` strength--${strength.toLowerCase()}`}>
+                {STRENGTHS.map((level, idx) => (
+                    <div
+                        key={level.toLowerCase()}
+                        className={`strength__dot ${passwordStrengthIdx >= idx ? "active" : ""}`}
+                    />
+                ))}
             </div>
         </div>
     )

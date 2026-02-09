@@ -1,6 +1,7 @@
 @use 'tooltip';
 @use 'modal';
 @use 'vault';
+@use 'vault-intro';
 @use 'form';
 @use 'toast';
 @use 'mixins' as *;
@@ -107,6 +108,7 @@
 .side-bar {
     @include flex(column, flex-start, stretch);
 
+    z-index: 3;
     gap: 0.5rem;
     width: 15rem;
     height: 100vh;
@@ -192,6 +194,10 @@
         border-radius: 10px;
         background-color: #9c558d1c;
     }
+
+    &.intro-shown {
+        margin-left: -15rem;
+    }
 }
 
 .greeting {
@@ -238,7 +244,13 @@ section.content {
     }
 }
 
-.content > .wrapper {
+.layout {
+    @include flex(column, space-between, stretch);
+
+    height: 100%;
+}
+
+.content > .wrapper, .layout > .wrapper {
     @include flex(column, flex-start, stretch);
 
     gap: 1rem;

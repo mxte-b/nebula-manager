@@ -13,13 +13,13 @@ const PAGES: {
     { id: "about", label: "About", icon: "InfoCircle"  },
 ];
 
-const SideBar = () => {
+const SideBar = ({ className }: { className?: string }) => {
     const { currentPage, navigate } = useRouter();
 
     const pageIdx = PAGES.findIndex(p => p.id == currentPage);
 
     return (
-        <div className="side-bar">
+        <motion.div layout className={"side-bar" + (className ? ` ${className}` : "")}>
             <div className="title">
                 <img src="/icon.png" alt="Nebula Manager Icon" />
                 EBULA
@@ -38,7 +38,7 @@ const SideBar = () => {
                 }
                 <motion.div layout className="side-bar-pill" style={{"--idx" : pageIdx} as CSSProperties}/>
             </div>
-        </div>
+        </motion.div>
     )
 }
 

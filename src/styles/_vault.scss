@@ -95,11 +95,39 @@
 
     .entry-password {
         @include flex($justify: flex-start);
-
-        gap: 0.5rem;
+        
+        // gap: 0.2rem;
 
         // min-width: 250px;
         font-family: "JetBrains Mono", monospace;
+
+        .strength {
+            @include flex(column, center, center);
+
+            --dot-active: var(--bga-1);
+
+            flex-direction: column-reverse;
+            gap: 0.2rem;
+            width: 8px;
+            height: 35px;
+
+            &__dot {
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background-color: var(--bga-1);
+                transition: background-color 0.2s ease;
+            }
+
+            &__dot.active {
+                background-color: var(--dot-active);
+            }
+
+            &--weak      { --dot-active: #c72e2e; }
+            &--okay    { --dot-active: #ffa72c; }
+            &--strong    { --dot-active: #4bd646; }
+            &--excellent { --dot-active: #3992ff; }
+        }
 
         .password-split {
             position: relative;

@@ -11,25 +11,21 @@ import { AnimatePresence, motion } from "motion/react";
 import { useVault } from "../contexts/vault";
 import FilteredEntryList from "../components/FilteredEntryList";
 import SecurityOverview from "../components/SecurityOverview";
+import { useError } from "../contexts/error";
 
-const Vault = (
-    { 
-        onEntryDelete,
-        onEntryUpdate,
-        onEntryFavorite,
-    }: { 
-        onEntryDelete: (id: string) => void,
-        onEntryUpdate: (id: string) => void,
-        onEntryFavorite: (id: string) => void,
-    }
-) => {
+const Vault = ({ onEntryUpdate }: { onEntryUpdate: (id: string) => void }) => {
 
     const { openModal, closeModal } = useModal();
-
-    const { entries, statistics } = useVault();
+    const { addError } = useError();
+    const { entries, statistics, deleteEntry, toggleFavorite } = useVault();
 
     return (
-        <>
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="layout"
+        >
             <div className="wrapper">
 
                 <h1>Dashboard</h1>
@@ -98,7 +94,7 @@ const Vault = (
                                                 hoverFg="#d3a747ff"
                                                 hoverBg="#d3a74718"
                                                 toggled={e.favorite}
-                                                onToggle={() => onEntryFavorite(e.id)}
+                                                onToggle={() => toggleFavorite(e.id, { err: addError })}
                                             />
                                         </Tooltip>
                                     </div>
@@ -115,7 +111,7 @@ const Vault = (
                                     </div>
 
                                     <div className="table-col password" role="cell">
-                                        <EntryPasswordField id={e.id} />
+                                        <EntryPasswordField id={e.id} strength={e.passwordStrength} />
                                     </div>
 
                                     <div className="table-col last-use" role="cell">
@@ -145,7 +141,9 @@ const Vault = (
                                                             dangerous: true,
                                                             icon: "ExclamationTriangle",
                                                             onCancel: closeModal,
-                                                            onConfirm: () => onEntryDelete(e.id)
+                                                            onConfirm: () => deleteEntry(e.id, {
+                                                                err: addError
+                                                            })
                                                         })
                                                     }}
                                                 >
@@ -163,7 +161,7 @@ const Vault = (
             </div>
 
             <Footer />
-        </>
+        </motion.div>
     )
 }
 
