@@ -17,7 +17,6 @@
         display: grid;
         align-items: center;
         min-height: 0;
-        will-change: height, opacity, transform;
         flex-shrink: 0;
         padding-inline: 0.25rem;
         grid-template-columns:
@@ -337,13 +336,13 @@
     }
 
     &-list {
+        position: relative;
         z-index: 1;
         
         @include flex(column, flex-start, flex-start);
 
         &-iwrap {
             position: relative;
-            z-index: 1;
             width: 100%;
         }
         
