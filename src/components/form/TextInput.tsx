@@ -58,6 +58,10 @@ const TextInput = (
         return () => unregisterField(name);
     }, [name]);
 
+    useEffect(() => {
+        setWithValidation((defaultValue ?? "") as string);
+    }, [defaultValue])
+
     return (
         field &&
         <div className={"form-input" + (required ? " required" : "") + (field.touched && field.error ? " has-error" : "")}>

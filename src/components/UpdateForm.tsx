@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useState } from "react";
+import { useVault } from "../contexts/vault";
 import { Entry, UpdateEntry } from "../types/general";
 import normalizeUrl from "../types/normalize-url";
 import passwordUtils from "../utils/passwordUtils";
@@ -22,6 +24,19 @@ const UpdateForm = ({
 }) => {
 
     const { generatePassword, evaluatePassword } = passwordUtils();
+
+    const { getEntryPassword } = useVault();
+
+    const [password, setPassword] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!entry) {
+            setPassword(null);
+            return;
+        }
+
+        getEntryPassword(entry.id, { ok: setPassword });
+    }, [entry]);
 
     if (!entry) return null;
 
@@ -48,7 +63,7 @@ const UpdateForm = ({
                 <TextInput label="Label" icon="Bookmark" name="label" placeholder="Label" defaultValue={entry.label} />
                 <TextInput label="Website (optional)" icon="Globe" name="url" placeholder="Website" defaultValue={entry.url} />
                 <TextInput label="Username" icon="Person" name="name" placeholder="Username" defaultValue={entry.name} />
-                <TextInput label="Password" icon="Lock" name="password" placeholder="Password" 
+                <TextInput label="Password" icon="Lock" name="password" placeholder="Password" defaultValue={password} 
                     actions={(field) =>
                         <>
                             <Tooltip text="Generate">
