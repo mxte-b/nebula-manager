@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useVault } from "../contexts/vault";
 import { Entry, UpdateEntry } from "../types/general";
 import normalizeUrl from "../types/normalize-url";

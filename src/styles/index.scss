@@ -154,3 +154,46 @@ button {
         }
     }
 }
+
+.loading-screen {
+    @include flex;
+
+    height: 100vh;
+    background: radial-gradient(circle at center center, #25131fcc, transparent 25%);
+}
+
+.loader {
+  display: inline-block;
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border: 5px solid #cf5da9;
+  border-radius: 50%;
+  box-sizing: border-box;
+  animation: pulse 1s linear infinite;
+
+  &::after {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 48px;
+    height: 48px;
+    border: 5px solid #cf5da9;
+    border-radius: 50%;
+    box-sizing: border-box;
+    content: '';
+    transform: translate(-50%, -50%);
+    animation: scale-up 1s linear infinite;
+  }
+}
+
+@keyframes scale-up {
+    0% { transform: translate(-50%, -50%) scale(0) }
+    60% , 100% { transform: translate(-50%, -50%)  scale(1)}
+}
+
+@keyframes pulse {
+    0% , 60% , 100%{ transform:  scale(1) }
+    80% { transform:  scale(1.2)}
+}

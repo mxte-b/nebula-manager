@@ -11,7 +11,7 @@ use time::OffsetDateTime;
 use uuid::Uuid;
 use zeroize::Zeroize;
 
-const VERSION: &str = "0.9.0";
+const VERSION: &str = "1.0.0";
 
 fn b64_to_bytes(x: &str) -> Result<Vec<u8>, String> {
     STANDARD.decode(x).map_err(|e| e.to_string())

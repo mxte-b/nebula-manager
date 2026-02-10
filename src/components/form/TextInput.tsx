@@ -59,7 +59,9 @@ const TextInput = (
     }, [name]);
 
     useEffect(() => {
-        setWithValidation((defaultValue ?? "") as string);
+        if (!defaultValue) return;
+
+        setWithValidation(defaultValue as string);
     }, [defaultValue])
 
     return (
