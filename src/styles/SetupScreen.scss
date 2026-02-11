@@ -160,7 +160,23 @@
         text-align: center;
     }
 
-    &:hover {
+    &.active {
+        border-color: var(--border-accent-1) !important;
+
+        svg {
+            color: var(--fg-accent) !important;
+        }
+
+        .card-icon {
+            background-color: var(--bg-accent) !important;
+        }
+    }
+
+    &.disabled {
+        opacity: 0.5;
+    }
+
+    &:not(.disabled):hover {
         border-color: var(--border-2);
 
         svg {
@@ -172,20 +188,8 @@
         }
     }
 
-    &:active {
+    &:not(.disabled):active {
         scale: 0.98;
-    }
-
-    &.active {
-        border-color: var(--border-accent-1);
-
-        svg {
-            color: var(--fg-accent);
-        }
-
-        .card-icon {
-            background-color: var(--bg-accent);
-        }
     }
 }
 

@@ -5,12 +5,12 @@ import Icons from "./Icons";
 import { motion } from "motion/react";
 
 const PAGES: {
-    id: Page, label: string, icon: keyof typeof Icons
+    id: Page, label: string, icon: keyof typeof Icons, disabled?: boolean
 }[] = [
     { id: "vault", label: "Dashboard", icon: "Home" },
-    { id: "export", label: "Export", icon: "Upload" },
-    { id: "settings", label: "Settings", icon: "Gear" },
-    { id: "about", label: "About", icon: "InfoCircle"  },
+    { id: "export", label: "Export", icon: "Upload", disabled: true },
+    { id: "settings", label: "Settings", icon: "Gear", disabled: true },
+    { id: "about", label: "About", icon: "InfoCircle", disabled: true },
 ];
 
 const SideBar = ({ className }: { className?: string }) => {
@@ -30,7 +30,7 @@ const SideBar = ({ className }: { className?: string }) => {
                     PAGES.map(p => {
                         const Icon = Icons[p.icon];
 
-                        return <div key={p.id} className={"side-bar-link" + (currentPage == p.id ? " active" : "")} onClick={() => navigate(p.id)}>
+                        return <div key={p.id} className={"side-bar-link" + (p.disabled ? " disabled" : "") + (currentPage == p.id ? " active" : "")} onClick={() => !p.disabled && navigate(p.id)}>
                             <Icon />
                             { p.label }
                         </div>

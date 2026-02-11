@@ -32,7 +32,7 @@ const SetupWelcomeStep = ({ next }: RootPhaseProps) => {
                             <div className="card-description">Protect your passwords with a brand new, encrypted vault.</div>
                         </div>
                     </div>
-                    <div className={"card" + (option == "import" ? " active" : "")} onClick={() => setOption("import")}>
+                    <div className={"card disabled" + (option == "import" ? " active" : "")}>
                         <div className="card-icon-wrapper">
                             <div className="card-icon">
                                 <Icons.FileUpload />

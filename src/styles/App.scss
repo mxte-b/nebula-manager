@@ -174,12 +174,16 @@
             height: 18px;
         }
 
-        &:hover {
+        &:not(.disabled):hover {
             color: var(--fg-secondary);
         }
 
         &.active {
-            color: var(--fg-accent);
+            color: var(--fg-accent) !important;
+        }
+
+        &.disabled {
+            opacity: 0.5;
         }
     }
 

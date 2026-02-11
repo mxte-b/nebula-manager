@@ -217,12 +217,6 @@ const EntryPasswordField = (
                         onClick={() => {
                             handlePasswordCopy(id);
                             setCopiedRecently(true);
-                            addError({
-                                kind: "Internal",
-                                severity: "Soft",
-                                message: "ASd",
-                                code: "ASDASd"
-                            })
                         }}
                     >
                         <Icons.Copy/>
