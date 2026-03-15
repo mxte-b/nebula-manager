@@ -11,7 +11,7 @@ import { PasswordStrength } from "../types/general";
 
 gsap.registerPlugin(SplitText);
 
-const STRENGTHS = ["Weak", "Good", "Strong", "Excellent"];
+const STRENGTHS = ["Weak", "Okay", "Strong", "Excellent"];
 
 const EntryPasswordField = (
     { 
