@@ -53,7 +53,6 @@
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
@@ -61,6 +60,9 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+
+Nebula Manager is a **cross-platform desktop password manager** designed for simplicity, speed, and privacy.  
+It uses **local-first storage** with strong encryption, giving you full control over your data without sending anything to the cloud. Perfect for developers, privacy-conscious users, or anyone who wants a hassle-free vault.  
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
@@ -82,31 +84,37 @@
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+Follow these steps to set up the project locally for development.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+Make sure you have the following installed:
+
+* **Node.js / npm**
+```sh
+npm install npm@latest -g
+```
+
+* **Rust** (for Tauri builds)  
+*Platform-specific instructions in the [Tauri docs](https://tauri.app/).*
 
 ### Installation
 
-1. Clone the repo
-   ```sh
-   git clone https://github.com/mxte-b/nebula-manager.git
-   ```
-2. Install NPM packages
-   ```sh
-   npm install
-   ```
-3. Run project
-   ```sh
-   npm run tauri dev
-   ```
+1. Clone the repository
+```sh id="45fscy"
+git clone https://github.com/mxte-b/nebula-manager.git
+cd nebula-manager
+```
+
+2. Install dependencies
+```sh id="on9eng"
+npm install
+```
+
+3. Run in development mode
+```sh id="5o2xvu"
+npm run tauri dev
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -115,9 +123,13 @@ This is an example of how to list things you need to use the software and how to
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+- Create a new vault or open an existing one.  
+- Set a strong master password.  
+- Add entries (username, password, URL, notes).  
+- Organize entries into groups or tags.  
+- Export/import vault files **only when necessary**; they are sensitive.  
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more detailed usage examples, check the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -126,12 +138,12 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [ ] Secure import/export
+- [ ] Application settings
+- [ ] Version auto-migration
+- [ ] UI/UX polish and accessibility updates
 
-See the [open issues](https://github.com/mxte-b/nebula-manager/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/mxte-b/nebula-manager/issues) for full feature list and known bugs.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -140,16 +152,24 @@ See the [open issues](https://github.com/mxte-b/nebula-manager/issues) for a ful
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions make this project better! Any help — reporting issues, feature requests, or pull requests — is appreciated.  
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+Steps to contribute:
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. Fork the project
+2. Create your feature branch:
+```sh id="3refy4"
+git checkout -b feature/AmazingFeature
+```
+3. Commit your changes:
+```sh id="pbe402"
+git commit -m "Add some AmazingFeature"
+```
+4. Push to your branch:
+```sh id="uxrfmi"
+git push origin feature/AmazingFeature
+```
+5. Open a pull request
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -160,11 +180,10 @@ Don't forget to give the project a star! Thanks again!
 </a>
 
 
-
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE.txt` for details.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -173,18 +192,17 @@ Distributed under the MIT. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Website: [mxteb.dev](https://mxteb.dev)
-
-Email: mxteb.dev@gmail.com
-
-Project Link: [https://github.com/mxte-b/nebula-manager](https://github.com/mxte-b/nebula-manager)
+Website: [mxteb.dev](https://mxteb.dev)  
+Email: hello@mxteb.dev
+Project: [github.com/mxte-b/nebula-manager](https://github.com/mxte-b/nebula-manager)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+---
+
 <!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/mxte-b/nebula-manager.svg?style=for-the-badge
-[contributors-url]: https://github.com/mxte-b/nebula-manager/graphs/contributors
+[contributors-url]: https://github.com/mxte-b/nebula-b/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/mxte-b/nebula-manager.svg?style=for-the-badge
 [forks-url]: https://github.com/mxte-b/nebula-manager/network/members
 [stars-shield]: https://img.shields.io/github/stars/mxte-b/nebula-manager.svg?style=for-the-badge
@@ -196,7 +214,6 @@ Project Link: [https://github.com/mxte-b/nebula-manager](https://github.com/mxte
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
-<!-- Shields.io badges. You can a comprehensive list with many more badges at: https://github.com/inttter/md-badges -->
 [React.js]: https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black
 [React-url]: https://reactjs.org/
 [TypeScript.ts]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
